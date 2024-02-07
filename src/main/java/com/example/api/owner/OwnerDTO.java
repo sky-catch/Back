@@ -15,7 +15,6 @@ public class OwnerDTO extends BaseDTO {
     private long ownerId;
     private String name;
     private String imagePath;
-    private String imageFileName;
     private String phone;
     private String email;
     private String platform;
