@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.review.ReviewMapper">
+
+    <resultMap id="review" type="com.example.api.review.dto.ReviewDTO">
+        <id property="reviewId" column="REVIEW_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="reservationId" column="RESERVATION_ID"/>
+        <result property="rate" column="RATE"/>
+        <result property="comment" column="COMMENT"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+    </resultMap>
+
+    <insert id="createReview" parameterType="com.example.api.review.dto.ReviewDTO" useGeneratedKeys="true" keyProperty="reviewId">
+        INSERT INTO review(member_id, restaurant_id, reservation_id, rate, comment)
+        VALUES (#{memberId}, #{restaurantId}, #{reservationId}, #{rate}, #{comment})
+    </insert>
+
+    <select id="getReviewsByRestaurant" parameterType="long" resultMap="review">
+        SELECT REVIEW_ID, MEMBER_ID, RESTAURANT_ID, RESERVATION_ID, RATE, COMMENT, CREATED_DATE, UPDATED_DATE
+        FROM review
+        WHERE RESTAURANT_ID = #{restaurantId}
+    </select>
+
+    <select id="getReviewsByMember" parameterType="long" resultMap="review">
+        SELECT REVIEW_ID, MEMBER_ID, RESTAURANT_ID, RESERVATION_ID, RATE, COMMENT, CREATED_DATE, UPDATED_DATE
+        FROM review
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <update id="updateReview" parameterType="com.example.api.review.dto.ReviewDTO">
+        UPDATE review SET
+            rate = #{rate},
+            comment = #{comment}
+        WHERE
+            review_id = #{reviewId};
+    </update>
+
+    <delete id="deleteReview">
+        DELETE
+        FROM review
+        WHERE review_id = #{reviewId}
+    </delete>
+
+</mapper>

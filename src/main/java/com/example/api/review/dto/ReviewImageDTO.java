@@ -1,4 +1,4 @@
-package com.example.api.review;
+package com.example.api.review.dto;
 
 import com.example.core.dto.BaseDTO;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewImageDTO extends BaseDTO {
 
-    private long menuImageId;
+    private long reviewImageId;
     private long reviewId;
     private String path;
-    private String fileName;
 }
