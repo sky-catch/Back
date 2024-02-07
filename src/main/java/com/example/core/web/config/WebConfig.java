@@ -1,7 +1,9 @@
 package com.example.core.web.config;
 
+import com.example.core.oauth.presentation.OauthServerTypeConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,5 +25,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials");
 //                .exposedHeaders("*");
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new OauthServerTypeConverter());
     }
 }
