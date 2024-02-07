@@ -15,7 +15,6 @@ public class MemberDTO extends BaseDTO {
     private long memberId;
     private String name;
     private String imagePath;
-    private String imageFileName;
     private String nickname;
     private String phone;
     private String email;

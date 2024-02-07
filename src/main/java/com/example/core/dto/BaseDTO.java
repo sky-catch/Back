@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseDTO {
 
-    private String createDate;
-    private String updateDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

@@ -15,5 +15,4 @@ public class ReviewImageDTO extends BaseDTO {
     private long menuImageId;
     private long reviewId;
     private String path;
-    private String fileName;
 }

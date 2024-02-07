@@ -15,5 +15,4 @@ public class FacilityDTO extends BaseDTO {
     private long facilityId;
     private String name;
     private String path;
-    private String fileName;
 }
