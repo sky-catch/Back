@@ -15,6 +15,5 @@ public class RestaurantImageDTO extends BaseDTO {
     private long menuId;
     private long restaurantId;
     private String path;
-    private String fileName;
     private String type;
 }
