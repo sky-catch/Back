@@ -23,6 +23,9 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class KakaoMemberClient implements OauthMemberClient {
 
+    private static final String KAKAO_TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String KAKAO_USER_INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
+
     private final KakaoOauthConfig kakaoOauthConfig;
 
     @Override
@@ -30,42 +33,10 @@ public class KakaoMemberClient implements OauthMemberClient {
         return OauthServerType.KAKAO;
     }
 
-    // todo fetch refactoring
     @Override
     public OauthMember fetch(String authCode) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
-
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(tokenRequestParams(authCode),
-                httpHeaders);
-        RestTemplate restTemplate = new RestTemplate();
-
-        KakaoToken tokenInfo = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                POST,
-                httpEntity,
-                KakaoToken.class
-        ).getBody();
-
-        if (tokenInfo == null) {
-            throw new NullPointerException("KakaoToken is null");
-        }
-
-        httpHeaders = new HttpHeaders();
-        httpHeaders.add(AUTHORIZATION, "Bearer " + tokenInfo.getAccessToken());
-        httpEntity = new HttpEntity<>(httpHeaders);
-        restTemplate = new RestTemplate();
-
-        KakaoMemberResponse kakaoMemberResponse = restTemplate.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                GET,
-                httpEntity,
-                KakaoMemberResponse.class
-        ).getBody();
-
-        if (kakaoMemberResponse == null) {
-            throw new NullPointerException("kakaoMemberResponse is null");
-        }
+        KakaoToken tokenInfo = getKakaoToken(authCode);
+        KakaoMemberResponse kakaoMemberResponse = getKakaoMemberResponse(tokenInfo);
 
         return kakaoMemberResponse.toDomain();
     }
@@ -79,5 +50,47 @@ public class KakaoMemberClient implements OauthMemberClient {
         params.add("client_secret", kakaoOauthConfig.getClientSecret());
         System.out.println("params = " + params);
         return params;
+    }
+
+    private KakaoToken getKakaoToken(String authCode) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(tokenRequestParams(authCode),
+                httpHeaders);
+        RestTemplate restTemplate = new RestTemplate();
+
+        KakaoToken tokenInfo = restTemplate.exchange(
+                KAKAO_TOKEN_REQUEST_URL,
+                POST,
+                httpEntity,
+                KakaoToken.class).getBody();
+
+        if (tokenInfo == null) {
+            throw new NullPointerException("KakaoToken is null");
+        }
+        return tokenInfo;
+    }
+
+    private KakaoMemberResponse getKakaoMemberResponse(KakaoToken tokenInfo) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(AUTHORIZATION, createAuthorizationHeaderValue(tokenInfo));
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(httpHeaders);
+        RestTemplate restTemplate = new RestTemplate();
+
+        KakaoMemberResponse kakaoMemberResponse = restTemplate.exchange(
+                KAKAO_USER_INFO_REQUEST_URL,
+                GET,
+                httpEntity,
+                KakaoMemberResponse.class).getBody();
+
+        if (kakaoMemberResponse == null) {
+            throw new NullPointerException("kakaoMemberResponse is null");
+        }
+        return kakaoMemberResponse;
+    }
+
+    private String createAuthorizationHeaderValue(KakaoToken tokenInfo) {
+        return "Bearer " + tokenInfo.getAccessToken();
     }
 }
