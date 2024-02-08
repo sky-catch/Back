@@ -1,10 +1,11 @@
 package com.example.api.review;
 
+import com.example.api.comment.CommentMapper;
+import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.review.dto.ReviewDTO;
 import com.example.core.file.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,31 +18,40 @@ public class ReviewService {
 
     private final ReviewMapper reviewMapper;
     private final ReviewImageMapper reviewImageMapper;
+    private final RestaurantMapper restaurantMapper;
+    private final CommentMapper commentMapper;
     private final S3UploadService s3UploadService;
 
-    //언더아머 log확인
-    public void createReview(ReviewDTO dto, List<MultipartFile> files) throws IOException {
-        //todo canCreateReview check reservation status
-        //todo get restaurantId from reservation
+    @Transactional
+    public void createReview(ReviewDTO reviewDTO, List<MultipartFile> files) throws IOException {
+        //todo can Create Review check reservation status
 
-        long restaurantId = 1L;
+        reviewDTO.setMemberId(1L);
 
-        //todo restaurant reviewCount, rate update
-        ReviewDTO reviewDTO = ReviewDTO.builder().restaurantId(restaurantId).memberId(1L)
-                .reservationId(dto.getReservationId()).rate(dto.getRate()).comment(dto.getComment()).build();
-
-        //todo 외부 api가 실패한다면?
-        List<String> fileNames = s3UploadService.upload(files);
         reviewMapper.createReview(reviewDTO);
-        reviewImageMapper.createReviewImage(reviewDTO.getReviewId(), fileNames);
+        reviewImageMapper.createReviewImage(reviewDTO.getReviewId(), s3UploadService.upload(files));
+        restaurantMapper.increaseReviewCountAndRate(reviewDTO);
+    }
+    
+    @Transactional
+    public void updateReview(ReviewDTO reviewDTO, List<MultipartFile> files) throws IOException {
+        long reviewId = reviewDTO.getReviewId();
+
+        s3UploadService.delete(reviewImageMapper.getReviewImages(reviewId));
+        reviewImageMapper.deleteReviewImages(reviewId);
+
+        reviewMapper.updateReview(reviewDTO);
+        reviewImageMapper.createReviewImage(reviewId, s3UploadService.upload(files));
     }
 
-    public void updateReview(ReviewDTO dto) {
-        reviewMapper.updateReview(dto);
-    }
-
+    @Transactional
     public void deleteReview(long reviewId) {
-        //todo 사장 댓글 달려있는지 확인
+        if(commentMapper.isPresentComment(reviewId)){
+            //todo 사장 댓글이 달려있습니다. 에러 발생시키기
+            return;
+        }
+        restaurantMapper.decreaseReviewCountAndRate(reviewMapper.getReview(reviewId));
+        reviewImageMapper.deleteReviewImages(reviewId);
         reviewMapper.deleteReview(reviewId);
     }
 }

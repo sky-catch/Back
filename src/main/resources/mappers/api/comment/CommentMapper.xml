@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.comment.CommentMapper">
+
+    <select id="isPresentComment" parameterType="long" resultType="boolean">
+        select if(count(*) = 1, 1, 0)
+        from comment
+        where review_id = #{reviewId}
+    </select>
+
+</mapper>

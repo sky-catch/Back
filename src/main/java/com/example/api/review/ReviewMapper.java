@@ -9,6 +9,8 @@ import java.util.List;
 public interface ReviewMapper {
     void createReview(ReviewDTO reviewDTO);
 
+    ReviewDTO getReview(long reviewId);
+
     List<ReviewDTO> getReviewsByRestaurant(long restaurantId);
 
     List<ReviewDTO> getReviewsByMember(long memberId);

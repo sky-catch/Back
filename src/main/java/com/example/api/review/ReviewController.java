@@ -21,14 +21,13 @@ public class ReviewController {
     }
 
     @PutMapping("")
-    public void updateReview(@RequestBody ReviewDTO dto) {
-        reviewService.updateReview(dto);
+    public void updateReview(@RequestPart ReviewDTO dto, @RequestPart List<MultipartFile> files) throws IOException {
+        reviewService.updateReview(dto, files);
     }
 
     @DeleteMapping("/{id}")
     public void deleteReview(@PathVariable(name = "id") long reviewId) {
         reviewService.deleteReview(reviewId);
     }
-
 
 }

@@ -48,6 +48,10 @@ public class S3UploadService {
         amazonS3.deleteObject(bucket, filePathAndName);
     }
 
+    public void delete(List<String> urls){
+        urls.forEach(this::delete);
+    }
+
     private String createFileName(String fileName) throws IOException {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
