@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.core.oauth.domain.mapper.OauthMemberMapper">
+    <select id="findByOauthId" resultType="com.example.core.oauth.domain.OauthMember"
+            parameterType="com.example.core.oauth.domain.OauthId">
+
+        SELECT *
+        FROM oauth_member
+        WHERE oauth_server_id = #{oauthServerId}
+          AND oauth_server = #{oauthServerType};
+    </select>
+
+    <insert id="save" parameterType="com.example.core.oauth.domain.OauthMember">
+        INSERT INTO oauth_member(nickname, profile_image_url, oauth_server_id, oauth_server)
+        VALUES (#{nickname},
+                #{profileImageUrl},
+                #{oauthServerId},
+                #{oauthServerType})
+    </insert>
+</mapper>
