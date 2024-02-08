@@ -1,6 +1,6 @@
 package com.example.core.web.config;
 
-import com.example.core.oauth.presentation.OauthServerTypeConverter;
+import com.example.core.oauth.controller.OauthServerTypeConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

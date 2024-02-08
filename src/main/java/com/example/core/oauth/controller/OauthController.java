@@ -1,7 +1,7 @@
-package com.example.core.oauth.presentation;
+package com.example.core.oauth.controller;
 
-import com.example.core.oauth.application.OauthService;
 import com.example.core.oauth.domain.OauthServerType;
+import com.example.core.oauth.service.OauthService;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

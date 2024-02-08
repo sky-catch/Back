@@ -1,4 +1,4 @@
-package com.example.core.oauth.presentation;
+package com.example.core.oauth.controller;
 
 import com.example.core.oauth.domain.OauthServerType;
 import org.springframework.core.convert.converter.Converter;

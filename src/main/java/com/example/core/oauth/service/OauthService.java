@@ -1,4 +1,4 @@
-package com.example.core.oauth.application;
+package com.example.core.oauth.service;
 
 import com.example.core.oauth.domain.OauthMember;
 import com.example.core.oauth.domain.OauthServerType;
