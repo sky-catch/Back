@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.member.MemberMapper">
+    <select id="findByEmail" resultType="com.example.api.member.MemberDTO" parameterType="string">
+        SELECT member_id,
+               name,
+               image_path,
+               nickname,
+               phone,
+               email,
+               platform,
+               status
+        FROM member
+        WHERE email = #{email};
+    </select>
+
+    <select id="save">
+        INSERT INTO member(name, image_path, nickname, phone, email, platform, status)
+        VALUES (#{name}, #{imagePath}, #{nickname}, #{phone}, #{email}, #{platform}, #{status});
+    </select>
+</mapper>
