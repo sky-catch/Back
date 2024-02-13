@@ -7,6 +7,7 @@ CREATE TABLE OAUTH_MEMBER
     profile_image_url varchar(100) null,
     email varchar(20) null,
     name varchar(20) null,
+    status varchar(20) null,
     oauth_server_id varchar(20) not null,
     oauth_server varchar(20) not null
 );

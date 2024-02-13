@@ -2,6 +2,7 @@ package com.example.core.oauth.infra.oauth.kakao.dto;
 
 import static com.example.core.oauth.domain.OauthServerType.KAKAO;
 
+import com.example.core.oauth.domain.MemberStatus;
 import com.example.core.oauth.domain.OauthId;
 import com.example.core.oauth.domain.OauthMember;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -29,6 +30,7 @@ public class KakaoMemberResponse {
                 .profileImageUrl(kakaoAccount.profile.profileImageUrl)
                 .email(kakaoAccount.email)
                 .name(kakaoAccount.name)
+                .status(MemberStatus.ACTIVE)
                 .build();
     }
 

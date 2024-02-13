@@ -5,18 +5,26 @@
     <select id="findByOauthId" resultType="com.example.core.oauth.domain.OauthMember"
             parameterType="com.example.core.oauth.domain.OauthId">
 
-        SELECT id, nickname, profile_image_url, email, name, oauth_server_id, oauth_server
+        SELECT id,
+               nickname,
+               profile_image_url,
+               email,
+               name,
+               status,
+               oauth_server_id,
+               oauth_server
         FROM oauth_member
         WHERE oauth_server_id = #{oauthServerId}
           AND oauth_server = #{oauthServerType};
     </select>
 
     <insert id="save" parameterType="com.example.core.oauth.domain.OauthMember">
-        INSERT INTO oauth_member(nickname, profile_image_url, email, name, oauth_server_id, oauth_server)
+        INSERT INTO oauth_member(nickname, profile_image_url, email, name, status, oauth_server_id, oauth_server)
         VALUES (#{nickname},
                 #{profileImageUrl},
                 #{email},
                 #{name},
+                #{status},
                 #{oauthServerId},
                 #{oauthServerType})
     </insert>

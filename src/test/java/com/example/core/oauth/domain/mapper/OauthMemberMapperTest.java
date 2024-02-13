@@ -4,6 +4,7 @@ import static com.example.core.oauth.domain.OauthServerType.KAKAO;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.core.oauth.domain.MemberStatus;
 import com.example.core.oauth.domain.OauthId;
 import com.example.core.oauth.domain.OauthMember;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,7 @@ class OauthMemberMapperTest {
                 .profileImageUrl("testProfileImageUrl")
                 .email("testEmail@test.com")
                 .name("testName")
+                .status(MemberStatus.ACTIVE)
                 .oauthId(oauthId)
                 .build();
 
@@ -45,6 +47,7 @@ class OauthMemberMapperTest {
             assertEquals(actual.profileImageUrl(), expected.profileImageUrl());
             assertEquals(actual.email(), expected.email());
             assertEquals(actual.name(), expected.name());
+            assertEquals(actual.status(), expected.status());
             assertEquals(actual.oauthId().oauthServer(), expected.oauthId().oauthServer());
             assertEquals(actual.oauthId().oauthServerId(), expected.oauthId().oauthServerId());
         });
