@@ -16,12 +16,12 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("")
-    public void createReview(@RequestPart ReviewDTO dto, @RequestPart List<MultipartFile> files) throws IOException {
+    public void createReview(@RequestPart ReviewDTO dto, @RequestPart(required = false) List<MultipartFile> files) throws IOException {
         reviewService.createReview(dto, files);
     }
 
     @PutMapping("")
-    public void updateReview(@RequestPart ReviewDTO dto, @RequestPart List<MultipartFile> files) throws IOException {
+    public void updateReview(@RequestPart ReviewDTO dto, @RequestPart(required = false) List<MultipartFile> files) throws IOException {
         reviewService.updateReview(dto, files);
     }
 

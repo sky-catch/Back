@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.owner.OwnerMapper">
+    <resultMap id="owner" type="com.example.api.owner.OwnerDTO">
+        <id property="ownerId" column="OWNER_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="imagePath" column="IMAGE_PATH"/>
+        <result property="phone" column="PHONE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="platform" column="PLATFORM"/>
+        <result property="status" column="STATUS"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+    </resultMap>
+
+    <insert id="createOwner" parameterType="com.example.api.owner.OwnerDTO">
+        INSERT INTO owner (NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS)
+        VALUES (#{name}, #{imagePath}, #{phone}, #{email}, #{platform}, #{status})
+    </insert>
+
+    <select id="getOwner" parameterType="long" resultMap="owner">
+        SELECT OWNER_ID, NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS, CREATED_DATE, UPDATED_DATE
+        FROM owner
+        WHERE OWNER_ID = #{ownerId}
+    </select>
+
+    <update id="updateOwner" parameterType="com.example.api.owner.OwnerDTO">
+        UPDATE owner
+        SET NAME = #{name},
+            <if test="imagePath != null">
+                IMAGE_PATH = #{imagePath},
+            </if>
+            PHONE = #{phone},
+            EMAIL = #{email}
+        WHERE OWNER_ID = #{ownerId}
+    </update>
+
+    <update id="deleteOwner" parameterType="com.example.api.owner.OwnerDTO">
+        UPDATE owner
+        SET STATUS = #{status}
+        WHERE OWNER_ID = #{ownerId}
+    </update>
+
+</mapper>

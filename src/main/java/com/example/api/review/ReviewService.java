@@ -29,10 +29,13 @@ public class ReviewService {
         reviewDTO.setMemberId(1L);
 
         reviewMapper.createReview(reviewDTO);
-        reviewImageMapper.createReviewImage(reviewDTO.getReviewId(), s3UploadService.upload(files));
+        if (!files.isEmpty()) {
+            reviewImageMapper.createReviewImage(reviewDTO.getReviewId(), s3UploadService.upload(files));
+        }
+
         restaurantMapper.increaseReviewCountAndRate(reviewDTO);
     }
-    
+
     @Transactional
     public void updateReview(ReviewDTO reviewDTO, List<MultipartFile> files) throws IOException {
         long reviewId = reviewDTO.getReviewId();
@@ -46,7 +49,7 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(long reviewId) {
-        if(commentMapper.isPresentComment(reviewId)){
+        if (commentMapper.isPresentComment(reviewId)) {
             //todo 사장 댓글이 달려있습니다. 에러 발생시키기
             return;
         }
