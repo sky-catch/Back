@@ -3,6 +3,7 @@ package com.example.api.review;
 import com.example.api.comment.CommentMapper;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.review.dto.ReviewDTO;
+import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,7 @@ public class ReviewService {
     @Transactional
     public void deleteReview(long reviewId) {
         if (commentMapper.isPresentComment(reviewId)) {
-            //todo 사장 댓글이 달려있습니다. 에러 발생시키기
-            return;
+            throw new SystemException("사장의 댓글이 달려있어 삭제할 수 없습니다.");
         }
         restaurantMapper.decreaseReviewCountAndRate(reviewMapper.getReview(reviewId));
         reviewImageMapper.deleteReviewImages(reviewId);

@@ -2,6 +2,7 @@ package com.example.core.file;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,6 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    //todo exception 정의 (메소드 전체)
     public String upload(MultipartFile file) throws IOException {
         String createFileName = "image/" + createFileName(file.getOriginalFilename());
 
@@ -52,14 +52,11 @@ public class S3UploadService {
         urls.forEach(this::delete);
     }
 
-    private String createFileName(String fileName) throws IOException {
+    private String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 
-    private String getFileExtension(String fileName) throws IOException {
-        if (fileName.isEmpty()) {
-            throw new IOException("");
-        }
+    private String getFileExtension(String fileName) {
         ArrayList<String> fileValidate = new ArrayList<>();
         fileValidate.add(".jpg");
         fileValidate.add(".jpeg");
@@ -69,7 +66,7 @@ public class S3UploadService {
         fileValidate.add(".PNG");
         String idxFileName = fileName.substring(fileName.lastIndexOf("."));
         if (!fileValidate.contains(idxFileName)) {
-            throw new IOException("");
+            throw new SystemException("이미지 파일만 올려주세요");
         }
         return fileName.substring(fileName.lastIndexOf("."));
     }
