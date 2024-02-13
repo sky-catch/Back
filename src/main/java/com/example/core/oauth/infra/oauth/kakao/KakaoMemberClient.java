@@ -23,9 +23,6 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class KakaoMemberClient implements OauthMemberClient {
 
-    private static final String KAKAO_TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String KAKAO_USER_INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
-
     private final KakaoOauthConfig kakaoOauthConfig;
 
     @Override
@@ -43,7 +40,7 @@ public class KakaoMemberClient implements OauthMemberClient {
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
+        params.add("grant_type", kakaoOauthConfig.getGrantType());
         params.add("client_id", kakaoOauthConfig.getClientId());
         params.add("redirect_uri", kakaoOauthConfig.getRedirectUri());
         params.add("code", authCode);
@@ -61,7 +58,7 @@ public class KakaoMemberClient implements OauthMemberClient {
         RestTemplate restTemplate = new RestTemplate();
 
         KakaoToken tokenInfo = restTemplate.exchange(
-                KAKAO_TOKEN_REQUEST_URL,
+                kakaoOauthConfig.getTokenRequestUrl(),
                 POST,
                 httpEntity,
                 KakaoToken.class).getBody();
@@ -79,7 +76,7 @@ public class KakaoMemberClient implements OauthMemberClient {
         RestTemplate restTemplate = new RestTemplate();
 
         KakaoMemberResponse kakaoMemberResponse = restTemplate.exchange(
-                KAKAO_USER_INFO_REQUEST_URL,
+                kakaoOauthConfig.getUserInfoRequestUrl(),
                 GET,
                 httpEntity,
                 KakaoMemberResponse.class).getBody();
