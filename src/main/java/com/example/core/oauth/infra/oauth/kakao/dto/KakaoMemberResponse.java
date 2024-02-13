@@ -1,16 +1,15 @@
 package com.example.core.oauth.infra.oauth.kakao.dto;
 
+import static com.example.core.oauth.domain.OauthServerType.KAKAO;
+
 import com.example.core.oauth.domain.OauthId;
 import com.example.core.oauth.domain.OauthMember;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
-import static com.example.core.oauth.domain.OauthServerType.KAKAO;
 
 @Data
 @NoArgsConstructor
@@ -28,6 +27,8 @@ public class KakaoMemberResponse {
                 .oauthId(new OauthId(String.valueOf(id), KAKAO))
                 .nickname(kakaoAccount.profile.nickname)
                 .profileImageUrl(kakaoAccount.profile.profileImageUrl)
+                .email(kakaoAccount.email)
+                .name(kakaoAccount.name)
                 .build();
     }
 

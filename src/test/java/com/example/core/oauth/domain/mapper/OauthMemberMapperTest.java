@@ -30,6 +30,8 @@ class OauthMemberMapperTest {
         OauthMember expected = OauthMember.builder()
                 .nickname("testNickname")
                 .profileImageUrl("testProfileImageUrl")
+                .email("testEmail@test.com")
+                .name("testName")
                 .oauthId(oauthId)
                 .build();
 
@@ -41,6 +43,8 @@ class OauthMemberMapperTest {
         assertAll(() -> {
             assertEquals(actual.nickname(), expected.nickname());
             assertEquals(actual.profileImageUrl(), expected.profileImageUrl());
+            assertEquals(actual.email(), expected.email());
+            assertEquals(actual.name(), expected.name());
             assertEquals(actual.oauthId().oauthServer(), expected.oauthId().oauthServer());
             assertEquals(actual.oauthId().oauthServerId(), expected.oauthId().oauthServerId());
         });
