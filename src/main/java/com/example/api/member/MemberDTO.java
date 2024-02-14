@@ -24,7 +24,7 @@ public class MemberDTO extends BaseDTO {
     private String name;
     private HumanStatus status;
     private String oauthServerId;
-    private OauthServerType oauthServerType;
+    private OauthServerType oauthServer;
 
     public MemberDTO(Long memberId, String nickname, String profileImageUrl, String email, String name,
                      HumanStatus status, OauthId oauthId) {
@@ -35,50 +35,10 @@ public class MemberDTO extends BaseDTO {
         this.name = name;
         this.status = status;
         this.oauthServerId = oauthId.oauthServerId();
-        this.oauthServerType = oauthId.oauthServer();
+        this.oauthServer = oauthId.oauthServer();
     }
 
     public OauthId oauthId() {
-        return new OauthId(oauthServerId, oauthServerType);
-    }
-
-    public Long memberId() {
-        return memberId;
-    }
-
-    public String nickname() {
-        return nickname;
-    }
-
-    public String profileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public String email() {
-        return email;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public HumanStatus status() {
-        return status;
-    }
-
-    public String oauthServerId() {
-        return oauthServerId;
-    }
-
-    public OauthServerType oauthServerType() {
-        return oauthServerType;
-    }
-
-    public OauthServerType getOauthServer() {
-        return oauthServerType;
-    }
-
-    public void setOauthServer(OauthServerType oauthServerType) {
-        this.oauthServerType = oauthServerType;
+        return new OauthId(oauthServerId, oauthServer);
     }
 }

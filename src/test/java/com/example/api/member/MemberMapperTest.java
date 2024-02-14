@@ -34,7 +34,7 @@ class MemberMapperTest {
                 .name("testName")
                 .status(HumanStatus.ACTIVE)
                 .oauthServerId(oauthId.oauthServerId())
-                .oauthServerType(oauthId.oauthServer())
+                .oauthServer(oauthId.oauthServer())
                 .build();
 
         // when
@@ -43,11 +43,11 @@ class MemberMapperTest {
         // then
         MemberDTO actual = memberMapper.findByOauthId(oauthId).get();
         assertAll(() -> {
-            assertEquals(actual.nickname(), expected.nickname());
-            assertEquals(actual.profileImageUrl(), expected.profileImageUrl());
-            assertEquals(actual.email(), expected.email());
-            assertEquals(actual.name(), expected.name());
-            assertEquals(actual.status(), expected.status());
+            assertEquals(actual.getNickname(), expected.getNickname());
+            assertEquals(actual.getProfileImageUrl(), expected.getProfileImageUrl());
+            assertEquals(actual.getEmail(), expected.getEmail());
+            assertEquals(actual.getName(), expected.getName());
+            assertEquals(actual.getStatus(), expected.getStatus());
             assertEquals(actual.oauthId().oauthServerId(), expected.oauthId().oauthServerId());
             assertEquals(actual.oauthId().oauthServer(), expected.oauthId().oauthServer());
         });

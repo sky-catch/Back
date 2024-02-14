@@ -30,7 +30,7 @@ public class KakaoMemberResponse {
                 .name(kakaoAccount.name)
                 .status(HumanStatus.ACTIVE)
                 .oauthServerId(String.valueOf(id))
-                .oauthServerType(KAKAO)
+                .oauthServer(KAKAO)
                 .build();
     }
 

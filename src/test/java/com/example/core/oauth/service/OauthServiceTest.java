@@ -49,7 +49,7 @@ class OauthServiceTest {
                         .name("testName")
                         .status(HumanStatus.ACTIVE)
                         .oauthServerId("1")
-                        .oauthServerType(OauthServerType.KAKAO)
+                        .oauthServer(OauthServerType.KAKAO)
                         .build();
             }
         };
