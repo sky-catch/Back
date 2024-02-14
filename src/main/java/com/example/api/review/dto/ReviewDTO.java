@@ -1,8 +1,12 @@
 package com.example.api.review.dto;
 
 import com.example.core.dto.BaseDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,4 +21,5 @@ public class ReviewDTO extends BaseDTO {
     private long reservationId;
     private int rate;
     private String comment;
+    private List<ReviewImageDTO> images;
 }

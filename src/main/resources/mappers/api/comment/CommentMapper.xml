@@ -5,9 +5,26 @@
 <mapper namespace="com.example.api.comment.CommentMapper">
 
     <select id="isPresentComment" parameterType="long" resultType="boolean">
-        select if(count(*) = 1, 1, 0)
-        from comment
-        where review_id = #{reviewId}
+        SELECT EXISTS(SELECT 1
+                      FROM comment
+                      WHERE REVIEW_ID = #{reviewId})
     </select>
+
+    <insert id="createComment" parameterType="com.example.api.comment.CommentDTO">
+        INSERT INTO comment(REVIEW_ID, OWNER_ID, CONTENT)
+        VALUES (#{reviewId}, #{ownerId}, #{content})
+    </insert>
+
+    <update id="updateComment" parameterType="com.example.api.comment.CommentDTO">
+        UPDATE comment
+        SET CONTENT = #{content}
+        WHERE COMMENT_ID = #{commentId}
+    </update>
+
+    <delete id="deleteComment" parameterType="long">
+        DELETE
+        FROM comment
+        WHERE COMMENT_ID = #{commentId}
+    </delete>
 
 </mapper>

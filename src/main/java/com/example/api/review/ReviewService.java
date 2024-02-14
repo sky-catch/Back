@@ -25,9 +25,14 @@ public class ReviewService {
 
     @Transactional
     public void createReview(ReviewDTO reviewDTO, List<MultipartFile> files) throws IOException {
-        //todo can Create Review check reservation status
+        //todo 예약 상태가 review 작성가능한 상태인지
 
         reviewDTO.setMemberId(1L);
+
+        //todo forTest
+        /*if(reviewMapper.isExist(reviewDTO.getReservationId())){
+            throw new SystemException("리뷰가 이미 존재합니다.");
+        }*/
 
         reviewMapper.createReview(reviewDTO);
         if (!files.isEmpty()) {
