@@ -1,10 +1,12 @@
 package com.example.core.oauth.service;
 
-import com.example.core.oauth.domain.OauthMember;
+import com.example.api.member.MemberDTO;
+import com.example.api.member.MemberMapper;
+import com.example.core.exception.SystemException;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
 import com.example.core.oauth.domain.client.OauthMemberClientComposite;
-import com.example.core.oauth.domain.mapper.OauthMemberMapper;
+import com.example.core.web.security.jwt.JWTProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,22 +16,23 @@ public class OauthService {
 
     private final AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite;
     private final OauthMemberClientComposite oauthMemberClientComposite;
-    private final OauthMemberMapper oauthMemberMapper;
+    private final MemberMapper memberMapper;
+    private final JWTProvider jwtProvider;
 
     public String getAuthCodeRequestUrl(OauthServerType oauthServerType) {
         return authCodeRequestUrlProviderComposite.provide(oauthServerType);
     }
 
-    public Long login(OauthServerType oauthServerType, String authCode) {
-        OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-        OauthMember saved = oauthMemberMapper.findByOauthId(oauthMember.oauthId())
+    public String login(OauthServerType oauthServerType, String authCode) {
+        MemberDTO member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
+        MemberDTO saved = memberMapper.findByOauthId(member.oauthId())
                 .orElseGet(() -> {
-                    oauthMemberMapper.save(oauthMember);
-                    oauthMemberMapper.findByOauthId(oauthMember.oauthId())
-                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-                    return oauthMemberMapper.findByOauthId(oauthMember.oauthId()).get();
+                    memberMapper.save(member);
+                    memberMapper.findByOauthId(member.oauthId())
+                            .orElseThrow(() -> new SystemException("존재하지 않는 사용자입니다."));
+                    return memberMapper.findByOauthId(member.oauthId()).get();
                 });
 
-        return saved.id();
+        return jwtProvider.createToken(saved);
     }
 }

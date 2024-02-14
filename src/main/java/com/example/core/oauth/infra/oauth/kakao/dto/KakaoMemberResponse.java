@@ -1,16 +1,15 @@
 package com.example.core.oauth.infra.oauth.kakao.dto;
 
-import com.example.core.oauth.domain.OauthId;
-import com.example.core.oauth.domain.OauthMember;
+import static com.example.core.oauth.domain.OauthServerType.KAKAO;
+
+import com.example.api.member.MemberDTO;
+import com.example.core.dto.HumanStatus;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
-import static com.example.core.oauth.domain.OauthServerType.KAKAO;
 
 @Data
 @NoArgsConstructor
@@ -23,11 +22,15 @@ public class KakaoMemberResponse {
     private LocalDateTime connectedAt;
     private KakaoAccount kakaoAccount;
 
-    public OauthMember toDomain() {
-        return OauthMember.builder()
-                .oauthId(new OauthId(String.valueOf(id), KAKAO))
+    public MemberDTO toDomain() {
+        return MemberDTO.builder()
                 .nickname(kakaoAccount.profile.nickname)
                 .profileImageUrl(kakaoAccount.profile.profileImageUrl)
+                .email(kakaoAccount.email)
+                .name(kakaoAccount.name)
+                .status(HumanStatus.ACTIVE)
+                .oauthServerId(String.valueOf(id))
+                .oauthServer(KAKAO)
                 .build();
     }
 

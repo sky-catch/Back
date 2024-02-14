@@ -13,4 +13,11 @@ public class KakaoOauthConfig {
     private String clientId;
     private String clientSecret;
     private String[] scope;
+
+    private String authorizeUrl;
+    private String responseType;
+
+    private String grantType;
+    private String tokenRequestUrl;
+    private String userInfoRequestUrl;
 }
