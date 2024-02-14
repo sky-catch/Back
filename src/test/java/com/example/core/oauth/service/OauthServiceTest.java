@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -34,6 +35,8 @@ class OauthServiceTest {
 
     @BeforeEach
     void init() {
+        memberMapper.deleteAll();
+
         OauthMemberClient client = new OauthMemberClient() {
             @Override
             public OauthServerType supportServer() {
@@ -62,6 +65,7 @@ class OauthServiceTest {
 
     @Test
     @DisplayName("로그인 성공 시 accessToken 반환 테스트")
+    @Sql({"classpath:schema.sql"})
     void test1() {
         // given
         OauthServerType oauthServerType = OauthServerType.KAKAO;

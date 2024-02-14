@@ -45,4 +45,9 @@
                 #{oauthServerId},
                 #{oauthServer})
     </select>
+
+    <select id="deleteAll">
+        DELETE
+        FROM member;
+    </select>
 </mapper>

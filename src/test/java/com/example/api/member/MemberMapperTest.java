@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,11 @@ class MemberMapperTest {
 
     @Autowired
     private MemberMapper memberMapper;
+
+    @BeforeEach
+    void init() {
+        memberMapper.deleteAll();
+    }
 
     @Test
     @DisplayName("소셜 회원 저장 테스트")

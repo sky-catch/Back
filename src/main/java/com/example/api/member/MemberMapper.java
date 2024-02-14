@@ -13,4 +13,6 @@ public interface MemberMapper {
     Optional<MemberDTO> findByOauthId(OauthId oauthId);
 
     void save(MemberDTO memberDTO);
+
+    void deleteAll();
 }
