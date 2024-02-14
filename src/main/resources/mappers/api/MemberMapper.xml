@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.member.MemberMapper">
+    <select id="findByEmail" resultType="com.example.api.member.MemberDTO" parameterType="string">
+        SELECT member_id,
+               nickname,
+               profile_image_url,
+               email,
+               name,
+               status,
+               oauth_server_id,
+               oauth_server,
+               created_date,
+               updated_date
+        FROM member
+        WHERE email = #{email};
+    </select>
+
+    <select id="findByOauthId" resultType="com.example.api.member.MemberDTO"
+            parameterType="com.example.core.oauth.domain.OauthId">
+        SELECT member_id,
+               nickname,
+               profile_image_url,
+               email,
+               name,
+               status,
+               oauth_server_id,
+               oauth_server,
+               created_date,
+               updated_date
+        FROM member
+        WHERE oauth_server_id = #{oauthServerId}
+          AND oauth_server = #{oauthServerType};
+    </select>
+
+    <select id="save">
+        INSERT INTO member(nickname, profile_image_url, email, name, status, oauth_server_id, oauth_server)
+        VALUES (#{nickname},
+                #{profileImageUrl},
+                #{email},
+                #{name},
+                #{status},
+                #{oauthServerId},
+                #{oauthServerType})
+    </select>
+</mapper>
