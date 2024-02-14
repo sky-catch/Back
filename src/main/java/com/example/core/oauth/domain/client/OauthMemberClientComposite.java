@@ -1,15 +1,14 @@
 package com.example.core.oauth.domain.client;
 
-import com.example.core.oauth.domain.OauthMember;
-import com.example.core.oauth.domain.OauthServerType;
-import org.springframework.stereotype.Component;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
+import com.example.api.member.MemberDTO;
+import com.example.core.oauth.domain.OauthServerType;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OauthMemberClientComposite {
@@ -24,7 +23,7 @@ public class OauthMemberClientComposite {
                 ));
     }
 
-    public OauthMember fetch(OauthServerType oauthServerType, String authCode) {
+    public MemberDTO fetch(OauthServerType oauthServerType, String authCode) {
         return getClient(oauthServerType).fetch(authCode);
     }
 

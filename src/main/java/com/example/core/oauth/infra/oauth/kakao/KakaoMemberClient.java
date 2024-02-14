@@ -6,7 +6,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-import com.example.core.oauth.domain.OauthMember;
+import com.example.api.member.MemberDTO;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.client.OauthMemberClient;
 import com.example.core.oauth.infra.oauth.kakao.dto.KakaoMemberResponse;
@@ -31,7 +31,7 @@ public class KakaoMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public OauthMember fetch(String authCode) {
+    public MemberDTO fetch(String authCode) {
         KakaoToken tokenInfo = getKakaoToken(authCode);
         KakaoMemberResponse kakaoMemberResponse = getKakaoMemberResponse(tokenInfo);
 
