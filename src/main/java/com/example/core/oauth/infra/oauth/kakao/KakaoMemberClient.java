@@ -8,6 +8,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 import com.example.api.member.MemberDTO;
+import com.example.core.exception.SystemException;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.client.OauthMemberClient;
 import com.example.core.oauth.infra.oauth.kakao.dto.KakaoMemberResponse;
@@ -65,7 +66,7 @@ public class KakaoMemberClient implements OauthMemberClient {
                 KakaoToken.class).getBody();
 
         if (tokenInfo == null) {
-            throw new NullPointerException("KakaoToken is null");
+            throw new SystemException("인가 코드로 카카오 토큰 발급에 실패하였습니다.");
         }
         return tokenInfo;
     }
@@ -83,7 +84,7 @@ public class KakaoMemberClient implements OauthMemberClient {
                 KakaoMemberResponse.class).getBody();
 
         if (kakaoMemberResponse == null) {
-            throw new NullPointerException("kakaoMemberResponse is null");
+            throw new SystemException("존재하지 않는 카카오 사용자 정보입니다.");
         }
         return kakaoMemberResponse;
     }

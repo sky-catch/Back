@@ -1,6 +1,7 @@
 package com.example.core.web.security.jwt;
 
 import com.example.api.member.MemberDTO;
+import com.example.core.exception.SystemException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -51,14 +52,17 @@ public class JWTProvider {
             return !claimsJws.getBody().getExpiration().before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.error("잘못된 JWT 서명입니다.");
+            throw new SystemException("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT 토큰입니다.");
+            throw new SystemException("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 JWT 토큰입니다.");
+            throw new SystemException("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             log.error("JWT 토큰이 잘못되었습니다.");
+            throw new SystemException("JWT 토큰이 잘못되었습니다.");
         }
-        return false;
     }
 
 }

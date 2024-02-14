@@ -2,6 +2,7 @@ package com.example.core.oauth.service;
 
 import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberMapper;
+import com.example.core.exception.SystemException;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
 import com.example.core.oauth.domain.client.OauthMemberClientComposite;
@@ -28,7 +29,7 @@ public class OauthService {
                 .orElseGet(() -> {
                     memberMapper.save(member);
                     memberMapper.findByOauthId(member.oauthId())
-                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                            .orElseThrow(() -> new SystemException("존재하지 않는 사용자입니다."));
                     return memberMapper.findByOauthId(member.oauthId()).get();
                 });
 
