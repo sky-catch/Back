@@ -15,31 +15,104 @@
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
 
+    <resultMap id="reviewAndComment" type="com.example.api.review.dto.ReviewCommentDTO">
+        <id property="reviewId" column="REVIEW_ID"/>
+        <result property="nickname" column="NICKNAME"/>
+        <result property="imagePath" column="IMAGE_PATH"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="rate" column="RATE"/>
+        <result property="comment" column="COMMENT"/>
+        <result property="reviewCreatedDate" column="REVIEW_CREATED_DATE"/>
+        <result property="reviewUpdatedDate" column="REVIEW_UPDATED_DATE"/>
+
+        <result property="commentId" column="COMMENT_ID"/>
+        <result property="content" column="CONTENT"/>
+        <result property="commentCreatedDate" column="COMMENT_CREATED_DATE"/>
+        <result property="commentUpdatedDate" column="COMMENT_UPDATED_DATE"/>
+
+        <collection property="images" ofType="com.example.api.review.dto.ReviewImageDTO">
+            <result property="reviewImageId" column="REVIEW_IMAGE_ID"/>
+            <result property="path" column="PATH"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="reviewAndImage" type="com.example.api.review.dto.ReviewDTO">
+        <id property="reviewId" column="REVIEW_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="reservationId" column="RESERVATION_ID"/>
+        <result property="rate" column="RATE"/>
+        <result property="comment" column="COMMENT"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+        <collection property="images" ofType="com.example.api.review.dto.ReviewImageDTO">
+            <result property="reviewImageId" column="REVIEW_IMAGE_ID"/>
+            <result property="path" column="PATH"/>
+        </collection>
+    </resultMap>
+
+    <select id="isExist" parameterType="long" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM review
+                      WHERE RESTAURANT_ID = #{reservationId})
+    </select>
+
     <insert id="createReview" parameterType="com.example.api.review.dto.ReviewDTO" useGeneratedKeys="true" keyProperty="reviewId">
         INSERT INTO review(member_id, restaurant_id, reservation_id, rate, comment)
         VALUES (#{memberId},
-                (select rs.restaurant_id from reservation rs
-                   join restaurant rt on rs.restaurant_id = rt.restaurant_id
-                   where rs.reservation_id = ${reservationId}),
+                (SELECT rs.restaurant_id
+                 FROM reservation rs
+                 JOIN restaurant rt ON rs.restaurant_id = rt.restaurant_id
+                 WHERE rs.reservation_id = ${reservationId}),
                 #{reservationId}, #{rate}, #{comment})
     </insert>
 
-    <select id="getReview" parameterType="long" resultMap="review">
-        SELECT REVIEW_ID, MEMBER_ID, RESTAURANT_ID, RESERVATION_ID, RATE, COMMENT, CREATED_DATE, UPDATED_DATE
-        FROM review
-        WHERE review_id = #{reviewId}
+    <select id="getReview" parameterType="long" resultMap="reviewAndImage">
+        SELECT r.REVIEW_ID, r.MEMBER_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
+               ri.REVIEW_IMAGE_ID, ri.PATH
+        FROM review r
+                 LEFT JOIN review_image ri on ri.REVIEW_ID = r.REVIEW_ID
+        WHERE r.review_id = #{reviewId}
     </select>
 
-    <select id="getReviewsByRestaurant" parameterType="long" resultMap="review">
-        SELECT REVIEW_ID, MEMBER_ID, RESTAURANT_ID, RESERVATION_ID, RATE, COMMENT, CREATED_DATE, UPDATED_DATE
-        FROM review
-        WHERE RESTAURANT_ID = #{restaurantId}
+    <select id="getReviewCommentPage" resultMap="reviewAndComment" parameterType="map">
+        SELECT m.NICKNAME,
+               m.IMAGE_PATH,
+               r.REVIEW_ID,
+               r.MEMBER_ID,
+               r.RATE,
+               r.COMMENT,
+               r.CREATED_DATE AS REVIEW_CREATED_DATE,
+               r.UPDATED_DATE AS REVIEW_UPDATED_DATE,
+               ri.REVIEW_IMAGE_ID,
+               ri.PATH,
+               c.COMMENT_ID,
+               c.CONTENT,
+               c.CREATED_DATE AS COMMENT_CREATED_DATE,
+               c.UPDATED_DATE AS COMMENT_UPDATED_DATE
+        FROM (SELECT *
+              FROM review
+              WHERE RESTAURANT_ID = #{restaurantId}
+              ORDER BY CREATED_DATE DESC
+              LIMIT #{pageable.offset}, #{pageable.pageSize}) r
+        LEFT JOIN member m ON m.MEMBER_ID = r.MEMBER_ID
+        LEFT JOIN review_image ri ON ri.REVIEW_ID = r.REVIEW_ID
+        LEFT JOIN comment c ON c.REVIEW_ID = r.REVIEW_ID
     </select>
 
-    <select id="getReviewsByMember" parameterType="long" resultMap="review">
-        SELECT REVIEW_ID, MEMBER_ID, RESTAURANT_ID, RESERVATION_ID, RATE, COMMENT, CREATED_DATE, UPDATED_DATE
+    <select id="getReviewByMember" parameterType="long" resultMap="reviewAndImage">
+        SELECT r.REVIEW_ID, r.MEMBER_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
+               ri.REVIEW_IMAGE_ID, ri.PATH
+        FROM review r
+                 LEFT JOIN review_image ri on ri.REVIEW_ID = r.REVIEW_ID
+        WHERE r.MEMBER_ID = #{memberId}
+        ORDER BY r.CREATED_DATE DESC
+    </select>
+
+    <select id="getReviewCount" parameterType="long" resultType="long">
+        SELECT COUNT(*)
         FROM review
-        WHERE MEMBER_ID = #{memberId}
+        where RESTAURANT_ID = #{restaurantId}
     </select>
 
     <update id="updateReview" parameterType="com.example.api.review.dto.ReviewDTO">
