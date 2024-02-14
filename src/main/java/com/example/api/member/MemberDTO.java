@@ -1,7 +1,7 @@
 package com.example.api.member;
 
 import com.example.core.dto.BaseDTO;
-import com.example.core.oauth.domain.MemberStatus;
+import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthId;
 import com.example.core.oauth.domain.OauthServerType;
 import lombok.AllArgsConstructor;
@@ -22,12 +22,12 @@ public class MemberDTO extends BaseDTO {
     private String profileImageUrl;
     private String email;
     private String name;
-    private MemberStatus status;
+    private HumanStatus status;
     private String oauthServerId;
     private OauthServerType oauthServerType;
 
     public MemberDTO(Long memberId, String nickname, String profileImageUrl, String email, String name,
-                     MemberStatus status, OauthId oauthId) {
+                     HumanStatus status, OauthId oauthId) {
         this.memberId = memberId;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
@@ -62,7 +62,7 @@ public class MemberDTO extends BaseDTO {
         return name;
     }
 
-    public MemberStatus status() {
+    public HumanStatus status() {
         return status;
     }
 

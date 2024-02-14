@@ -3,7 +3,7 @@ package com.example.core.oauth.infra.oauth.kakao.dto;
 import static com.example.core.oauth.domain.OauthServerType.KAKAO;
 
 import com.example.api.member.MemberDTO;
-import com.example.core.oauth.domain.MemberStatus;
+import com.example.core.dto.HumanStatus;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public class KakaoMemberResponse {
                 .profileImageUrl(kakaoAccount.profile.profileImageUrl)
                 .email(kakaoAccount.email)
                 .name(kakaoAccount.name)
-                .status(MemberStatus.ACTIVE)
+                .status(HumanStatus.ACTIVE)
                 .oauthServerId(String.valueOf(id))
                 .oauthServerType(KAKAO)
                 .build();

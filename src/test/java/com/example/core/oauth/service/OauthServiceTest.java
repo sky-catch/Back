@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberMapper;
-import com.example.core.oauth.domain.MemberStatus;
+import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
 import com.example.core.oauth.domain.client.OauthMemberClient;
@@ -47,7 +47,7 @@ class OauthServiceTest {
                         .profileImageUrl("testProfileImageUrl")
                         .email("test@test.com")
                         .name("testName")
-                        .status(MemberStatus.ACTIVE)
+                        .status(HumanStatus.ACTIVE)
                         .oauthServerId("1")
                         .oauthServerType(OauthServerType.KAKAO)
                         .build();

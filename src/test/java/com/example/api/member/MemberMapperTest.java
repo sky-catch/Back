@@ -4,7 +4,7 @@ import static com.example.core.oauth.domain.OauthServerType.KAKAO;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.core.oauth.domain.MemberStatus;
+import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class MemberMapperTest {
                 .profileImageUrl("testProfileImageUrl")
                 .email("testEmail@test.com")
                 .name("testName")
-                .status(MemberStatus.ACTIVE)
+                .status(HumanStatus.ACTIVE)
                 .oauthServerId(oauthId.oauthServerId())
                 .oauthServerType(oauthId.oauthServer())
                 .build();
