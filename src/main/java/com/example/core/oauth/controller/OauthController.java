@@ -30,8 +30,8 @@ public class OauthController {
     }
 
     @GetMapping("/login/{oauthServerType}")
-    public ResponseEntity<Long> login(@PathVariable OauthServerType oauthServerType, @RequestParam String code) {
-        Long login = oauthService.login(oauthServerType, code);
-        return ResponseEntity.ok(login);
+    public ResponseEntity<String> login(@PathVariable OauthServerType oauthServerType, @RequestParam String code) {
+        String accessToken = oauthService.login(oauthServerType, code);
+        return ResponseEntity.ok(accessToken);
     }
 }

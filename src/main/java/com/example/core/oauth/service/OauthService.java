@@ -5,6 +5,7 @@ import com.example.api.member.MemberMapper;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
 import com.example.core.oauth.domain.client.OauthMemberClientComposite;
+import com.example.core.web.security.jwt.JWTProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,13 @@ public class OauthService {
     private final AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite;
     private final OauthMemberClientComposite oauthMemberClientComposite;
     private final MemberMapper memberMapper;
+    private final JWTProvider jwtProvider;
 
     public String getAuthCodeRequestUrl(OauthServerType oauthServerType) {
         return authCodeRequestUrlProviderComposite.provide(oauthServerType);
     }
 
-    public Long login(OauthServerType oauthServerType, String authCode) {
+    public String login(OauthServerType oauthServerType, String authCode) {
         MemberDTO member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
         MemberDTO saved = memberMapper.findByOauthId(member.oauthId())
                 .orElseGet(() -> {
@@ -30,6 +32,6 @@ public class OauthService {
                     return memberMapper.findByOauthId(member.oauthId()).get();
                 });
 
-        return saved.memberId();
+        return jwtProvider.createToken(saved);
     }
 }
