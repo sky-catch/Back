@@ -3,6 +3,7 @@ package com.example.core.web.security.jwt;
 import com.example.api.member.MemberDTO;
 import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthServerType;
+import com.example.core.web.security.login.LoginMember;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,9 @@ public class JWTTestController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/authorization/jwt/test")
-    public String authorizationTestJwt(@AuthenticationPrincipal UserDetails userDetails) {
+    public String authorizationTestJwt(@AuthenticationPrincipal UserDetails userDetails,
+                                       @LoginMember MemberDTO memberDTO) {
+        System.out.println("memberDTO = " + memberDTO);
         return userDetails.getUsername() + " authenticated";
     }
 
