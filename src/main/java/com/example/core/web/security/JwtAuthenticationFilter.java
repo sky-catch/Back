@@ -1,5 +1,8 @@
 package com.example.core.web.security;
 
+import static com.example.core.web.security.jwt.JWTUtils.AUTHORIZATION_HEADER;
+import static com.example.core.web.security.jwt.JWTUtils.TOKEN_PREFIX;
+
 import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberMapper;
 import com.example.core.web.security.jwt.JWTProvider;
@@ -30,8 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String[] NO_CHECK_URIS = {"/oauth"};
     private static final String DEFAULT_MEMBER_ROLE = "USER";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
 
     private final JWTProvider jwtProvider;
     private final MemberMapper memberMapper;
@@ -58,8 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getAccessToken(HttpServletRequest request) {
         String tokenHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(BEARER_PREFIX)) {
-            return tokenHeader.replace(BEARER_PREFIX, "");
+        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(TOKEN_PREFIX)) {
+            return tokenHeader.replace(TOKEN_PREFIX, "");
         }
         return null;
     }

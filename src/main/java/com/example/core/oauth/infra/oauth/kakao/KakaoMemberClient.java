@@ -1,5 +1,6 @@
 package com.example.core.oauth.infra.oauth.kakao;
 
+import static com.example.core.web.security.jwt.JWTUtils.TOKEN_PREFIX;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.GET;
@@ -88,6 +89,6 @@ public class KakaoMemberClient implements OauthMemberClient {
     }
 
     private String createAuthorizationHeaderValue(KakaoToken tokenInfo) {
-        return "Bearer " + tokenInfo.getAccessToken();
+        return TOKEN_PREFIX + tokenInfo.getAccessToken();
     }
 }
