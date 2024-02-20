@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.api.owner.OwnerMapper">
-    <resultMap id="owner" type="com.example.api.owner.OwnerDTO">
+    <resultMap id="owner" type="com.example.api.owner.dto.Owner">
         <id property="ownerId" column="OWNER_ID"/>
         <result property="name" column="NAME"/>
         <result property="imagePath" column="IMAGE_PATH"/>
@@ -15,7 +15,7 @@
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
 
-    <insert id="createOwner" parameterType="com.example.api.owner.OwnerDTO">
+    <insert id="createOwner" parameterType="com.example.api.owner.dto.Owner">
         INSERT INTO owner (NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS)
         VALUES (#{name}, #{imagePath}, #{phone}, #{email}, #{platform}, #{status})
     </insert>
@@ -26,7 +26,7 @@
         WHERE OWNER_ID = #{ownerId}
     </select>
 
-    <update id="updateOwner" parameterType="com.example.api.owner.OwnerDTO">
+    <update id="updateOwner" parameterType="com.example.api.owner.dto.Owner">
         UPDATE owner
         SET NAME = #{name},
             <if test="imagePath != null">
@@ -37,7 +37,7 @@
         WHERE OWNER_ID = #{ownerId}
     </update>
 
-    <update id="deleteOwner" parameterType="com.example.api.owner.OwnerDTO">
+    <update id="deleteOwner">
         UPDATE owner
         SET STATUS = #{status}
         WHERE OWNER_ID = #{ownerId}
