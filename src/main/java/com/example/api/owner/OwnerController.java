@@ -21,20 +21,20 @@ public class OwnerController {
     private final OwnerService ownerService;
 
     @PostMapping(value = "", consumes = {"multipart/form-data"})
-    @Operation(summary = "사장 만들기")
+    @Operation(summary = "사장 생성")
     public void createOwner(@ParameterObject @RequestPart CreateOwnerReq dto,
                             @Parameter(description = "이미지 형식의 파일만 가능") @RequestPart(required = false) MultipartFile file) throws IOException {
         ownerService.createOwner(dto, file);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "사장 정보 얻기")
+    @Operation(summary = "사장 조회")
     public GetOwnerRes getOwner(@Parameter(example = "1") @PathVariable(name = "id") long ownerId) {
         return ownerService.getOwner(ownerId);
     }
 
     @PutMapping(value = "", consumes = {"multipart/form-data"})
-    @Operation(summary = "사장 정보 업데이트")
+    @Operation(summary = "사장 수정")
     public void updateOwner(@ParameterObject @RequestPart CreateOwnerReq createOwnerReq,
                             @Parameter(description = "이미지 형식의 파일만 가능") @RequestPart(required = false) MultipartFile file) throws IOException {
         ownerService.updateOwner(createOwnerReq, file);

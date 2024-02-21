@@ -1,5 +1,6 @@
 package com.example.api.comment;
 
+import com.example.api.comment.dto.CommentDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

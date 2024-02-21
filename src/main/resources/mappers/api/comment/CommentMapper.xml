@@ -10,12 +10,12 @@
                       WHERE REVIEW_ID = #{reviewId})
     </select>
 
-    <insert id="createComment" parameterType="com.example.api.comment.CommentDTO">
+    <insert id="createComment" parameterType="com.example.api.comment.dto.CommentDTO">
         INSERT INTO comment(REVIEW_ID, OWNER_ID, CONTENT)
         VALUES (#{reviewId}, #{ownerId}, #{content})
     </insert>
 
-    <update id="updateComment" parameterType="com.example.api.comment.CommentDTO">
+    <update id="updateComment" parameterType="com.example.api.comment.dto.CommentDTO">
         UPDATE comment
         SET CONTENT = #{content}
         WHERE COMMENT_ID = #{commentId}

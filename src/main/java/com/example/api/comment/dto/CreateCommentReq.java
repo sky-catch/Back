@@ -1,4 +1,4 @@
-package com.example.api.comment;
+package com.example.api.comment.dto;
 
 import com.example.core.dto.BaseDTO;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDTO extends BaseDTO {
+public class CreateCommentReq extends BaseDTO {
 
-    private long commentId;
     private long reviewId;
-    private long ownerId;
     private String content;
 }
