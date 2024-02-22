@@ -15,10 +15,10 @@
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
 
-    <resultMap id="reviewAndComment" type="com.example.api.review.dto.ReviewCommentDTO">
+    <resultMap id="reviewAndComment" type="com.example.api.review.dto.GetReviewCommentRes">
         <id property="reviewId" column="REVIEW_ID"/>
         <result property="nickname" column="NICKNAME"/>
-        <result property="imagePath" column="IMAGE_PATH"/>
+        <result property="imagePath" column="PROFILE_IMAGE_URL"/>
         <result property="memberId" column="MEMBER_ID"/>
         <result property="rate" column="RATE"/>
         <result property="comment" column="COMMENT"/>
@@ -36,9 +36,8 @@
         </collection>
     </resultMap>
 
-    <resultMap id="reviewAndImage" type="com.example.api.review.dto.ReviewDTO">
+    <resultMap id="reviewAndImage" type="com.example.api.review.dto.GetReviewRes">
         <id property="reviewId" column="REVIEW_ID"/>
-        <result property="memberId" column="MEMBER_ID"/>
         <result property="restaurantId" column="RESTAURANT_ID"/>
         <result property="reservationId" column="RESERVATION_ID"/>
         <result property="rate" column="RATE"/>
@@ -62,7 +61,7 @@
         VALUES (#{memberId},
                 (SELECT rs.restaurant_id
                  FROM reservation rs
-                 JOIN restaurant rt ON rs.restaurant_id = rt.restaurant_id
+                          JOIN restaurant rt ON rs.restaurant_id = rt.restaurant_id
                  WHERE rs.reservation_id = ${reservationId}),
                 #{reservationId}, #{rate}, #{comment})
     </insert>
@@ -77,7 +76,7 @@
 
     <select id="getReviewCommentPage" resultMap="reviewAndComment" parameterType="map">
         SELECT m.NICKNAME,
-               m.IMAGE_PATH,
+               m.PROFILE_IMAGE_URL,
                r.REVIEW_ID,
                r.MEMBER_ID,
                r.RATE,
@@ -101,7 +100,7 @@
     </select>
 
     <select id="getReviewByMember" parameterType="long" resultMap="reviewAndImage">
-        SELECT r.REVIEW_ID, r.MEMBER_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
+        SELECT r.REVIEW_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
                ri.REVIEW_IMAGE_ID, ri.PATH
         FROM review r
                  LEFT JOIN review_image ri on ri.REVIEW_ID = r.REVIEW_ID

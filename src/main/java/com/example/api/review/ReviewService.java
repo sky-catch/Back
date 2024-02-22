@@ -2,7 +2,9 @@ package com.example.api.review;
 
 import com.example.api.comment.CommentMapper;
 import com.example.api.restaurant.RestaurantMapper;
+import com.example.api.review.dto.CreateReviewReq;
 import com.example.api.review.dto.ReviewDTO;
+import com.example.api.review.dto.ReviewImageDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +26,12 @@ public class ReviewService {
     private final S3UploadService s3UploadService;
 
     @Transactional
-    public void createReview(ReviewDTO reviewDTO, List<MultipartFile> files) throws IOException {
+    public void createReview(CreateReviewReq dto, List<MultipartFile> files) throws IOException {
         //todo 예약 상태가 review 작성가능한 상태인지
 
-        reviewDTO.setMemberId(1L);
+        ReviewDTO reviewDTO = new ReviewDTO(dto);
 
+        reviewDTO.setMemberId(1L);
         //todo forTest
         /*if(reviewMapper.isExist(reviewDTO.getReservationId())){
             throw new SystemException("리뷰가 이미 존재합니다.");
@@ -43,7 +46,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateReview(ReviewDTO reviewDTO, List<MultipartFile> files) throws IOException {
+    public void updateReview(CreateReviewReq dto, List<MultipartFile> files) throws IOException {
+        ReviewDTO reviewDTO = new ReviewDTO(dto);
         long reviewId = reviewDTO.getReviewId();
 
         s3UploadService.delete(reviewImageMapper.getReviewImages(reviewId));

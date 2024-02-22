@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Mapper
 public interface ReviewImageMapper {
-    void createReviewImage(long reviewId,List<String> list);
+    void createReviewImage(long reviewId, List<String> list);
 
     List<String> getReviewImages(long reviewId);
     void deleteReviewImages(long reviewId);

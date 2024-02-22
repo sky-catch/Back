@@ -68,6 +68,6 @@ public class S3UploadService {
         if (!fileValidate.contains(idxFileName)) {
             throw new SystemException("이미지 파일만 올려주세요");
         }
-        return fileName.substring(fileName.lastIndexOf("."));
+        return idxFileName;
     }
 }

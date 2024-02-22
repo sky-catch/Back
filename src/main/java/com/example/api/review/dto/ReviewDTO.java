@@ -22,4 +22,11 @@ public class ReviewDTO extends BaseDTO {
     private int rate;
     private String comment;
     private List<ReviewImageDTO> images;
+
+    public ReviewDTO(CreateReviewReq dto) {
+        this.restaurantId = dto.getRestaurantId();
+        this.reservationId = dto.getReservationId();
+        this.rate = dto.getRate();
+        this.comment = dto.getComment();
+    }
 }

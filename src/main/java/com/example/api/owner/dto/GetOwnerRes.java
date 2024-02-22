@@ -1,11 +1,8 @@
-package com.example.api.owner;
+package com.example.api.owner.dto;
 
 import com.example.core.dto.BaseDTO;
 import com.example.core.dto.HumanStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
@@ -13,14 +10,13 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerDTO extends BaseDTO {
+public class GetOwnerRes extends BaseDTO {
 
     private long ownerId;
-    private String name;
     private String imagePath;
+    private String name;
     private String phone;
     private String email;
-    private String platform;
     private HumanStatus status;
 
 }
