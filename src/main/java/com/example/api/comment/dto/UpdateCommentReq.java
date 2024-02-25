@@ -1,4 +1,4 @@
-package com.example.api.restaurant.dto;
+package com.example.api.comment.dto;
 
 import com.example.core.dto.BaseDTO;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RestaurantImageDTO extends BaseDTO {
+public class UpdateCommentReq extends BaseDTO {
 
-    private long menuId;
-    private long restaurantId;
-    private String path;
-    private RestaurantImageType type;
+    private long commentId;
+    private String content;
 }

@@ -2,6 +2,7 @@ package com.example.api.owner;
 
 import com.example.api.owner.dto.CreateOwnerReq;
 import com.example.api.owner.dto.GetOwnerRes;
+import com.example.api.owner.dto.UpdateOwnerReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,9 +36,9 @@ public class OwnerController {
 
     @PutMapping(value = "", consumes = {"multipart/form-data"})
     @Operation(summary = "사장 수정")
-    public void updateOwner(@ParameterObject @RequestPart CreateOwnerReq createOwnerReq,
+    public void updateOwner(@ParameterObject @RequestPart UpdateOwnerReq dto,
                             @Parameter(description = "이미지 형식의 파일만 가능") @RequestPart(required = false) MultipartFile file) throws IOException {
-        ownerService.updateOwner(createOwnerReq, file);
+        ownerService.updateOwner(dto, file);
     }
 
     /**

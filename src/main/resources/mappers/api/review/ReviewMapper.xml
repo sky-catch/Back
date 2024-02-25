@@ -40,6 +40,10 @@
         <id property="reviewId" column="REVIEW_ID"/>
         <result property="restaurantId" column="RESTAURANT_ID"/>
         <result property="reservationId" column="RESERVATION_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="restaurantImage" column="RESTAURANT_IMAGE"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="address" column="ADDRESS"/>
         <result property="rate" column="RATE"/>
         <result property="comment" column="COMMENT"/>
         <result property="createdDate" column="CREATED_DATE"/>
@@ -66,11 +70,9 @@
                 #{reservationId}, #{rate}, #{comment})
     </insert>
 
-    <select id="getReview" parameterType="long" resultMap="reviewAndImage">
-        SELECT r.REVIEW_ID, r.MEMBER_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
-               ri.REVIEW_IMAGE_ID, ri.PATH
+    <select id="getReview" parameterType="long" resultMap="review">
+        SELECT r.REVIEW_ID, r.MEMBER_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE
         FROM review r
-                 LEFT JOIN review_image ri on ri.REVIEW_ID = r.REVIEW_ID
         WHERE r.review_id = #{reviewId}
     </select>
 
@@ -100,10 +102,14 @@
     </select>
 
     <select id="getReviewByMember" parameterType="long" resultMap="reviewAndImage">
-        SELECT r.REVIEW_ID, r.RESTAURANT_ID, r.RESERVATION_ID, r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
+        SELECT r.REVIEW_ID, r.RESTAURANT_ID, r.RESERVATION_ID,
+               rt.NAME, rti.path as RESTAURANT_IMAGE, rt.CATEGORY, rt.ADDRESS,
+               r.RATE, r.COMMENT, r.CREATED_DATE, r.UPDATED_DATE,
                ri.REVIEW_IMAGE_ID, ri.PATH
         FROM review r
-                 LEFT JOIN review_image ri on ri.REVIEW_ID = r.REVIEW_ID
+                LEFT JOIN review_image ri on ri.REVIEW_ID = r.REVIEW_ID
+                LEFT JOIN restaurant rt on rt.RESTAURANT_ID = r.RESTAURANT_ID
+                LEFT JOIN restaurant_image rti on rti.RESTAURANT_ID = r.RESTAURANT_ID and rti.type = 'REPRESENTATIVE'
         WHERE r.MEMBER_ID = #{memberId}
         ORDER BY r.CREATED_DATE DESC
     </select>

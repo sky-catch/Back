@@ -1,6 +1,7 @@
 package com.example.api.comment;
 
 import com.example.api.comment.dto.CreateCommentReq;
+import com.example.api.comment.dto.UpdateCommentReq;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class CommentController {
     }
 
     @PatchMapping("")
-    public void updateComment(@RequestBody CreateCommentReq dto){
+    public void updateComment(@RequestBody UpdateCommentReq dto){
         commentService.updateComment(dto);
     }
 

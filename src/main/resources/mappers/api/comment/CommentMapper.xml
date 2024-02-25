@@ -15,6 +15,11 @@
         VALUES (#{reviewId}, #{ownerId}, #{content})
     </insert>
 
+    <select id="getComment" resultType="com.example.api.comment.dto.CommentDTO">
+        SELECT * FROM comment
+        WHERE COMMENT_ID = #{commentId}
+    </select>
+
     <update id="updateComment" parameterType="com.example.api.comment.dto.CommentDTO">
         UPDATE comment
         SET CONTENT = #{content}

@@ -3,6 +3,7 @@ package com.example.api.owner;
 import com.example.api.owner.dto.CreateOwnerReq;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
+import com.example.api.owner.dto.UpdateOwnerReq;
 import com.example.core.dto.HumanStatus;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
@@ -23,7 +24,7 @@ public class OwnerService {
     @Transactional
     public void createOwner(CreateOwnerReq createOwnerReq, MultipartFile file) throws IOException {
         Owner owner = new Owner(createOwnerReq);
-        //todo 카카오 중복 로그인 검사
+        //todo 중복 가입 검사
 
         if (file!= null && !file.isEmpty()) {
             owner.setImagePath(s3UploadService.upload(file));
@@ -34,16 +35,14 @@ public class OwnerService {
     }
 
     public GetOwnerRes getOwner(long ownerId) {
-        Owner owner = ownerMapper.getOwner(ownerId);
-        if(owner != null){
-            return owner.toDto();
-        }
-        throw new SystemException("존재하지 않는 사용자입니다.");
+        return checkOwnerExists(ownerId).toDto();
     }
 
     @Transactional
-    public void updateOwner(CreateOwnerReq createOwnerReq, MultipartFile file) throws IOException {
-        Owner owner = new Owner(createOwnerReq);
+    public void updateOwner(UpdateOwnerReq dto, MultipartFile file) throws IOException {
+        checkOwnerExists(dto.getOwnerId());
+
+        Owner owner = new Owner(dto);
         if (file!= null && !file.isEmpty()) {
             owner.setImagePath(s3UploadService.upload(file));
         }
@@ -52,6 +51,17 @@ public class OwnerService {
 
     @Transactional
     public void deleteOwner(long ownerId) {
+        checkOwnerExists(ownerId);
         ownerMapper.deleteOwner(ownerId, HumanStatus.WITHDRAWN);
     }
+
+    private Owner checkOwnerExists(long ownerId){
+        Owner owner = ownerMapper.getOwner(ownerId);
+        if(owner == null){
+            throw new SystemException("존재하지 않는 사용자입니다.");
+        }
+        return owner;
+    }
+
+
 }

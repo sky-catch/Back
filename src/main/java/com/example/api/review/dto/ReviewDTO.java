@@ -1,9 +1,10 @@
 package com.example.api.review.dto;
 
 import com.example.core.dto.BaseDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -26,6 +27,12 @@ public class ReviewDTO extends BaseDTO {
     public ReviewDTO(CreateReviewReq dto) {
         this.restaurantId = dto.getRestaurantId();
         this.reservationId = dto.getReservationId();
+        this.rate = dto.getRate();
+        this.comment = dto.getComment();
+    }
+
+    public ReviewDTO(UpdateReviewReq dto) {
+        this.reviewId = dto.getReviewId();
         this.rate = dto.getRate();
         this.comment = dto.getComment();
     }

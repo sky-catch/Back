@@ -1,6 +1,7 @@
 package com.example.api.review;
 
 import com.example.api.review.dto.GetReviewCommentRes;
+import com.example.api.review.dto.GetReviewRes;
 import com.example.api.review.dto.ReviewDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,7 +19,7 @@ public interface ReviewMapper {
 
     List<GetReviewCommentRes> getReviewCommentPage(@Param("restaurantId") long restaurantId, @Param("pageable") Pageable pageable);
 
-    List<GetReviewCommentRes> getReviewByMember(long memberId);
+    List<GetReviewRes> getReviewByMember(long memberId);
 
     long getReviewCount(long restaurantId);
 

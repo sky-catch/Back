@@ -1,6 +1,8 @@
 package com.example.api.review;
 
 import com.example.api.review.dto.CreateReviewReq;
+import com.example.api.review.dto.GetReviewRes;
+import com.example.api.review.dto.UpdateReviewReq;
 import com.example.core.exception.SystemException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +36,7 @@ public class ReviewController {
 
     @PutMapping(value = "", consumes = {"multipart/form-data"})
     @Operation(summary = "리뷰 수정")
-    public void updateReview(@RequestPart CreateReviewReq dto,
+    public void updateReview(@RequestPart UpdateReviewReq dto,
                              @Parameter(description = "이미지 형식의 파일만 가능, 최대 5개")
                              @RequestPart(required = false) List<MultipartFile> files) throws IOException {
         if (files.size() > 5) {

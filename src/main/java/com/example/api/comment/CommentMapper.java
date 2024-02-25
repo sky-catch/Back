@@ -9,10 +9,10 @@ public interface CommentMapper {
     
     void createComment(CommentDTO commentDTO);
 
-    //List<CommentDTO> getComment(long ownerId);
+    CommentDTO getComment(long ownerId);
 
-    int updateComment(CommentDTO commentDTO);
+    void updateComment(CommentDTO commentDTO);
 
-    int deleteComment(long commentId);
+    void deleteComment(long commentId);
 
 }

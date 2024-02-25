@@ -29,6 +29,13 @@ public class Owner extends BaseDTO {
         this.email = ownerReq.getEmail();
     }
 
+    public Owner(UpdateOwnerReq ownerReq){
+        this.ownerId = ownerReq.getOwnerId();
+        this.name = ownerReq.getName();
+        this.phone = ownerReq.getPhone();
+        this.email = ownerReq.getEmail();
+    }
+
     public GetOwnerRes toDto(){
         return GetOwnerRes.builder().ownerId(ownerId).name(name).imagePath(imagePath).phone(phone)
                 .email(email).status(status).createdDate(getCreatedDate()).updatedDate(getUpdatedDate()).build();

@@ -1,6 +1,5 @@
 package com.example.api.comment.dto;
 
-import com.example.api.comment.dto.CreateCommentReq;
 import com.example.core.dto.BaseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +19,11 @@ public class CommentDTO extends BaseDTO {
 
     public CommentDTO(CreateCommentReq dto) {
         this.reviewId = dto.getReviewId();
+        this.content = dto.getContent();
+    }
+
+    public CommentDTO(UpdateCommentReq dto) {
+        this.commentId = dto.getCommentId();
         this.content = dto.getContent();
     }
 }

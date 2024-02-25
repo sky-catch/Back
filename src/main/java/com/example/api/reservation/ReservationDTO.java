@@ -22,5 +22,5 @@ public class ReservationDTO extends BaseDTO {
     private String time;
     private String numberOfPeople;
     private String memo;
-    private String status;
+    private ReservationStatus status;
 }

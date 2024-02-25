@@ -1,10 +1,14 @@
 package com.example.api.review;
 
 import com.example.api.comment.CommentMapper;
+import com.example.api.reservation.ReservationDTO;
+import com.example.api.reservation.ReservationMapper;
+import com.example.api.reservation.ReservationStatus;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.review.dto.CreateReviewReq;
 import com.example.api.review.dto.ReviewDTO;
 import com.example.api.review.dto.ReviewImageDTO;
+import com.example.api.review.dto.UpdateReviewReq;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +26,21 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
     private final ReviewImageMapper reviewImageMapper;
     private final RestaurantMapper restaurantMapper;
+    private final ReservationMapper reservationMapper;
     private final CommentMapper commentMapper;
     private final S3UploadService s3UploadService;
 
     @Transactional
     public void createReview(CreateReviewReq dto, List<MultipartFile> files) throws IOException {
-        //todo 예약 상태가 review 작성가능한 상태인지
-
         ReviewDTO reviewDTO = new ReviewDTO(dto);
-
         reviewDTO.setMemberId(1L);
+
         //todo forTest
-        /*if(reviewMapper.isExist(reviewDTO.getReservationId())){
+        /*ReservationDTO reservationDTO = reservationMapper.getReservation(dto.getReservationId());
+        if(reservationDTO.getStatus() != ReservationStatus.COMPLETED){
+            throw new SystemException("리뷰를 작성할 수 있는 상태가 아닙니다.");
+        }
+        if(reviewMapper.isExist(reviewDTO.getReservationId())){
             throw new SystemException("리뷰가 이미 존재합니다.");
         }*/
 
@@ -46,7 +53,10 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateReview(CreateReviewReq dto, List<MultipartFile> files) throws IOException {
+    public void updateReview(UpdateReviewReq dto, List<MultipartFile> files) throws IOException {
+        if(reviewMapper.getReview(dto.getReviewId()) == null){
+            throw new SystemException("해당 리뷰가 없습니다.");
+        }
         ReviewDTO reviewDTO = new ReviewDTO(dto);
         long reviewId = reviewDTO.getReviewId();
 
