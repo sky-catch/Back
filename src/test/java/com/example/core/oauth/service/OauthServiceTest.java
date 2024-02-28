@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -65,8 +64,6 @@ class OauthServiceTest {
 
     @Test
     @DisplayName("로그인 성공 시 accessToken 반환 테스트")
-    // todo @Sql activeProfiles와 중복돼서 삭제하기
-    @Sql({"classpath:schema.sql"})
     void test1() {
         // given
         OauthServerType oauthServerType = OauthServerType.KAKAO;
