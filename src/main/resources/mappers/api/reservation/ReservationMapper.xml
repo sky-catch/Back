@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.reservation.ReservationMapper">
+
+    <resultMap id="reservation" type="com.example.api.reservation.ReservationDTO">
+        <id property="reservationId" column="RESERVATION_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="paymentId" column="PAYMENT_ID"/>
+        <result property="time" column="TIME"/>
+        <result property="numberOfPeople" column="NUMBER_OF_PEOPLE"/>
+        <result property="memo" column="MEMO"/>
+        <result property="status" column="STATUS"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+    </resultMap>
+
+    <select id="getReservationsByMemberAndStatus" resultMap="reservation">
+        SELECT *
+        FROM reservation rez
+                 INNER JOIN restaurant rt on rt.RESTAURANT_ID = rez.RESTAURANT_ID
+        WHERE rez.MEMBER_ID = #{memberId}
+          AND rez.STATUS = #{status}
+        ORDER BY rez.CREATED_DATE DESC
+    </select>
+
+    <insert id="save" parameterType="com.example.api.reservation.ReservationDTO" useGeneratedKeys="true"
+            keyProperty="reservationId">
+        INSERT INTO reservation(restaurant_id, member_id, reservation_day_id, payment_id, time, number_of_people, memo,
+                                status)
+        VALUES (#{restaurantId}, #{memberId}, #{reservationDayId}, #{paymentId}, #{time}, #{numberOfPeople}, #{memo},
+                #{status});
+    </insert>
+
+    <select id="deleteAll">
+        DELETE
+        FROM reservation;
+    </select>
+</mapper>

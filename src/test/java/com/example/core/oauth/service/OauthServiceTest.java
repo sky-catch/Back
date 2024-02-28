@@ -65,6 +65,7 @@ class OauthServiceTest {
 
     @Test
     @DisplayName("로그인 성공 시 accessToken 반환 테스트")
+    // todo @Sql activeProfiles와 중복돼서 삭제하기
     @Sql({"classpath:schema.sql"})
     void test1() {
         // given

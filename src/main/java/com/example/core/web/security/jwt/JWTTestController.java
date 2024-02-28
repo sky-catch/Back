@@ -18,6 +18,8 @@ public class JWTTestController {
 
     private final JWTProvider jwtProvider;
 
+    // todo swagger 설정하기
+
     @GetMapping("/oauth/jwt/test")
     public GetTestJWTResponse createTestJWT() {
         MemberDTO testMember = MemberDTO.builder()

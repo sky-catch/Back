@@ -7,7 +7,7 @@
     <update id="increaseReviewCountAndRate" parameterType="com.example.api.review.dto.ReviewDTO">
         update restaurant
         set review_count = review_count + 1,
-            review_avg = ((review_count - 1) * review_avg + #{rate}) / review_count
+            review_avg   = ((review_count - 1) * review_avg + #{rate}) / review_count
         where restaurant_id = #{restaurantId}
     </update>
 
@@ -24,4 +24,18 @@
         where restaurant_id = #{restaurantId};
     </update>
 
+    <!--    todo 테스트 코드 작성하기-->
+    <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
+            keyProperty="restaurantId">
+        INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time, address,
+                               detail_address, lunch_price, dinner_price, saved_count, review_count, review_avg)
+        VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{capacity}, #{openTime}, #{lastOrderTime},
+                #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount}, #{reviewCount},
+                #{reviewAvg});
+    </insert>
+
+    <select id="deleteAll">
+        DELETE
+        FROM restaurant;
+    </select>
 </mapper>

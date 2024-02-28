@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+    // todo header 설정 추가하기
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
