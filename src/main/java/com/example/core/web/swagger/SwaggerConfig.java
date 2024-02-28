@@ -1,8 +1,13 @@
 package com.example.core.web.swagger;
 
+import static com.example.core.web.security.jwt.JWTUtils.AUTHORIZATION_HEADER;
+import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,13 +16,31 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    // todo header 설정 추가하기
+    private static final String SECURITY_SCHEMES_BEARER = "bearer";
+    private static final String SECURITY_SCHEMES_BEARER_FORMAT = "JWT";
 
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .components(new Components())
-                .info(apiInfo());
+                .components(components())
+                .info(apiInfo())
+                .addSecurityItem(securityRequirement());
+    }
+
+    private static Components components() {
+        // SecuritySchemes 등록
+        return new Components()
+                .addSecuritySchemes(AUTHORIZATION_HEADER, new SecurityScheme()
+                        .name(AUTHORIZATION_HEADER)
+                        .type(HTTP) // HTTP 방식
+                        .scheme(SECURITY_SCHEMES_BEARER)
+                        .bearerFormat(SECURITY_SCHEMES_BEARER_FORMAT));
+    }
+
+    private SecurityRequirement securityRequirement() {
+        // API 요청헤더에 인증정보 포함
+        return new SecurityRequirement()
+                .addList(AUTHORIZATION_HEADER);
     }
 
     private Info apiInfo() {
