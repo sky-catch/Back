@@ -1,8 +1,14 @@
 package com.example.api.reservation;
 
+import static java.util.Locale.ENGLISH;
+
 public enum ReservationStatus {
-    CONFIRMED, // 확인됨
-    CANCELLED, // 취소됨
-    NO_SHOW,
-    COMPLETED, // 완료됨
+    PLANNED, // 방문예정
+    DONE, // 방문완료
+    CANCEL, // 취소/노쇼
+    ;
+
+    public static ReservationStatus fromName(String status) {
+        return ReservationStatus.valueOf(status.toUpperCase(ENGLISH));
+    }
 }
