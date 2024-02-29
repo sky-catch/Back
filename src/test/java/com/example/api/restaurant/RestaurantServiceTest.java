@@ -18,9 +18,11 @@ class RestaurantServiceTest {
 
     @Autowired
     private RestaurantService restaurantService;
+    @Autowired
+    private RestaurantMapper restaurantMapper;
 
     @Test
-    @DisplayName("새 가게를 생성하면 생성된 가게 번호를 반환하는 테스트")
+    @DisplayName("새 가게를 생성하는 테스트")
     void test1() {
         // given
         RestaurantDTO dto = RestaurantDTO.builder()
@@ -38,9 +40,11 @@ class RestaurantServiceTest {
         restaurantService.createRestaurant(dto);
 
         // when
-        long expected = restaurantService.createRestaurant(dto);
+        long before = restaurantMapper.findAll().size();
+        restaurantService.createRestaurant(dto);
+        long actual = restaurantMapper.findAll().size();
 
         // then
-        assertEquals(expected, 2);
+        assertEquals(before + 1, actual);
     }
 }

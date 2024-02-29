@@ -37,4 +37,9 @@
         DELETE
         FROM restaurant;
     </select>
+
+    <select id="findAll" resultType="com.example.api.restaurant.dto.RestaurantDTO">
+        SELECT *
+        FROM restaurant;
+    </select>
 </mapper>
