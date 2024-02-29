@@ -4,9 +4,11 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.web.security.login.LoginMember;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,14 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/restaurants")
 @RequiredArgsConstructor
-@Slf4j
+@Tag(name = "식당", description = "식당 관련 API입니다.")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
     @PostMapping
-    public ResponseEntity<Void> createRestaurant(@LoginMember Owner owner, @RequestBody CreateRestaurantReq dto) {
-
+    @Operation(summary = "식당 생성", description = "사장은 식당을 생성할 수 있습니다.")
+    public ResponseEntity<Void> createRestaurant(@Parameter(hidden = true) @LoginMember Owner owner,
+                                                 @RequestBody CreateRestaurantReq dto) {
         RestaurantDTO restaurantDTO = RestaurantDTO.builder()
                 .ownerId(owner.getOwnerId())
                 .name(dto.getName())
