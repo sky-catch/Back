@@ -19,9 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql("classpath:truncate.sql")
 class ReservationServiceTest {
 
     @Autowired
@@ -35,9 +37,6 @@ class ReservationServiceTest {
 
     @BeforeEach
     void init() {
-        reservationMapper.deleteAll();
-        restaurantMapper.deleteAll();
-
         restaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")

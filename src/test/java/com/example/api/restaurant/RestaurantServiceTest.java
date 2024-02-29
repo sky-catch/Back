@@ -4,26 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.api.restaurant.dto.RestaurantDTO;
 import java.time.LocalTime;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql("classpath:truncate.sql")
 class RestaurantServiceTest {
 
     @Autowired
     private RestaurantService restaurantService;
-    @Autowired
-    private RestaurantMapper restaurantMapper;
-
-    @BeforeEach
-    void init() {
-        restaurantMapper.deleteAll();
-    }
 
     @Test
     @DisplayName("새 가게를 생성하면 생성된 가게 번호를 반환하는 테스트")
