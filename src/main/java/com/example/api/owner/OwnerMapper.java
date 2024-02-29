@@ -1,11 +1,13 @@
 package com.example.api.owner;
 
+import com.example.api.member.UsersMapper;
 import com.example.api.owner.dto.Owner;
 import com.example.core.dto.HumanStatus;
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface OwnerMapper {
+public interface OwnerMapper extends UsersMapper<Owner> {
 
     void createOwner(Owner dto);
 
@@ -14,4 +16,7 @@ public interface OwnerMapper {
     void updateOwner(Owner dto);
 
     void deleteOwner(long ownerId, HumanStatus status);
+
+    @Override
+    Optional<Owner> findByEmail(String email);
 }
