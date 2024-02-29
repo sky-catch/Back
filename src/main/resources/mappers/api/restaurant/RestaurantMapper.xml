@@ -24,7 +24,6 @@
         where restaurant_id = #{restaurantId};
     </update>
 
-    <!--    todo 테스트 코드 작성하기-->
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time, address,
