@@ -36,8 +36,7 @@ public class RestaurantImageService {
             MultipartFile file = dto.getFiles().get(i);
             RestaurantImageType restaurantImageType = dto.getRestaurantImageTypes().get(i);
             result.add(AddRestaurantImageWithTypeDTO.builder()
-//                    .path(s3UploadService.upload(file))
-                    .path(file.getOriginalFilename())
+                    .path(s3UploadService.upload(file))
                     .restaurantImageType(restaurantImageType)
                     .build());
         }
