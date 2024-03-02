@@ -32,12 +32,13 @@ public class RestaurantImageController {
     private final RestaurantService restaurantService;
     private final RestaurantImageService restaurantImageService;
 
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     @Operation(summary = "식당 이미치 추가", description = "식당의 이미지들을 추가하는 기능입니다.")
     public ResponseEntity<Void> addRestaurantImages(@Parameter(hidden = true) @LoginMember Owner owner,
                                                     @PathVariable long restaurantId,
-                                                    @RequestParam List<RestaurantImageType> restaurantImageTypes,
-                                                    @RequestPart List<MultipartFile> files) throws IOException {
+                                                    @Parameter @RequestParam List<RestaurantImageType> restaurantImageTypes,
+                                                    @Parameter(description = "이미지 형식의 파일만 가능, 최소 1개 이상") @RequestPart List<MultipartFile> files)
+            throws IOException {
 
         // todo 식당 이미지 개수 제한 어떻게 할까
 //        if (files.size() > 5) {
