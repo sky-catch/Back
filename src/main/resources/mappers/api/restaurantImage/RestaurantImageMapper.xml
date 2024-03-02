@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.restaurantImage.RestaurantImageMapper">
+
+    <insert id="addRestaurantImages">
+        INSERT INTO restaurant_image(restaurant_id, path, type)
+        VALUES
+        <foreach collection="list" item="item" index="idx" separator=",">
+            (
+            #{restaurantId},
+            #{item.path},
+            #{item.restaurantImageType}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getReviewImages" parameterType="long" resultType="String">
+        select path
+        from review_image
+        where review_id = #{reviewId}
+    </select>
+
+    <delete id="deleteReviewImages" parameterType="long">
+        delete
+        from review_image
+        where review_id = #{reviewId}
+    </delete>
+
+</mapper>

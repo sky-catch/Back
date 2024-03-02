@@ -42,4 +42,10 @@
         SELECT *
         FROM restaurant;
     </select>
+
+    <select id="findById" resultType="com.example.api.restaurant.dto.RestaurantDTO">
+        SELECT *
+        FROM restaurant
+        where restaurant_id = #{restaurantId};
+    </select>
 </mapper>
