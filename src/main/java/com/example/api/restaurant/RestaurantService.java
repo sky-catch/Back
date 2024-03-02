@@ -13,7 +13,7 @@ public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
 
-    // todo transactional 추가하기
+    @Transactional
     public long createRestaurant(RestaurantDTO dto) {
         // todo 중복 생성 검사
         restaurantMapper.save(dto);
