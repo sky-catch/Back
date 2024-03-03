@@ -2,6 +2,7 @@ package com.example.api.restaurant;
 
 import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
+import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,5 +48,14 @@ public class RestaurantController {
         long createdRestaurantId = restaurantService.createRestaurant(restaurantDTO);
         URI uri = URI.create("/restaurants/" + createdRestaurantId);
         return ResponseEntity.created(uri).build();
+    }
+
+    // todo 리뷰, 편의시설 등 응답값으로 추가하기
+    @GetMapping("/{restaurantId}")
+    @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 정렬 기준: 1. type(REPRESENTATION, NORMAL 순서), 2. id(오름차순)")
+    public ResponseEntity<GetRestaurantRes> getRestaurant(@PathVariable long restaurantId) {
+        GetRestaurantRes restaurantRes = restaurantService.getRestaurantInfoById(restaurantId);
+
+        return ResponseEntity.ok(restaurantRes);
     }
 }

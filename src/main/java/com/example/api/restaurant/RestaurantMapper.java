@@ -1,5 +1,6 @@
 package com.example.api.restaurant;
 
+import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.review.dto.ReviewDTO;
 import java.util.List;
@@ -19,4 +20,6 @@ public interface RestaurantMapper {
     List<RestaurantDTO> findAll();
 
     Optional<RestaurantDTO> findById(long restaurantId);
+
+    Optional<GetRestaurantRes> findRestaurantInfoById(long restaurantId);
 }

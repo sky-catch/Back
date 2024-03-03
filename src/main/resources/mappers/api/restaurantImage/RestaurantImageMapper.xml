@@ -16,10 +16,10 @@
         </foreach>
     </insert>
 
-    <select id="getReviewImages" parameterType="long" resultType="String">
-        select path
-        from review_image
-        where review_id = #{reviewId}
+    <select id="getRestaurantImagesBy" parameterType="long" resultType="String">
+        SELECT path
+        FROM restaurant_image
+        WHERE restaurant_id = #{restaurantId}
     </select>
 
     <delete id="deleteReviewImages" parameterType="long">

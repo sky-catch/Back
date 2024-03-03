@@ -8,8 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface RestaurantImageMapper {
     void addRestaurantImages(long restaurantId, List<AddRestaurantImageWithTypeDTO> list);
 
-    List<String> getReviewImages(long reviewId);
+    List<String> getRestaurantImagesBy(long restaurantId);
 
     void deleteReviewImages(long reviewId);
-
 }

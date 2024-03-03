@@ -1,6 +1,7 @@
 package com.example.api.restaurant;
 
 import com.example.api.owner.dto.Owner;
+import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,15 @@ public class RestaurantService {
     public RestaurantDTO getRestaurantById(long restaurantId) {
         return restaurantMapper.findById(restaurantId)
                 .orElseThrow(() -> new SystemException("존재하지 않는 식당입니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public GetRestaurantRes getRestaurantInfoById(long restaurantId) {
+        GetRestaurantRes getRestaurantRes = restaurantMapper.findRestaurantInfoById(restaurantId)
+                .orElseThrow(() -> new SystemException("존재하지 않는 식당입니다."));
+        getRestaurantRes.sortImages();
+
+        return getRestaurantRes;
     }
 
     public void isOwner(RestaurantDTO restaurant, Owner owner) {
