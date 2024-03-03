@@ -33,7 +33,7 @@ public class RestaurantImageController {
     private final RestaurantImageService restaurantImageService;
 
     @PostMapping(consumes = {"multipart/form-data"})
-    @Operation(summary = "식당 이미치 추가", description = "식당의 이미지들을 추가하는 기능입니다.")
+    @Operation(summary = "식당 이미지들 추가", description = "식당의 이미지들을 추가하는 기능입니다.")
     public ResponseEntity<Void> addRestaurantImages(@Parameter(hidden = true) @LoginMember Owner owner,
                                                     @PathVariable long restaurantId,
                                                     @Parameter @RequestParam List<RestaurantImageType> restaurantImageTypes,
