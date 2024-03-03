@@ -1,6 +1,6 @@
-package com.example.api.restaurantImage;
+package com.example.api.restaurantimage;
 
-import com.example.api.restaurantImage.dto.AddRestaurantImageWithTypeDTO;
+import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 

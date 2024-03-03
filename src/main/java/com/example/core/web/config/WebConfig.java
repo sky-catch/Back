@@ -1,7 +1,7 @@
 package com.example.core.web.config;
 
 import com.example.api.reservation.ReservationStatusConverter;
-import com.example.api.restaurantImage.controller.converter.RestaurantImageTypeConverter;
+import com.example.api.restaurantimage.controller.converter.RestaurantImageTypeConverter;
 import com.example.core.oauth.controller.OauthServerTypeConverter;
 import com.example.core.web.security.login.LoginMemberArgumentResolver;
 import java.util.List;

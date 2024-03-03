@@ -1,8 +1,8 @@
-package com.example.api.restaurantImage;
+package com.example.api.restaurantimage;
 
 import com.example.api.restaurant.dto.RestaurantImageType;
-import com.example.api.restaurantImage.dto.AddRestaurantImageWithTypeDTO;
-import com.example.api.restaurantImage.dto.AddRestaurantImagesDTO;
+import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
+import com.example.api.restaurantimage.dto.AddRestaurantImagesDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
 import java.io.IOException;

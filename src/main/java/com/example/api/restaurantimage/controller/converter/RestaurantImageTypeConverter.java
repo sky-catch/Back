@@ -1,4 +1,4 @@
-package com.example.api.restaurantImage.controller.converter;
+package com.example.api.restaurantimage.controller.converter;
 
 import com.example.api.restaurant.dto.RestaurantImageType;
 import com.fasterxml.jackson.core.type.TypeReference;

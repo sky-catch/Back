@@ -1,11 +1,11 @@
-package com.example.api.restaurantImage.controller;
+package com.example.api.restaurantimage.controller;
 
 import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantImageType;
-import com.example.api.restaurantImage.RestaurantImageService;
-import com.example.api.restaurantImage.dto.AddRestaurantImagesDTO;
+import com.example.api.restaurantimage.RestaurantImageService;
+import com.example.api.restaurantimage.dto.AddRestaurantImagesDTO;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

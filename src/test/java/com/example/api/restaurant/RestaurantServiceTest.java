@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurantImage.RestaurantImageMapper;
-import com.example.api.restaurantImage.dto.AddRestaurantImageWithTypeDTO;
+import com.example.api.restaurantimage.RestaurantImageMapper;
+import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalTime;
 import java.util.ArrayList;

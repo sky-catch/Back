@@ -1,4 +1,4 @@
-package com.example.api.restaurantImage.dto;
+package com.example.api.restaurantimage.dto;
 
 import com.example.api.restaurant.dto.RestaurantImageType;
 import lombok.Builder;
