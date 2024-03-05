@@ -34,7 +34,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
         //db 저장
         //todo 개발 후 주석 해제
-        //chatService.createChat(chat.getChatRoomId(), chat.getMasterId());
+        chatService.createChat(chat);
 
         //채팅방의 다른 사람한테 채팅 보내기
         ChatRoomSession chatRoomSession = enableChatRooms.get(chat.getChatRoomId());
