@@ -6,8 +6,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface MemberMapper {
+public interface MemberMapper extends UsersMapper<MemberDTO> {
 
+    @Override
     Optional<MemberDTO> findByEmail(@Param("email") String email);
 
     Optional<MemberDTO> findByOauthId(OauthId oauthId);

@@ -1,8 +1,8 @@
 package com.example.api.reservation;
 
-import static com.example.api.reservation.ReservationStatus.COMPLETED;
-import static com.example.api.reservation.ReservationStatus.CONFIRMED;
-import static com.example.api.reservation.ReservationStatus.NO_SHOW;
+import static com.example.api.reservation.ReservationStatus.CANCEL;
+import static com.example.api.reservation.ReservationStatus.DONE;
+import static com.example.api.reservation.ReservationStatus.PLANNED;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,9 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql("classpath:truncate.sql")
 class ReservationServiceTest {
 
     @Autowired
@@ -35,9 +37,6 @@ class ReservationServiceTest {
 
     @BeforeEach
     void init() {
-        reservationMapper.deleteAll();
-        restaurantMapper.deleteAll();
-
         restaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
@@ -60,12 +59,12 @@ class ReservationServiceTest {
     void test1() {
         // given
         for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = NO_SHOW;
+            ReservationStatus status = CANCEL;
             if (i <= 10) {
-                status = COMPLETED;
+                status = PLANNED;
             }
             if (i <= 5) {
-                status = CONFIRMED;
+                status = DONE;
             }
             ReservationDTO dto = ReservationDTO.builder()
                     .restaurantId(restaurant.getRestaurantId())
@@ -82,7 +81,7 @@ class ReservationServiceTest {
 
         GetMyReservationDTO dto = GetMyReservationDTO.builder()
                 .memberId(1L)
-                .status(CONFIRMED)
+                .status(DONE)
                 .build();
 
         // when

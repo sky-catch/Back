@@ -24,7 +24,6 @@
         where restaurant_id = #{restaurantId};
     </update>
 
-    <!--    todo 테스트 코드 작성하기-->
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time, address,
@@ -37,5 +36,69 @@
     <select id="deleteAll">
         DELETE
         FROM restaurant;
+    </select>
+
+    <select id="findAll" resultType="com.example.api.restaurant.dto.RestaurantDTO">
+        SELECT *
+        FROM restaurant;
+    </select>
+
+    <select id="findById" resultType="com.example.api.restaurant.dto.RestaurantDTO">
+        SELECT *
+        FROM restaurant
+        where restaurant_id = #{restaurantId};
+    </select>
+
+    <resultMap id="restaurant" type="com.example.api.restaurant.dto.GetRestaurantRes">
+        <id property="restaurantId" column="restaurant_id"/>
+        <id property="ownerId" column="owner_id"/>
+        <id property="name" column="name"/>
+        <id property="category" column="category"/>
+        <id property="content" column="content"/>
+        <id property="phone" column="phone"/>
+        <id property="capacity" column="capacity"/>
+        <id property="openTime" column="open_time"/>
+        <id property="lastOrderTime" column="last_order_time"/>
+        <id property="address" column="address"/>
+        <id property="detailAddress" column="detail_address"/>
+        <id property="lunchPrice" column="lunch_price"/>
+        <id property="dinnerPrice" column="dinner_price"/>
+        <id property="savedCount" column="saved_count"/>
+        <id property="reviewCount" column="review_count"/>
+        <id property="reviewAvg" column="review_avg"/>
+        <id property="createdDate" column="created_date"/>
+        <id property="updatedDate" column="updated_date"/>
+        <collection property="images" ofType="com.example.api.restaurant.dto.RestaurantImage">
+            <id property="restaurantImageId" column="restaurant_image_id"/>
+            <id property="path" column="path"/>
+            <id property="type" column="type"/>
+        </collection>
+    </resultMap>
+
+    <select id="findRestaurantInfoById" resultMap="restaurant">
+        SELECT res.restaurant_id,
+               res.owner_id,
+               res.name,
+               res.category,
+               res.content,
+               res.phone,
+               res.capacity,
+               res.open_time,
+               res.last_order_time,
+               res.address,
+               res.detail_address,
+               res.lunch_price,
+               res.dinner_price,
+               res.saved_count,
+               res.review_count,
+               res.review_avg,
+               res.created_date,
+               res.updated_date,
+               resi.restaurant_image_id,
+               resi.path,
+               resi.type
+        FROM restaurant res
+                 INNER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+        WHERE res.restaurant_id = #{restaurantId};
     </select>
 </mapper>

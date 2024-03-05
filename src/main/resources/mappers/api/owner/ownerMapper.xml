@@ -21,7 +21,15 @@
     </insert>
 
     <select id="getOwner" parameterType="long" resultMap="owner">
-        SELECT OWNER_ID, NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS, CREATED_DATE, UPDATED_DATE
+        SELECT OWNER_ID,
+               NAME,
+               IMAGE_PATH,
+               PHONE,
+               EMAIL,
+               PLATFORM,
+               STATUS,
+               CREATED_DATE,
+               UPDATED_DATE
         FROM owner
         WHERE OWNER_ID = #{ownerId}
     </select>
@@ -29,11 +37,11 @@
     <update id="updateOwner" parameterType="com.example.api.owner.dto.Owner">
         UPDATE owner
         SET NAME = #{name},
-            <if test="imagePath != null">
-                IMAGE_PATH = #{imagePath},
-            </if>
-            PHONE = #{phone},
-            EMAIL = #{email}
+        <if test="imagePath != null">
+            IMAGE_PATH = #{imagePath},
+        </if>
+        PHONE = #{phone},
+        EMAIL = #{email}
         WHERE OWNER_ID = #{ownerId}
     </update>
 
@@ -43,4 +51,17 @@
         WHERE OWNER_ID = #{ownerId}
     </update>
 
+    <select id="findByEmail" parameterType="string" resultMap="owner">
+        SELECT OWNER_ID,
+               NAME,
+               IMAGE_PATH,
+               PHONE,
+               EMAIL,
+               PLATFORM,
+               STATUS,
+               CREATED_DATE,
+               UPDATED_DATE
+        FROM owner
+        WHERE EMAIL = #{email}
+    </select>
 </mapper>

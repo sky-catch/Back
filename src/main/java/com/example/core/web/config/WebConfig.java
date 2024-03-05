@@ -1,5 +1,7 @@
 package com.example.core.web.config;
 
+import com.example.api.reservation.ReservationStatusConverter;
+import com.example.api.restaurantimage.controller.converter.RestaurantImageTypeConverter;
 import com.example.core.oauth.controller.OauthServerTypeConverter;
 import com.example.core.web.security.login.LoginMemberArgumentResolver;
 import java.util.List;
@@ -35,6 +37,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new OauthServerTypeConverter());
+        registry.addConverter(new ReservationStatusConverter());
+        registry.addConverter(new RestaurantImageTypeConverter());
     }
 
     @Override

@@ -18,9 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql("classpath:truncate.sql")
 class OauthServiceTest {
 
     private OauthService oauthService;
@@ -34,8 +36,6 @@ class OauthServiceTest {
 
     @BeforeEach
     void init() {
-        memberMapper.deleteAll();
-
         OauthMemberClient client = new OauthMemberClient() {
             @Override
             public OauthServerType supportServer() {

@@ -57,3 +57,14 @@ CREATE TABLE RESERVATION
     updated_date       timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (reservation_id)
 );
+
+CREATE TABLE RESTAURANT_IMAGE
+(
+    restaurant_image_id bigint       NOT NULL AUTO_INCREMENT,
+    restaurant_id       bigint       NOT NULL,
+    path                varchar(255) NOT NULL,
+    type                varchar(25)  NOT NULL,
+    created_date        timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date        timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (restaurant_image_id)
+);
