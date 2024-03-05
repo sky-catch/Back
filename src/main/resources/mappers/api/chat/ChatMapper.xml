@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.chat.ChatMapper">
+
+    <resultMap id="GetChatRoomListRes" type="com.example.api.chat.dto.GetChatRoomListRes">
+        <id property="chatRoomId" column="CHAT_ROOM_ID"/>
+        <result property="restaurantName" column="RESTAURANT_NAME"/>
+        <result property="restaurantImage" column="RESTAURANT_IMAGE"/>
+        <result property="lastChatDate" column="LAST_CHAT_DATE"/>
+        <result property="lastChat" column="LAST_CHAT"/>
+        <result property="hasNewChat" column="HAS_NEW_CHAT"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+    </resultMap>
+
+    <resultMap id="GetChatRoom" type="com.example.api.chat.dto.GetChatRoom">
+        <id property="chatRoomId" column="CHAT_ROOM_ID"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="ownerId" column="OWNER_ID"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <collection property="chatList" ofType="com.example.api.chat.dto.Chat">
+            <result property="chatId" column="CHAT_ID"/>
+            <result property="memberChat" column="MEMBER_CHAT"/>
+            <result property="readChat" column="READ_CHAT"/>
+            <result property="content" column="CONTENT"/>
+        </collection>
+    </resultMap>
+
+    <insert id="createChat">
+        INSERT INTO chat (chat_room_id, member_chat, content)
+        VALUES (#{chatRoomId}, ${memberChat? 1 : 0}, #{content});
+    </insert>
+
+    <insert id="createChatRoom">
+        INSERT INTO chat_room (member_id, restaurant_id, owner_id)
+        VALUES (#{memberId}, #{restaurantId}, (SELECT owner_id FROM restaurant WHERE restaurant_id = #{restaurantId}));
+    </insert>
+
+    <select id="getChatRoomList" resultMap="GetChatRoomListRes">
+        select cr.CHAT_ROOM_ID, rt.name as RESTAURANT_NAME, rti.path as RESTAURANT_IMAGE, c.content as LAST_CHAT, c.created_date as LAST_CHAT_DATE,
+               (select if(read_chat = 1 , false, true) from chat where chat_room_id = cr.CHAT_ROOM_ID and member_chat = 0 order by created_date desc limit 1)
+                as HAS_NEW_CHAT, cr.CREATED_DATE
+        from chat_room cr
+            left join restaurant rt on rt.restaurant_id = cr.restaurant_id
+            left join restaurant_image rti on rti.restaurant_id = cr.restaurant_id and rti.type = 'REPRESENTATIVE'
+            left join (select content, created_date, read_chat, chat_room_id
+            from chat
+            order by created_date desc limit 1) as c ON c.CHAT_ROOM_ID = cr.CHAT_ROOM_ID
+        where cr.member_id = #{memberId}
+    </select>
+
+    <select id="getChatRoom" resultMap="GetChatRoom">
+        select cr.CHAT_ROOM_ID, cr.RESTAURANT_ID, cr.CREATED_DATE, cr.OWNER_ID,
+               c.chat_id, if(c.MEMBER_CHAT = 1, true, false) as MEMBER_CHAT, if(c.READ_CHAT = 1, true, false) as READ_CHAT, c.CONTENT
+        from chat_room cr
+                 left join chat c on c.CHAT_ROOM_ID = cr.CHAT_ROOM_ID
+        where cr.CHAT_ROOM_ID = #{chatRoomId}
+        order by cr.CHAT_ROOM_ID
+    </select>
+
+</mapper>
