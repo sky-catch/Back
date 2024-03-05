@@ -68,3 +68,17 @@ CREATE TABLE RESTAURANT_IMAGE
     updated_date        timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (restaurant_image_id)
 );
+
+CREATE TABLE restaurant_notification
+(
+    notification_id bigint      NOT NULL AUTO_INCREMENT,
+    restaurant_id   bigint      NOT NULL,
+    owner_id        bigint      NOT NULL,
+    title           varchar(25) NOT NULL,
+    content         text        NOT NULL,
+    start_date      date        NOT NULL,
+    end_date        date        NOT NULL,
+    created_date    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (notification_id)
+);

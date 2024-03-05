@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.restaurantnotification.RestaurantNotificationMapper">
+
+    <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantNotificationDTO"
+            useGeneratedKeys="true" keyProperty="notificationId">
+        INSERT INTO restaurant_notification(restaurant_id, owner_id, title, content, start_date, end_date)
+        VALUES (#{restaurantId}, #{ownerId}, #{title}, #{content}, #{startDate}, #{endDate});
+    </insert>
+</mapper>
