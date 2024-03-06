@@ -20,6 +20,7 @@ public class RestaurantImageService {
     private final RestaurantImageMapper restaurantImageMapper;
     private final S3UploadService s3UploadService;
 
+    // todo REPRESENTATIVE는 한 개만 허용
     @Transactional
     public void addRestaurantImages(AddRestaurantImagesDTO dto) throws IOException {
         if (dto.isEmptyImages()) {

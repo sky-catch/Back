@@ -1,5 +1,6 @@
 package com.example.api.restaurant.dto;
 
+import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.core.dto.BaseDTO;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class GetRestaurantRes extends BaseDTO {
     private long reviewCount;
     private float reviewAvg;
     private List<RestaurantImage> images;
+    private List<GetRestaurantNotificationRes> notifications;
 
     public void sortImages() {
         images = images.stream()

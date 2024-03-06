@@ -73,6 +73,14 @@
             <id property="path" column="path"/>
             <id property="type" column="type"/>
         </collection>
+        <collection property="notifications"
+                    ofType="com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes">
+            <id property="notificationId" column="notification_id"/>
+            <id property="title" column="title"/>
+            <id property="content" column="content"/>
+            <id property="startDate" column="start_date"/>
+            <id property="endDate" column="end_date"/>
+        </collection>
     </resultMap>
 
     <select id="findRestaurantInfoById" resultMap="restaurant">
@@ -96,9 +104,15 @@
                res.updated_date,
                resi.restaurant_image_id,
                resi.path,
-               resi.type
+               resi.type,
+               resn.notification_id,
+               resn.title,
+               resn.content,
+               resn.start_date,
+               resn.end_date
         FROM restaurant res
-                 INNER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
         WHERE res.restaurant_id = #{restaurantId};
     </select>
 </mapper>
