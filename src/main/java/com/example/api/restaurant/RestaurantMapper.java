@@ -22,4 +22,6 @@ public interface RestaurantMapper {
     Optional<RestaurantDTO> findById(long restaurantId);
 
     Optional<GetRestaurantRes> findRestaurantInfoById(long restaurantId);
+
+    boolean isAlreadyCreated(long ownerId);
 }

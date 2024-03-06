@@ -16,7 +16,10 @@ public class RestaurantService {
 
     @Transactional
     public long createRestaurant(RestaurantDTO dto) {
-        // todo 중복 생성 검사 - 한 식당만 생성 가능
+        if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
+            throw new SystemException("식당은 한 개만 생성할 수 있습니다.");
+        }
+
         restaurantMapper.save(dto);
 
         return dto.getRestaurantId();

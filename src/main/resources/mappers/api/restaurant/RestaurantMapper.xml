@@ -116,4 +116,8 @@
         WHERE res.restaurant_id = #{restaurantId}
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
+
+    <select id="isAlreadyCreated" parameterType="long" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.owner_id = #{ownerId})
+    </select>
 </mapper>

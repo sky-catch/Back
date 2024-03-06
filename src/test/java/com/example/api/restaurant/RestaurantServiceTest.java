@@ -152,6 +152,18 @@ class RestaurantServiceTest {
                 );
     }
 
+    @Test
+    @DisplayName("식당 생성 시 이미 식당을 만든 경우 예외 발생하는 테스트")
+    void test6() {
+        // given
+        restaurantService.createRestaurant(testRestaurant);
+
+        // expected
+        assertThatThrownBy(() -> restaurantService.createRestaurant(testRestaurant))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("식당은 한 개만 생성할 수 있습니다.");
+    }
+
     private int getCreatedTestImageSize(long restaurantId) {
         List<AddRestaurantImageWithTypeDTO> restaurantImageWithTypeDTOS = new ArrayList<>();
         restaurantImageWithTypeDTOS.add(AddRestaurantImageWithTypeDTO.builder()
