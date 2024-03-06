@@ -50,4 +50,8 @@
         DELETE
         FROM member;
     </select>
+
+    <select id="findById" resultType="com.example.api.member.MemberDTO">
+        SELECT * FROM member WHERE member_id = #{memberId}
+    </select>
 </mapper>

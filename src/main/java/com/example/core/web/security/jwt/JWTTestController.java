@@ -1,6 +1,7 @@
 package com.example.core.web.security.jwt;
 
 import com.example.api.member.MemberDTO;
+import com.example.api.member.MemberService;
 import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.web.security.login.LoginMember;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class JWTTestController {
 
     private final JWTProvider jwtProvider;
+    private final MemberService memberService;
 
     @GetMapping("/oauth/jwt/test")
     @Operation(summary = "테스트용 JWT 발급", description = "test@test.com 회원의 JWT를 발급한다.")
@@ -34,6 +37,15 @@ public class JWTTestController {
                 .oauthServerId("1")
                 .oauthServer(OauthServerType.KAKAO)
                 .build();
+
+        String accessToken = jwtProvider.createToken(testMember);
+        return new GetTestJWTResponse(accessToken);
+    }
+
+    @GetMapping("/oauth/jwt/test/{memberId}")
+    @Operation(summary = "테스트용 JWT 발급 - memberId 입력")
+    public GetTestJWTResponse createTestJWTById(@PathVariable long memberId) {
+        MemberDTO testMember = memberService.getMemberById(memberId);
 
         String accessToken = jwtProvider.createToken(testMember);
         return new GetTestJWTResponse(accessToken);
