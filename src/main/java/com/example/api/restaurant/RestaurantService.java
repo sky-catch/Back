@@ -16,7 +16,10 @@ public class RestaurantService {
 
     @Transactional
     public long createRestaurant(RestaurantDTO dto) {
-        // todo 중복 생성 검사
+        if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
+            throw new SystemException("식당은 한 개만 생성할 수 있습니다.");
+        }
+
         restaurantMapper.save(dto);
 
         return dto.getRestaurantId();
@@ -32,7 +35,7 @@ public class RestaurantService {
     public GetRestaurantRes getRestaurantInfoById(long restaurantId) {
         GetRestaurantRes getRestaurantRes = restaurantMapper.findRestaurantInfoById(restaurantId)
                 .orElseThrow(() -> new SystemException("존재하지 않는 식당입니다."));
-        getRestaurantRes.sortImages();
+//        getRestaurantRes.sortImages();
 
         return getRestaurantRes;
     }

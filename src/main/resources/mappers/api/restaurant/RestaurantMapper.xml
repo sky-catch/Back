@@ -68,10 +68,18 @@
         <id property="reviewAvg" column="review_avg"/>
         <id property="createdDate" column="created_date"/>
         <id property="updatedDate" column="updated_date"/>
-        <collection property="images" ofType="com.example.api.restaurant.dto.RestaurantImage">
+        <collection property="images" ofType="com.example.api.restaurant.dto.GetRestaurantImageRes">
             <id property="restaurantImageId" column="restaurant_image_id"/>
             <id property="path" column="path"/>
             <id property="type" column="type"/>
+        </collection>
+        <collection property="notifications"
+                    ofType="com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes">
+            <id property="notificationId" column="notification_id"/>
+            <id property="title" column="title"/>
+            <id property="content" column="content"/>
+            <id property="startDate" column="start_date"/>
+            <id property="endDate" column="end_date"/>
         </collection>
     </resultMap>
 
@@ -96,9 +104,20 @@
                res.updated_date,
                resi.restaurant_image_id,
                resi.path,
-               resi.type
+               resi.type,
+               resn.notification_id,
+               resn.title,
+               resn.content,
+               resn.start_date,
+               resn.end_date
         FROM restaurant res
-                 INNER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
-        WHERE res.restaurant_id = #{restaurantId};
+                 LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
+        WHERE res.restaurant_id = #{restaurantId}
+        ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
+    </select>
+
+    <select id="isAlreadyCreated" parameterType="long" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.owner_id = #{ownerId})
     </select>
 </mapper>
