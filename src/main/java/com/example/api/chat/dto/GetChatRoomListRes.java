@@ -1,6 +1,5 @@
 package com.example.api.chat.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +19,6 @@ public class GetChatRoomListRes {
     private LocalDateTime lastChatDate;
     private String lastChat;
     private boolean hasNewChat;
+    private LocalDateTime createdDate;
 
 }

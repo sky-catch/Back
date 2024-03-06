@@ -27,6 +27,12 @@
         </collection>
     </resultMap>
 
+    <select id="isExistChatRoom" parameterType="long" resultType="boolean">
+        select exists(select 1
+        from chat_room
+        where chat_room_id = #{chatRoomId})
+    </select>
+
     <insert id="createChat">
         INSERT INTO chat (chat_room_id, member_chat, content)
         VALUES (#{chatRoomId}, ${memberChat? 1 : 0}, #{content});
@@ -58,5 +64,11 @@
         where cr.CHAT_ROOM_ID = #{chatRoomId}
         order by cr.CHAT_ROOM_ID
     </select>
+
+    <update id="readChat">
+        update chat
+        set read_chat = 1
+        where chat_room_id = #{chatRoomId} and member_chat = !#{memberChat}
+    </update>
 
 </mapper>
