@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper
 public interface ChatMapper {
 
+    boolean isExistChatRoom(long chatRoomId);
+
     void createChat(Chat chat);
 
     void createChatRoom(long restaurantId, long memberId);
@@ -17,4 +19,7 @@ public interface ChatMapper {
     List<GetChatRoomListRes> getChatRoomList(long memberId);
 
     GetChatRoom getChatRoom(long chatRoomId);
+
+    void readChat(long chatRoomId, boolean memberChat);
+
 }

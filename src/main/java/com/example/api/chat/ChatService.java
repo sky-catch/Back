@@ -3,6 +3,7 @@ package com.example.api.chat;
 import com.example.api.chat.dto.Chat;
 import com.example.api.chat.dto.GetChatRoom;
 import com.example.api.chat.dto.GetChatRoomListRes;
+import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ public class ChatService {
     private final ChatMapper chatMapper;
 
     public void createChat(Chat chat) {
-        //todo 채팅방이 있는지 검사
+        if(!chatMapper.isExistChatRoom(chat.getChatRoomId())){
+            throw new SystemException("채팅방이 없습니다.");
+        }
 
         chatMapper.createChat(chat);
     }
@@ -30,5 +33,9 @@ public class ChatService {
 
     public GetChatRoom getChatRoom(long chatRoomId) {
         return chatMapper.getChatRoom(chatRoomId);
+    }
+
+    public void readChat(long chatRoomId, boolean memberChat){
+        chatMapper.readChat(chatRoomId, memberChat);
     }
 }
