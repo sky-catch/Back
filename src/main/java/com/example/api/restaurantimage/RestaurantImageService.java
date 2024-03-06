@@ -1,5 +1,7 @@
 package com.example.api.restaurantimage;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_OWNER;
+
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantImageType;
@@ -28,7 +30,7 @@ public class RestaurantImageService {
         long restaurantId = dto.getRestaurantId();
         RestaurantDTO findRestaurant = restaurantService.getRestaurantById(restaurantId);
         if (!findRestaurant.isOwner(ownerId)) {
-            throw new SystemException("식당 주인이 아닙니다.");
+            throw new SystemException(NOT_OWNER.getMessage());
         }
 
         restaurantImageMapper.addRestaurantImages(restaurantId, getAddRestaurantImageWitTypeDTOS(dto));

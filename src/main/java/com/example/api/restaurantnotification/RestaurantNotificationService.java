@@ -1,5 +1,7 @@
 package com.example.api.restaurantnotification;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
+
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import com.example.core.exception.SystemException;
@@ -17,7 +19,7 @@ public class RestaurantNotificationService {
     @Transactional
     public long createRestaurantNotification(RestaurantNotificationDTO dto) {
         restaurantMapper.findById(dto.getRestaurantId())
-                .orElseThrow(() -> new SystemException("존재하지 않는 식당입니다."));
+                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
 
         restaurantNotificationMapper.save(dto);
 

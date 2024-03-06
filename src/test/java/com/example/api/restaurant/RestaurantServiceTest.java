@@ -2,6 +2,8 @@ package com.example.api.restaurant;
 
 import static com.example.api.restaurant.dto.RestaurantImageType.NORMAL;
 import static com.example.api.restaurant.dto.RestaurantImageType.REPRESENTATIVE;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -99,7 +101,7 @@ class RestaurantServiceTest {
         // expected
         assertThatThrownBy(() -> restaurantService.getRestaurantInfoById(notExistsRestaurantId))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("존재하지 않는 식당입니다.");
+                .hasMessageContaining(NOT_FOUND.getMessage());
     }
 
     // 이미지 정렬 조건
@@ -161,7 +163,7 @@ class RestaurantServiceTest {
         // expected
         assertThatThrownBy(() -> restaurantService.createRestaurant(testRestaurant))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("식당은 한 개만 생성할 수 있습니다.");
+                .hasMessageContaining(CAN_CREATE_ONLY_ONE.getMessage());
     }
 
     private int getCreatedTestImageSize(long restaurantId) {
