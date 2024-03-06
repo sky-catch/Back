@@ -31,8 +31,11 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        Chat chat = gson.fromJson(message.getPayload(), Chat.class);
-        String memberChatHeader = session.getHandshakeHeaders().getFirst("memberChat");
+        String content = message.getPayload();
+        long chatRoomId = Long.parseLong(session.getHandshakeHeaders().getFirst("chatRoomId"));
+        //todo 현재 회원인지 사장인지 어떤걸로 구분할지 정해지지 않아서 임시로 헤더로 구분
+        boolean memberChat = Boolean.parseBoolean(session.getHandshakeHeaders().getFirst("memberChat"));
+        Chat chat = Chat.builder().chatRoomId(chatRoomId).memberChat(memberChat).content(content).build();
 
         //채팅 읽음 체크
         chatService.readChat(chat.getChatRoomId(), chat.isMemberChat());
@@ -62,7 +65,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         String chatRoomHeader = session.getHandshakeHeaders().getFirst("chatRoomId");
-        //todo 현재 회원인지 사장인지 어떤걸로 구분할지 정해지지 않아서 임시로 헤더로 구분
         String memberChatHeader = session.getHandshakeHeaders().getFirst("memberChat");
 
         if(StringUtils.isEmpty(chatRoomHeader) ||StringUtils.isEmpty(memberChatHeader)){
@@ -71,6 +73,9 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         long chatRoomId = Long.parseLong(chatRoomHeader);
         boolean memberChat = Boolean.parseBoolean(memberChatHeader);
 
+        chatService.checkExistChatRoom(chatRoomId);
+
+        //map에 채팅방 세션List를 가지고 와서 그안에 세션 넣기
         ChatRoomSession chatRoom = enableChatRooms.getOrDefault(chatRoomId, new ChatRoomSession());
         chatRoom.addSession(session);
         enableChatRooms.put(chatRoomId, chatRoom);
