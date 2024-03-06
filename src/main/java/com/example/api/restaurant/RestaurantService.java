@@ -32,7 +32,7 @@ public class RestaurantService {
     public GetRestaurantRes getRestaurantInfoById(long restaurantId) {
         GetRestaurantRes getRestaurantRes = restaurantMapper.findRestaurantInfoById(restaurantId)
                 .orElseThrow(() -> new SystemException("존재하지 않는 식당입니다."));
-        getRestaurantRes.sortImages();
+//        getRestaurantRes.sortImages();
 
         return getRestaurantRes;
     }

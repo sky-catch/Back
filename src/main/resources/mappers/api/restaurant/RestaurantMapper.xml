@@ -113,6 +113,7 @@
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
-        WHERE res.restaurant_id = #{restaurantId};
+        WHERE res.restaurant_id = #{restaurantId}
+        ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
 </mapper>

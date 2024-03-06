@@ -104,7 +104,7 @@ class RestaurantServiceTest {
 
     // 이미지 정렬 조건
     // 1. REPRESENTATIVE -> NORMAL
-    // 2. 등록순
+    // 2. 생성일 오름차순
     @Test
     @DisplayName("식당 상세 정보 조회 시 식당 이미지들이 정렬되는지 테스트")
     void test4() {
@@ -129,7 +129,7 @@ class RestaurantServiceTest {
     }
 
 
-    // 공지는 최신순으로 정렬
+    // 공지는 시작일순으로 내림차순 정렬
     @Test
     @DisplayName("식당 상세 정보 조회 시 식당 공지사항들이 정렬되는지 테스트")
     void test5() {
@@ -147,8 +147,8 @@ class RestaurantServiceTest {
                 .hasSize(expectedNotificationSize)
                 .extracting("title", "startDate")
                 .containsExactly(
-                        tuple("제목입니다.1", LocalDate.of(2024, 1, 1)),
-                        tuple("제목입니다.2", LocalDate.of(2024, 1, 1))
+                        tuple("제목입니다.2", LocalDate.of(2024, 2, 1)),
+                        tuple("제목입니다.1", LocalDate.of(2024, 1, 1))
                 );
     }
 
@@ -173,18 +173,28 @@ class RestaurantServiceTest {
 
     private int getCreatedTestNotificationSize(long createdRestaurantId) {
         List<RestaurantNotificationDTO> result = new ArrayList<>();
-        for (int i = 1; i <= 2; i++) {
-            RestaurantNotificationDTO dto = RestaurantNotificationDTO.builder()
-                    .restaurantId(createdRestaurantId)
-                    .ownerId(1L)
-                    .title("제목입니다." + i)
-                    .content("내용입니다." + i)
-                    .startDate(LocalDate.of(2024, 1, 1))
-                    .endDate(LocalDate.of(2024, 1, 1))
-                    .build();
-            result.add(dto);
-            restaurantNotificationMapper.save(dto);
-        }
+        RestaurantNotificationDTO dto2 = RestaurantNotificationDTO.builder()
+                .restaurantId(createdRestaurantId)
+                .ownerId(1L)
+                .title("제목입니다." + 2)
+                .content("내용입니다." + 2)
+                .startDate(LocalDate.of(2024, 2, 1))
+                .endDate(LocalDate.of(2024, 2, 1))
+                .build();
+        result.add(dto2);
+        restaurantNotificationMapper.save(dto2);
+
+        RestaurantNotificationDTO dto = RestaurantNotificationDTO.builder()
+                .restaurantId(createdRestaurantId)
+                .ownerId(1L)
+                .title("제목입니다." + 1)
+                .content("내용입니다." + 1)
+                .startDate(LocalDate.of(2024, 1, 1))
+                .endDate(LocalDate.of(2024, 1, 1))
+                .build();
+        result.add(dto);
+        restaurantNotificationMapper.save(dto);
+
         return result.size();
     }
 }
