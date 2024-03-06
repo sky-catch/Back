@@ -1,5 +1,9 @@
 package com.example.api.restaurantimage.dto;
 
+import static com.example.api.restaurantimage.exception.RestaurantImageExceptionType.NOT_MATCH_IMAGE_SIZE_WITH_IMAGE_TYPE_SIZE;
+import static com.example.api.restaurantimage.exception.RestaurantImageExceptionType.NOT_SATISFIED_IMAGE_SIZE;
+import static com.example.api.restaurantimage.exception.RestaurantImageExceptionType.NOT_SATISFIED_IMAGE_TYPE_REQUIREMENT;
+
 import com.example.api.restaurant.dto.RestaurantImageType;
 import com.example.core.exception.SystemException;
 import java.util.List;
@@ -30,13 +34,13 @@ public class AddRestaurantImagesDTO {
 
     private void validateListSize(List<?> list) {
         if (list.isEmpty() || list.size() > 10) {
-            throw new SystemException("식당 이미지는 1 ~ 10개 사이여야 합니다.");
+            throw new SystemException(NOT_SATISFIED_IMAGE_SIZE.getMessage());
         }
     }
 
     private void validateImageWithType(List<MultipartFile> files, List<RestaurantImageType> restaurantImageTypes) {
         if (files.size() != restaurantImageTypes.size()) {
-            throw new SystemException("식당 이미지와 식당 이미지 타입의 개수가 일치하지 않습니다.");
+            throw new SystemException(NOT_MATCH_IMAGE_SIZE_WITH_IMAGE_TYPE_SIZE.getMessage());
         }
     }
 
@@ -45,7 +49,7 @@ public class AddRestaurantImagesDTO {
                 .filter(restaurantImageType -> restaurantImageType == RestaurantImageType.REPRESENTATIVE)
                 .count();
         if (count != 1) {
-            throw new SystemException("대표 식당 이미지는 한 개여야 합니다.");
+            throw new SystemException(NOT_SATISFIED_IMAGE_TYPE_REQUIREMENT.getMessage());
         }
     }
 }
