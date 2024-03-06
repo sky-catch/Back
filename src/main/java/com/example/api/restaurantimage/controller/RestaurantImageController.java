@@ -1,8 +1,6 @@
 package com.example.api.restaurantimage.controller;
 
 import com.example.api.owner.dto.Owner;
-import com.example.api.restaurant.RestaurantService;
-import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantImageType;
 import com.example.api.restaurantimage.RestaurantImageService;
 import com.example.api.restaurantimage.dto.AddRestaurantImagesDTO;
@@ -29,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "식당 이미지", description = "식당 이미지 관련 API입니다.")
 public class RestaurantImageController {
 
-    private final RestaurantService restaurantService;
     private final RestaurantImageService restaurantImageService;
 
     @PostMapping(consumes = {"multipart/form-data"})
@@ -40,25 +37,16 @@ public class RestaurantImageController {
                                                     @Parameter(description = "이미지 형식의 파일만 가능, 최소 1개 이상") @RequestPart List<MultipartFile> files)
             throws IOException {
 
-        // todo 식당 이미지 개수 제한 어떻게 할까
-//        if (files.size() > 5) {
-//            throw new SystemException("이미지 개수는 5개를 넘을 수 없습니다.");
-//        }
-
-        // 1. 실존하는 식당인지 확인
-        RestaurantDTO restaurant = restaurantService.getRestaurantById(restaurantId);
-
-        // 2. 식당 주인인지 확인
-        restaurantService.isOwner(restaurant, owner);
-
         AddRestaurantImagesDTO dto = AddRestaurantImagesDTO.builder()
-                .restaurantId(restaurant.getRestaurantId())
+                .restaurantId(restaurantId)
                 .files(files)
                 .restaurantImageTypes(restaurantImageTypes)
                 .build();
-        restaurantImageService.addRestaurantImages(dto);
+        restaurantImageService.addRestaurantImages(dto, owner.getOwnerId());
 
         URI uri = URI.create("/restaurants/" + restaurantId + "/images");
         return ResponseEntity.created(uri).build();
     }
+
+    // todo requestBody로 List<String> 받을 수 있는 지 테스트해보기
 }

@@ -30,4 +30,8 @@ public class RestaurantDTO extends BaseDTO {
     private long savedCount;
     private long reviewCount;
     private float reviewAvg;
+
+    public boolean isOwner(long ownerId) {
+        return this.ownerId == ownerId;
+    }
 }
