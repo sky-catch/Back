@@ -33,29 +33,29 @@ public class GetRestaurantRes extends BaseDTO {
     private long savedCount;
     private long reviewCount;
     private float reviewAvg;
-    private List<RestaurantImage> images;
+    private List<GetRestaurantImageRes> images;
     private List<GetRestaurantNotificationRes> notifications;
 
     public void sortImages() {
         images = images.stream()
-                .sorted((restaurantImage1, restaurantImage2) -> {
-                    if (isSameType(restaurantImage1, restaurantImage2)) {
-                        return sortById(restaurantImage1, restaurantImage2);
+                .sorted((getRestaurantImageRes1, getRestaurantImageRes2) -> {
+                    if (isSameType(getRestaurantImageRes1, getRestaurantImageRes2)) {
+                        return sortById(getRestaurantImageRes1, getRestaurantImageRes2);
                     }
-                    return sortByType(restaurantImage1, restaurantImage2);
+                    return sortByType(getRestaurantImageRes1, getRestaurantImageRes2);
                 })
                 .collect(Collectors.toList());
     }
 
-    private boolean isSameType(RestaurantImage restaurantImage1, RestaurantImage restaurantImage2) {
-        return restaurantImage1.getType() == restaurantImage2.getType();
+    private boolean isSameType(GetRestaurantImageRes dto1, GetRestaurantImageRes dto2) {
+        return dto1.getType() == dto2.getType();
     }
 
-    private int sortById(RestaurantImage restaurantImage1, RestaurantImage restaurantImage2) {
-        return (int) (restaurantImage1.getRestaurantId() - restaurantImage2.getRestaurantId());
+    private int sortById(GetRestaurantImageRes dto1, GetRestaurantImageRes dto2) {
+        return (int) (dto1.getRestaurantId() - dto2.getRestaurantId());
     }
 
-    private int sortByType(RestaurantImage restaurantImage1, RestaurantImage restaurantImage2) {
-        return restaurantImage1.getType().compareTo(restaurantImage2.getType());
+    private int sortByType(GetRestaurantImageRes dto1, GetRestaurantImageRes dto2) {
+        return dto1.getType().compareTo(dto2.getType());
     }
 }

@@ -68,7 +68,7 @@
         <id property="reviewAvg" column="review_avg"/>
         <id property="createdDate" column="created_date"/>
         <id property="updatedDate" column="updated_date"/>
-        <collection property="images" ofType="com.example.api.restaurant.dto.RestaurantImage">
+        <collection property="images" ofType="com.example.api.restaurant.dto.GetRestaurantImageRes">
             <id property="restaurantImageId" column="restaurant_image_id"/>
             <id property="path" column="path"/>
             <id property="type" column="type"/>

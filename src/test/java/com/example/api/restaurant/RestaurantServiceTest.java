@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.api.restaurant.dto.GetRestaurantImageRes;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantImage;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import com.example.api.restaurantimage.RestaurantImageMapper;
 import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
@@ -115,7 +115,7 @@ class RestaurantServiceTest {
 
         // when
         GetRestaurantRes restaurantInfoById = restaurantService.getRestaurantInfoById(createdRestaurantId);
-        List<RestaurantImage> actual = restaurantInfoById.getImages();
+        List<GetRestaurantImageRes> actual = restaurantInfoById.getImages();
 
         // then
         assertThat(actual)
