@@ -3,7 +3,6 @@ package com.example.api.restaurant;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 
-import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
@@ -41,11 +40,5 @@ public class RestaurantService {
 //        getRestaurantRes.sortImages();
 
         return getRestaurantRes;
-    }
-
-    public void isOwner(RestaurantDTO restaurant, Owner owner) {
-        if (restaurant.getOwnerId() != owner.getOwnerId()) {
-            throw new SystemException("식당 주인이 아닙니다.");
-        }
     }
 }
