@@ -3,6 +3,7 @@ package com.example.api.reservation;
 import static com.example.api.reservation.ReservationStatus.CANCEL;
 import static com.example.api.reservation.ReservationStatus.DONE;
 import static com.example.api.reservation.ReservationStatus.PLANNED;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,6 +11,7 @@ import com.example.api.reservation.ReservationController.GetMyReservationDTO;
 import com.example.api.reservation.dto.GetReservationRes;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.core.exception.SystemException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -43,9 +45,9 @@ class ReservationServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .capacity(1)
-                .openTime(LocalTime.now().toString())
-                .lastOrderTime(LocalTime.now().toString())
+                .capacity(10)
+                .openTime(LocalTime.of(10, 0, 0).toString())
+                .lastOrderTime(LocalTime.of(20, 0, 0).toString())
                 .address("address")
                 .detailAddress("detailAddress")
                 .build();
@@ -91,5 +93,70 @@ class ReservationServiceTest {
         assertAll(() -> {
             assertEquals(expected.size(), 5);
         });
+    }
+
+    // todo 예약 가능 시간 올바른지 테스트 보충하기
+    @Test
+    @DisplayName("새로운 예약을 생성하는 테스트")
+    void test2() {
+        // given
+        ReservationDTO dto = ReservationDTO.builder()
+                .restaurantId(restaurant.getRestaurantId())
+                .memberId(1L)
+                .reservationDayId(1L)
+                .paymentId(1L)
+                .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
+                .numberOfPeople(2)
+                .memo("메모")
+                .status(PLANNED)
+                .build();
+
+        // when
+        long actual = reservationService.createReservation(dto);
+
+        // then
+        assertEquals(1L, actual);
+    }
+
+    @Test
+    @DisplayName("예약 불가능한 시간에 예약하는 경우 예외 발생하는 테스트")
+    void test3() {
+        // given
+        ReservationDTO dto = ReservationDTO.builder()
+                .restaurantId(restaurant.getRestaurantId())
+                .memberId(1L)
+                .reservationDayId(1L)
+                .paymentId(1L)
+                .time(LocalDateTime.of(2024, 1, 1, 9, 0, 0))
+                .numberOfPeople(2)
+                .memo("메모")
+                .status(PLANNED)
+                .build();
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("예약 가능한 시간이 아닙니다.");
+    }
+
+    @Test
+    @DisplayName("PLANNED 상태가 아닌 경우 예외 발생하는 테스트")
+    void test4() {
+        // given
+        ReservationDTO dto = ReservationDTO.builder()
+                .restaurantId(restaurant.getRestaurantId())
+                .memberId(1L)
+                .reservationDayId(1L)
+                .paymentId(1L)
+                .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
+                .numberOfPeople(2)
+                .memo("메모")
+                .status(DONE)
+                .build();
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("잘못된 예약 상태입니다.");
     }
 }
