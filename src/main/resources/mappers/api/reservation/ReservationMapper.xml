@@ -38,4 +38,10 @@
         DELETE
         FROM reservation;
     </select>
+
+    <select id="getReservation" resultType="com.example.api.reservation.ReservationDTO">
+        SELECT *
+        FROM reservation
+        WHERE reservation_id = #{reservationId}
+    </select>
 </mapper>

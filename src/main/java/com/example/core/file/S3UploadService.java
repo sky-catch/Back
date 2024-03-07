@@ -2,6 +2,7 @@ package com.example.core.file;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,18 +24,22 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file) {
         String createFileName = "image/" + createFileName(file.getOriginalFilename());
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
+        try {
+            amazonS3.putObject(bucket, createFileName, file.getInputStream(), metadata);
+        }catch (IOException e){
+            throw new SystemException("파일 업로드 에러 : " + e.getMessage());
+        }
 
-        amazonS3.putObject(bucket, createFileName, file.getInputStream(), metadata);
         return amazonS3.getUrl(bucket, createFileName).toString();
     }
 
-    public List<String> upload(List<MultipartFile> files) throws IOException {
+    public List<String> upload(List<MultipartFile> files) {
         List<String> fileNames = new ArrayList<>();
         for (MultipartFile file : files) {
             fileNames.add(upload(file));

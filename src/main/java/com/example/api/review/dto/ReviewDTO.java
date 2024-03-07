@@ -25,6 +25,7 @@ public class ReviewDTO extends BaseDTO {
     private List<ReviewImageDTO> images;
 
     public ReviewDTO(CreateReviewReq dto) {
+        this.memberId = dto.getMemberId();
         this.restaurantId = dto.getRestaurantId();
         this.reservationId = dto.getReservationId();
         this.rate = dto.getRate();

@@ -31,13 +31,12 @@ public class ReviewService {
     private final S3UploadService s3UploadService;
 
     @Transactional
-    public void createReview(CreateReviewReq dto, List<MultipartFile> files) throws IOException {
+    public void createReview(CreateReviewReq dto, List<MultipartFile> files) {
         ReviewDTO reviewDTO = new ReviewDTO(dto);
-        reviewDTO.setMemberId(1L);
 
         //todo forTest
-        /*ReservationDTO reservationDTO = reservationMapper.getReservation(dto.getReservationId());
-        if(reservationDTO.getStatus() != ReservationStatus.COMPLETED){
+        ReservationDTO reservationDTO = reservationMapper.getReservation(dto.getReservationId());
+        /*if(reservationDTO.getStatus() != ReservationStatus.DONE){
             throw new SystemException("리뷰를 작성할 수 있는 상태가 아닙니다.");
         }
         if(reviewMapper.isExist(reviewDTO.getReservationId())){
@@ -53,7 +52,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateReview(UpdateReviewReq dto, List<MultipartFile> files) throws IOException {
+    public void updateReview(UpdateReviewReq dto, List<MultipartFile> files) {
         if(reviewMapper.getReview(dto.getReviewId()) == null){
             throw new SystemException("해당 리뷰가 없습니다.");
         }
@@ -72,6 +71,8 @@ public class ReviewService {
         if (commentMapper.isPresentComment(reviewId)) {
             throw new SystemException("사장의 댓글이 달려있어 삭제할 수 없습니다.");
         }
+
+        s3UploadService.delete(reviewImageMapper.getReviewImages(reviewId));
         restaurantMapper.decreaseReviewCountAndRate(reviewMapper.getReview(reviewId));
         reviewImageMapper.deleteReviewImages(reviewId);
         reviewMapper.deleteReview(reviewId);
