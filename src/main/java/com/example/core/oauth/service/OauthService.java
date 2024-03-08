@@ -28,9 +28,8 @@ public class OauthService {
         MemberDTO saved = memberMapper.findByOauthId(member.oauthId())
                 .orElseGet(() -> {
                     memberMapper.save(member);
-                    memberMapper.findByOauthId(member.oauthId())
+                    return memberMapper.findByOauthId(member.oauthId())
                             .orElseThrow(() -> new SystemException("존재하지 않는 사용자입니다."));
-                    return memberMapper.findByOauthId(member.oauthId()).get();
                 });
 
         return jwtProvider.createToken(saved);
