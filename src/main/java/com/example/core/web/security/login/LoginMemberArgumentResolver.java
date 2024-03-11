@@ -1,5 +1,6 @@
 package com.example.core.web.security.login;
 
+import com.example.api.member.MemberException;
 import com.example.api.member.MemberMapper;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
         String email = getAuthenticatedUserEmail();
         return memberMapper.findByEmail(email)
-                .orElseThrow(() -> new SystemException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND.getMessage()));
     }
 
     private String getAuthenticatedUserEmail() {

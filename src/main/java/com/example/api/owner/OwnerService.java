@@ -1,5 +1,6 @@
 package com.example.api.owner;
 
+import com.example.api.member.MemberException;
 import com.example.api.owner.dto.CreateOwnerReq;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
@@ -59,7 +60,7 @@ public class OwnerService {
     private Owner checkOwnerExists(long ownerId) {
         Owner owner = ownerMapper.getOwner(ownerId);
         if (owner == null) {
-            throw new SystemException("존재하지 않는 사용자입니다.");
+            throw new SystemException(MemberException.NOT_FOUND.getMessage());
         }
         return owner;
     }

@@ -1,6 +1,7 @@
 package com.example.core.oauth.service;
 
 import com.example.api.member.MemberDTO;
+import com.example.api.member.MemberException;
 import com.example.api.member.MemberMapper;
 import com.example.api.owner.OwnerMapper;
 import com.example.core.exception.SystemException;
@@ -34,7 +35,7 @@ public class OauthService {
                 .orElseGet(() -> {
                     memberMapper.save(member);
                     return memberMapper.findByOauthId(member.oauthId())
-                            .orElseThrow(() -> new SystemException("존재하지 않는 사용자입니다."));
+                            .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND.getMessage()));
                 });
 
         UsersDTO usersDTO = getUsersDTO(saved);
