@@ -37,6 +37,17 @@ public class OauthService {
                             .orElseThrow(() -> new SystemException("존재하지 않는 사용자입니다."));
                 });
 
+        UsersDTO usersDTO = getUsersDTO(saved);
+
+        AccessToken accessToken = jwtProvider.createToken(usersDTO);
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .isOwner(usersDTO.isOwner())
+                .build();
+    }
+
+    private UsersDTO getUsersDTO(MemberDTO saved) {
         UsersDTO usersDTO = UsersDTO.builder()
                 .email(saved.getEmail())
                 .isOwner(false)
@@ -45,12 +56,6 @@ public class OauthService {
         if (ownerMapper.isExistByEmail(saved.getEmail())) {
             usersDTO.setOwner(true);
         }
-
-        AccessToken accessToken = jwtProvider.createToken(usersDTO);
-
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .isOwner(usersDTO.isOwner())
-                .build();
+        return usersDTO;
     }
 }
