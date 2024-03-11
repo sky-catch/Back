@@ -3,8 +3,8 @@ package com.example.core.web.security;
 import static com.example.core.web.security.jwt.JWTUtils.AUTHORIZATION_HEADER;
 import static com.example.core.web.security.jwt.JWTUtils.TOKEN_PREFIX;
 
-import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberMapper;
+import com.example.core.web.security.dto.Authority;
 import com.example.core.web.security.jwt.JWTProvider;
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,7 +32,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String[] NO_CHECK_URIS = {"/oauth"};
-    private static final String DEFAULT_MEMBER_ROLE = "USER";
 
     private final JWTProvider jwtProvider;
     private final MemberMapper memberMapper;
@@ -71,15 +70,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(String accessToken) {
         String email = jwtProvider.getMemberEmail(accessToken);
-        memberMapper.findByEmail(email).ifPresent(this::saveAuthentication);
+        boolean isOwner = jwtProvider.isOwner(accessToken);
+        memberMapper.findByEmail(email).ifPresent(memberDTO -> saveAuthentication(email, isOwner));
     }
 
-    private void saveAuthentication(MemberDTO memberDTO) {
+    private void saveAuthentication(String email, boolean isOwner) {
         UserDetails userDetailsUser = User.builder()
-                .username(memberDTO.getEmail())
+                .username(email)
                 .password(UUID.randomUUID().toString())
-                .roles(DEFAULT_MEMBER_ROLE)
+                .roles(Authority.MEMBER.name())
                 .build();
+
+        if (isOwner) {
+            userDetailsUser = User.builder()
+                    .username(email)
+                    .password(UUID.randomUUID().toString())
+                    .roles(Authority.OWNER.name())
+                    .build();
+        }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsUser, null,
                 authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));

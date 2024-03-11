@@ -64,4 +64,10 @@
         FROM owner
         WHERE EMAIL = #{email}
     </select>
+
+    <select id="isExistByEmail" parameterType="string" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM owner
+                      WHERE email = #{email})
+    </select>
 </mapper>

@@ -82,3 +82,17 @@ CREATE TABLE restaurant_notification
     updated_date    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (notification_id)
 );
+
+CREATE TABLE OWNER
+(
+    owner_id     bigint      NOT NULL AUTO_INCREMENT,
+    name         varchar(25) NOT NULL,
+    image_path   varchar(255)         DEFAULT NULL,
+    phone        varchar(25) NOT NULL,
+    email        varchar(25)          DEFAULT NULL,
+    platform     varchar(25) NOT NULL,
+    status       varchar(25) NOT NULL,
+    created_date timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (owner_id)
+);

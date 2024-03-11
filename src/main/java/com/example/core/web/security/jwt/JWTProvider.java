@@ -1,7 +1,8 @@
 package com.example.core.web.security.jwt;
 
-import com.example.api.member.MemberDTO;
 import com.example.core.exception.SystemException;
+import com.example.core.web.security.dto.UsersDTO;
+import com.example.core.web.security.jwt.dto.AccessToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -25,16 +26,21 @@ public class JWTProvider {
     private Key key;
     private static final long expirationDate = 1000L * 60 * 60 * 24; //현재 24시간 (1000 = 1초)
 
-    public String createToken(MemberDTO memberDTO) {
+    public AccessToken createToken(UsersDTO usersDTO) {
         key = Keys.hmacShaKeyFor(secretCode);
 
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setHeaderParam("type", "jwt")
-                .claim("email", memberDTO.getEmail())
+                .claim("email", usersDTO.getEmail())
+                .claim("isOwner", usersDTO.isOwner())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationDate))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
+
+        return AccessToken.builder()
+                .value(accessToken)
+                .build();
     }
 
     public String getMemberEmail(String token) {
@@ -65,4 +71,12 @@ public class JWTProvider {
         }
     }
 
+    public boolean isOwner(String token) {
+        Jws<Claims> claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
+
+        return claims.getBody().get("isOwner", Boolean.class);
+    }
 }

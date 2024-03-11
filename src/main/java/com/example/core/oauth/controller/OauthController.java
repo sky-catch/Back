@@ -1,6 +1,7 @@
 package com.example.core.oauth.controller;
 
 import com.example.core.oauth.domain.OauthServerType;
+import com.example.core.oauth.dto.LoginResponse;
 import com.example.core.oauth.service.OauthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,10 +40,10 @@ public class OauthController {
 
     @GetMapping("/login/{oauthServerType}")
     @Operation(summary = "사용자 로그인 처리")
-    public ResponseEntity<String> login(
+    public ResponseEntity<LoginResponse> login(
             @Parameter(description = "SNS 종류", required = true) @PathVariable OauthServerType oauthServerType,
             @Parameter(description = "카카오 서버에서 받은 인가 코드", required = true) @RequestParam String code) {
-        String accessToken = oauthService.login(oauthServerType, code);
-        return ResponseEntity.ok(accessToken);
+        LoginResponse response = oauthService.login(oauthServerType, code);
+        return ResponseEntity.ok(response);
     }
 }

@@ -19,4 +19,6 @@ public interface OwnerMapper extends UsersMapper<Owner> {
 
     @Override
     Optional<Owner> findByEmail(String email);
+
+    boolean isExistByEmail(String email);
 }

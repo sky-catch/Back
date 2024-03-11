@@ -1,14 +1,19 @@
 package com.example.core.oauth.service;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberMapper;
+import com.example.api.owner.OwnerMapper;
+import com.example.api.owner.dto.Owner;
 import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
 import com.example.core.oauth.domain.client.OauthMemberClient;
 import com.example.core.oauth.domain.client.OauthMemberClientComposite;
+import com.example.core.oauth.dto.LoginResponse;
 import com.example.core.web.security.jwt.JWTProvider;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +36,8 @@ class OauthServiceTest {
     private AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite;
     @Autowired
     private MemberMapper memberMapper;
+    @Autowired
+    private OwnerMapper ownerMapper;
     @Autowired
     private JWTProvider jwtProvider;
 
@@ -59,20 +66,45 @@ class OauthServiceTest {
         clients.add(client);
         OauthMemberClientComposite oauthMemberClientComposite = new OauthMemberClientComposite(clients);
         this.oauthService = new OauthService(authCodeRequestUrlProviderComposite, oauthMemberClientComposite,
-                memberMapper, jwtProvider);
+                memberMapper, ownerMapper, jwtProvider);
     }
 
     @Test
-    @DisplayName("로그인 성공 시 accessToken 반환 테스트")
+    @DisplayName("회원 로그인 성공 시 accessToken, isOwner = false 반환 테스트")
     void test1() {
         // given
         OauthServerType oauthServerType = OauthServerType.KAKAO;
         String authCode = "authCode";
 
         // when
-        String actual = oauthService.login(oauthServerType, authCode);
+        LoginResponse actual = oauthService.login(oauthServerType, authCode);
 
         // then
-        assertNotNull(actual);
+        assertNotNull(actual.getAccessToken());
+        assertFalse(actual.isOwner());
+    }
+
+    @Test
+    @DisplayName("사장 로그인 성공 시 accessToken, isOwner = true 반환 테스트")
+    void test2() {
+        // given
+        Owner owner = Owner.builder()
+                .name("test owner")
+                .phone("010-1111-1111")
+                .email("test@test.com")
+                .platform("카카오")
+                .status(HumanStatus.ACTIVE)
+                .build();
+        ownerMapper.createOwner(owner);
+
+        OauthServerType oauthServerType = OauthServerType.KAKAO;
+        String authCode = "authCode";
+
+        // when
+        LoginResponse actual = oauthService.login(oauthServerType, authCode);
+
+        // then
+        assertNotNull(actual.getAccessToken());
+        assertTrue(actual.isOwner());
     }
 }
