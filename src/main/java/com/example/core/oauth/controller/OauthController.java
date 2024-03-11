@@ -40,6 +40,7 @@ public class OauthController {
 
     @GetMapping("/login/{oauthServerType}")
     @Operation(summary = "사용자 로그인 처리")
+    @ApiResponse(responseCode = "200", description = "카카오로부터 사용자 정보를 성공적으로 받아온 경우 accessToken, isOwner를 반환합니다.")
     public ResponseEntity<LoginResponse> login(
             @Parameter(description = "SNS 종류", required = true) @PathVariable OauthServerType oauthServerType,
             @Parameter(description = "카카오 서버에서 받은 인가 코드", required = true) @RequestParam String code) {
