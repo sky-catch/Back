@@ -4,6 +4,7 @@ import static com.example.api.restaurant.dto.RestaurantImageType.NORMAL;
 import static com.example.api.restaurant.dto.RestaurantImageType.REPRESENTATIVE;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -70,7 +71,7 @@ class RestaurantServiceTest {
         // given
         RestaurantDTO dto = RestaurantDTO.builder()
                 .ownerId(2L)
-                .name("name")
+                .name("name2")
                 .category("category")
                 .content("content")
                 .phone("phone")
@@ -104,8 +105,32 @@ class RestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("식당 상세 정보를 조회하는 테스트")
+    @DisplayName("중복 이름의 식당을 생성하면 예외가 발생하는 테스트")
     void test3() {
+        // given
+        RestaurantDTO dto = RestaurantDTO.builder()
+                .ownerId(2L)
+                .name("name")
+                .category("category")
+                .content("content")
+                .phone("phone")
+                .capacity(1)
+                .openTime(LocalTime.now())
+                .lastOrderTime(LocalTime.now())
+                .address("address")
+                .detailAddress("detailAddress")
+                .build();
+        restaurantMapper.save(dto);
+
+        // expected
+        assertThatThrownBy(() -> restaurantService.createRestaurant(testRestaurant))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(NOT_UNIQUE_NAME.getMessage());
+    }
+
+    @Test
+    @DisplayName("식당 상세 정보를 조회하는 테스트")
+    void test4() {
         // given
         long createdRestaurantId = restaurantService.createRestaurant(testRestaurant);
 
@@ -120,7 +145,7 @@ class RestaurantServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 식당 상세 정보를 조회하는 테스트")
-    void test4() {
+    void test5() {
         // given
         long notExistsRestaurantId = 1000L;
 
@@ -135,7 +160,7 @@ class RestaurantServiceTest {
     // 2. 생성일 오름차순
     @Test
     @DisplayName("식당 상세 정보 조회 시 식당 이미지들이 정렬되는지 테스트")
-    void test5() {
+    void test6() {
         // given
         long createdRestaurantId = restaurantService.createRestaurant(testRestaurant);
 
@@ -160,7 +185,7 @@ class RestaurantServiceTest {
     // 공지는 시작일순으로 내림차순 정렬
     @Test
     @DisplayName("식당 상세 정보 조회 시 식당 공지사항들이 정렬되는지 테스트")
-    void test6() {
+    void test7() {
         // given
         long createdRestaurantId = restaurantService.createRestaurant(testRestaurant);
 
@@ -182,7 +207,7 @@ class RestaurantServiceTest {
 
     @Test
     @DisplayName("식당 생성 시 이미 식당을 만든 경우 예외 발생하는 테스트")
-    void test7() {
+    void test8() {
         // given
         restaurantService.createRestaurant(testRestaurant);
 

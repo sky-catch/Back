@@ -2,6 +2,7 @@ package com.example.api.restaurant;
 
 import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
 
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
@@ -20,6 +21,10 @@ public class RestaurantService {
     public long createRestaurant(RestaurantDTO dto) {
         if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
             throw new SystemException(CAN_CREATE_ONLY_ONE.getMessage());
+        }
+
+        if (restaurantMapper.isAlreadyExistsName(dto.getName())) {
+            throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
         restaurantMapper.save(dto);

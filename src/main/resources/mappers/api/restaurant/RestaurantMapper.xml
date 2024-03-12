@@ -120,4 +120,8 @@
     <select id="isAlreadyCreated" parameterType="long" resultType="boolean">
         SELECT EXISTS (SELECT * FROM restaurant res WHERE res.owner_id = #{ownerId})
     </select>
+
+    <select id="isAlreadyExistsName" parameterType="String" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name});
+    </select>
 </mapper>
