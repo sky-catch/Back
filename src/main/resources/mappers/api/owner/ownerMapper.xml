@@ -11,13 +11,14 @@
         <result property="email" column="EMAIL"/>
         <result property="platform" column="PLATFORM"/>
         <result property="status" column="STATUS"/>
+        <result property="businessRegistrationNumber" column="BUSINESS_REGISTRATION_NUMBER"/>
         <result property="createdDate" column="CREATED_DATE"/>
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
 
     <insert id="createOwner" parameterType="com.example.api.owner.dto.Owner">
-        INSERT INTO owner (NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS)
-        VALUES (#{name}, #{imagePath}, #{phone}, #{email}, #{platform}, #{status})
+        INSERT INTO owner (NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS, BUSINESS_REGISTRATION_NUMBER)
+        VALUES (#{name}, #{imagePath}, #{phone}, #{email}, #{platform}, #{status}, #{businessRegistrationNumber});
     </insert>
 
     <select id="getOwner" parameterType="long" resultMap="owner">
@@ -28,6 +29,7 @@
                EMAIL,
                PLATFORM,
                STATUS,
+               BUSINESS_REGISTRATION_NUMBER,
                CREATED_DATE,
                UPDATED_DATE
         FROM owner
@@ -59,6 +61,7 @@
                EMAIL,
                PLATFORM,
                STATUS,
+               BUSINESS_REGISTRATION_NUMER,
                CREATED_DATE,
                UPDATED_DATE
         FROM owner
@@ -70,4 +73,14 @@
                       FROM owner
                       WHERE email = #{email})
     </select>
+
+    <select id="findAll" resultMap="owner">
+        SELECT *
+        FROM owner;
+    </select>
+
+    <delete id="deleteAll">
+        DELETE
+        FROM owner;
+    </delete>
 </mapper>

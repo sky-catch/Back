@@ -1,7 +1,7 @@
 package com.example.api.owner;
 
 import com.example.api.member.MemberException;
-import com.example.api.owner.dto.CreateOwnerReq;
+import com.example.api.owner.dto.CreateOwnerDTO;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.owner.dto.UpdateOwnerReq;
@@ -24,18 +24,16 @@ public class OwnerService {
     // 사장이라면 Member, Owner 테이블에 정보 저장
     // 회원이라면 Member 테이블에 정보 저장
     @Transactional
-    public void createOwner(CreateOwnerReq createOwnerReq, MultipartFile file) throws IOException {
-        Owner owner = new Owner(createOwnerReq);
-        //todo 중복 가입 검사
-
-        if (file != null && !file.isEmpty()) {
-            owner.setImagePath(s3UploadService.upload(file));
+    public void createOwner(CreateOwnerDTO dto) {
+        if (ownerMapper.isExistByEmail(dto.getEmail())) {
+            throw new SystemException("사장의 중복 생성은 불가능합니다.");
         }
-        owner.setPlatform("카카오");
-        owner.setStatus(HumanStatus.ACTIVE);
+
+        Owner owner = new Owner(dto);
         ownerMapper.createOwner(owner);
     }
 
+    @Transactional(readOnly = true)
     public GetOwnerRes getOwner(long ownerId) {
         return checkOwnerExists(ownerId).toDto();
     }
