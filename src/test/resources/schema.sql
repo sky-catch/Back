@@ -88,7 +88,6 @@ CREATE TABLE OWNER
     owner_id                     bigint      NOT NULL AUTO_INCREMENT,
     name                         varchar(25) NOT NULL,
     image_path                   varchar(255)         DEFAULT NULL,
-    phone                        varchar(25) NOT NULL,
     email                        varchar(25)          DEFAULT NULL,
     platform                     varchar(25) NOT NULL,
     status                       varchar(25) NOT NULL,

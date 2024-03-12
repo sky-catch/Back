@@ -18,7 +18,6 @@ public class GetOwnerRes extends BaseDTO {
     private long ownerId;
     private String name;
     private String imagePath;
-    private String phone;
     private String email;
     private HumanStatus status;
     private String businessRegistrationNumber;

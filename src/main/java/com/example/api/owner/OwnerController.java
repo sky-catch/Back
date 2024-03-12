@@ -43,11 +43,9 @@ public class OwnerController {
     public void createOwner(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
                             @Valid @RequestBody CreateOwnerReq req) {
 
-        // phone이 있어야 할까?
         CreateOwnerDTO dto = CreateOwnerDTO.builder()
                 .name(memberDTO.getName())
                 .profileImageUrl(memberDTO.getProfileImageUrl())
-                .phone("")
                 .email(memberDTO.getEmail())
                 .platform(memberDTO.getOauthServer())
                 .status(HumanStatus.ACTIVE)

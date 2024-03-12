@@ -18,7 +18,6 @@ public class Owner extends BaseDTO {
     private long ownerId;
     private String name;
     private String imagePath;
-    private String phone;
     private String email;
     private String platform;
     private HumanStatus status;
@@ -27,7 +26,6 @@ public class Owner extends BaseDTO {
     public Owner(CreateOwnerDTO createOwnerDTO) {
         this.name = createOwnerDTO.getName();
         this.imagePath = createOwnerDTO.getProfileImageUrl();
-        this.phone = createOwnerDTO.getPhone();
         this.email = createOwnerDTO.getEmail();
         this.platform = createOwnerDTO.getPlatformName();
         this.status = createOwnerDTO.getStatus();
@@ -37,13 +35,12 @@ public class Owner extends BaseDTO {
     public Owner(UpdateOwnerReq ownerReq) {
         this.ownerId = ownerReq.getOwnerId();
         this.name = ownerReq.getName();
-        this.phone = ownerReq.getPhone();
         this.email = ownerReq.getEmail();
     }
 
     public GetOwnerRes toDto() {
-        return GetOwnerRes.builder().ownerId(ownerId).name(name).imagePath(imagePath).phone(phone)
-                .email(email).status(status).createdDate(getCreatedDate()).updatedDate(getUpdatedDate()).build();
+        return GetOwnerRes.builder().ownerId(ownerId).name(name).imagePath(imagePath).email(email).status(status)
+                .createdDate(getCreatedDate()).updatedDate(getUpdatedDate()).build();
     }
 
 }

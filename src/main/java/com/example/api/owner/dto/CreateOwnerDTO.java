@@ -20,7 +20,6 @@ public class CreateOwnerDTO extends BaseDTO {
     private String name;
     private String profileImageUrl;
     private String email;
-    private String phone;
     private OauthServerType platform;
     private HumanStatus status;
     private String businessRegistrationNumber;

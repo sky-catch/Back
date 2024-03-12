@@ -7,7 +7,6 @@
         <id property="ownerId" column="OWNER_ID"/>
         <result property="name" column="NAME"/>
         <result property="imagePath" column="IMAGE_PATH"/>
-        <result property="phone" column="PHONE"/>
         <result property="email" column="EMAIL"/>
         <result property="platform" column="PLATFORM"/>
         <result property="status" column="STATUS"/>
@@ -17,15 +16,14 @@
     </resultMap>
 
     <insert id="createOwner" parameterType="com.example.api.owner.dto.Owner">
-        INSERT INTO owner (NAME, IMAGE_PATH, PHONE, EMAIL, PLATFORM, STATUS, BUSINESS_REGISTRATION_NUMBER)
-        VALUES (#{name}, #{imagePath}, #{phone}, #{email}, #{platform}, #{status}, #{businessRegistrationNumber});
+        INSERT INTO owner (NAME, IMAGE_PATH, EMAIL, PLATFORM, STATUS, BUSINESS_REGISTRATION_NUMBER)
+        VALUES (#{name}, #{imagePath}, #{email}, #{platform}, #{status}, #{businessRegistrationNumber});
     </insert>
 
     <select id="getOwner" parameterType="long" resultMap="owner">
         SELECT OWNER_ID,
                NAME,
                IMAGE_PATH,
-               PHONE,
                EMAIL,
                PLATFORM,
                STATUS,
@@ -42,7 +40,6 @@
         <if test="imagePath != null">
             IMAGE_PATH = #{imagePath},
         </if>
-        PHONE = #{phone},
         EMAIL = #{email}
         WHERE OWNER_ID = #{ownerId}
     </update>
@@ -57,11 +54,10 @@
         SELECT OWNER_ID,
                NAME,
                IMAGE_PATH,
-               PHONE,
                EMAIL,
                PLATFORM,
                STATUS,
-               BUSINESS_REGISTRATION_NUMER,
+               BUSINESS_REGISTRATION_NUMBER,
                CREATED_DATE,
                UPDATED_DATE
         FROM owner
