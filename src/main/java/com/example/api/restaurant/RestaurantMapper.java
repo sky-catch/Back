@@ -26,4 +26,6 @@ public interface RestaurantMapper {
     boolean isAlreadyCreated(long ownerId);
 
     boolean isAlreadyExistsName(String name);
+
+    Optional<GetRestaurantRes> findRestaurantInfoByName(String name);
 }

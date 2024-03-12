@@ -52,10 +52,10 @@ public class RestaurantController {
         return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping("/{restaurantId}")
-    @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 정렬 기준: 1. type(REPRESENTATION, NORMAL 순서), 2. 등록일(오름차순)")
-    public ResponseEntity<GetRestaurantRes> getRestaurant(@PathVariable long restaurantId) {
-        GetRestaurantRes restaurantRes = restaurantService.getRestaurantInfoById(restaurantId);
+    @GetMapping("/{name}")
+    @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 식당 사진 정렬 기준: 1. type(REPRESENTATION -> NORMAL 순서), 2. 등록일(오름차순)")
+    public ResponseEntity<GetRestaurantRes> getRestaurant(@PathVariable String name) {
+        GetRestaurantRes restaurantRes = restaurantService.getRestaurantInfoByName(name);
 
         return ResponseEntity.ok(restaurantRes);
     }

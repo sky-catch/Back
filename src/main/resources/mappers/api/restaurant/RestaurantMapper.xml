@@ -128,4 +128,39 @@
     <select id="isAlreadyExistsName" parameterType="String" resultType="boolean">
         SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name});
     </select>
+
+    <select id="findRestaurantInfoByName" resultMap="restaurant">
+        SELECT res.restaurant_id,
+               res.owner_id,
+               res.name,
+               res.category,
+               res.content,
+               res.phone,
+               res.capacity,
+               res.open_time,
+               res.last_order_time,
+               res.close_time,
+               res.address,
+               res.detail_address,
+               res.lunch_price,
+               res.dinner_price,
+               res.saved_count,
+               res.review_count,
+               res.review_avg,
+               res.created_date,
+               res.updated_date,
+               resi.restaurant_image_id,
+               resi.path,
+               resi.type,
+               resn.notification_id,
+               resn.title,
+               resn.content,
+               resn.start_date,
+               resn.end_date
+        FROM restaurant res
+                 LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
+        WHERE res.name = #{name}
+        ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
+    </select>
 </mapper>

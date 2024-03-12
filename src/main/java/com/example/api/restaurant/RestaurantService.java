@@ -46,4 +46,10 @@ public class RestaurantService {
 
         return getRestaurantRes;
     }
+
+    @Transactional(readOnly = true)
+    public GetRestaurantRes getRestaurantInfoByName(String name) {
+        return restaurantMapper.findRestaurantInfoByName(name)
+                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+    }
 }
