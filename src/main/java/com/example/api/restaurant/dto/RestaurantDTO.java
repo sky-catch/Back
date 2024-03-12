@@ -50,4 +50,14 @@ public class RestaurantDTO extends BaseDTO {
             throw new SystemException("예약 가능한 시간이 아닙니다.");
         }
     }
+
+    // for mybatis
+    public String getOpenTime() {
+        return openTime.toString();
+    }
+
+    // for mybatis
+    public String getLastOrderTime() {
+        return lastOrderTime.toString();
+    }
 }
