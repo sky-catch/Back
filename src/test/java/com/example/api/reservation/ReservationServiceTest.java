@@ -46,8 +46,8 @@ class ReservationServiceTest {
                 .content("content")
                 .phone("phone")
                 .capacity(10)
-                .openTime(LocalTime.of(10, 0, 0).toString())
-                .lastOrderTime(LocalTime.of(20, 0, 0).toString())
+                .openTime(LocalTime.of(10, 0, 0))
+                .lastOrderTime(LocalTime.of(20, 0, 0))
                 .address("address")
                 .detailAddress("detailAddress")
                 .build();

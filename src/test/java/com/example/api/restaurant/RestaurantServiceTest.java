@@ -57,8 +57,8 @@ class RestaurantServiceTest {
                 .content("content")
                 .phone("phone")
                 .capacity(1)
-                .openTime(LocalTime.now().toString())
-                .lastOrderTime(LocalTime.now().toString())
+                .openTime(LocalTime.now())
+                .lastOrderTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
                 .build();
@@ -68,15 +68,27 @@ class RestaurantServiceTest {
     @DisplayName("새로운 식당을 생성하는 테스트")
     void test1() {
         // given
-        restaurantService.createRestaurant(testRestaurant);
+        RestaurantDTO dto = RestaurantDTO.builder()
+                .ownerId(2L)
+                .name("name")
+                .category("category")
+                .content("content")
+                .phone("phone")
+                .capacity(1)
+                .openTime(LocalTime.now())
+                .lastOrderTime(LocalTime.now())
+                .address("address")
+                .detailAddress("detailAddress")
+                .build();
+        restaurantMapper.save(dto);
+        long before = restaurantMapper.findAll().size();
 
         // when
-        long before = restaurantMapper.findAll().size();
-        restaurantMapper.save(testRestaurant);
-        long actual = restaurantMapper.findAll().size();
+        restaurantService.createRestaurant(testRestaurant);
 
         // then
-        assertEquals(before + 1, actual);
+        long after = restaurantMapper.findAll().size();
+        assertEquals(before + 1, after);
     }
 
     @Test
