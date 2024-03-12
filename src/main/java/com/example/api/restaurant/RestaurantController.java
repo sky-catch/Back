@@ -4,11 +4,12 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.core.web.security.login.LoginMember;
+import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,8 @@ public class RestaurantController {
 
     @PostMapping
     @Operation(summary = "식당 생성", description = "사장은 식당을 생성할 수 있습니다.")
-    public ResponseEntity<Void> createRestaurant(@Parameter(hidden = true) @LoginMember Owner owner,
-                                                 @RequestBody CreateRestaurantReq dto) {
+    public ResponseEntity<Void> createRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
+                                                 @Valid @RequestBody CreateRestaurantReq dto) {
         RestaurantDTO restaurantDTO = RestaurantDTO.builder()
                 .ownerId(owner.getOwnerId())
                 .name(dto.getName())
