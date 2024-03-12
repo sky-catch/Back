@@ -1,21 +1,19 @@
 package com.example.api.restaurant.dto;
 
-import com.example.core.dto.BaseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+
+import javax.validation.constraints.NotNull;
 
 @Schema(description = "식당 생성 요청값")
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRestaurantReq extends BaseDTO {
+public class CreateRestaurantReq {
 
     @NotNull
     @Schema(description = "이름", example = "스시미루")

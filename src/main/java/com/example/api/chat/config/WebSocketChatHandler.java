@@ -4,10 +4,10 @@ import com.example.api.chat.ChatService;
 import com.example.api.chat.dto.Chat;
 import com.example.api.chat.dto.ChatRoomSession;
 import com.example.core.exception.SystemException;
+import com.example.core.web.security.jwt.JWTProvider;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
@@ -25,16 +25,21 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class WebSocketChatHandler extends TextWebSocketHandler {
 
+    //todo 추후 레디스 적용
     private static final Map<Long, ChatRoomSession> enableChatRooms = new HashMap<>();
     private final Gson gson = new Gson();
     private final ChatService chatService;
+    private final JWTProvider jwtProvider;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         String content = message.getPayload();
         long chatRoomId = Long.parseLong(session.getHandshakeHeaders().getFirst("chatRoomId"));
-        //todo 현재 회원인지 사장인지 어떤걸로 구분할지 정해지지 않아서 임시로 헤더로 구분
+        String authorizationHeader = session.getHandshakeHeaders().getFirst("Authorization");
         boolean memberChat = Boolean.parseBoolean(session.getHandshakeHeaders().getFirst("memberChat"));
+
+        jwtProvider.validateBearerToken(authorizationHeader);
+
         Chat chat = Chat.builder().chatRoomId(chatRoomId).memberChat(memberChat).content(content).build();
 
         //채팅 읽음 체크
@@ -65,13 +70,14 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         String chatRoomHeader = session.getHandshakeHeaders().getFirst("chatRoomId");
-        String memberChatHeader = session.getHandshakeHeaders().getFirst("memberChat");
+        String authorizationHeader = session.getHandshakeHeaders().getFirst("Authorization");
+        boolean memberChat = Boolean.parseBoolean(session.getHandshakeHeaders().getFirst("memberChat"));
 
-        if(StringUtils.isEmpty(chatRoomHeader) ||StringUtils.isEmpty(memberChatHeader)){
+        if(StringUtils.isEmpty(chatRoomHeader) ||StringUtils.isEmpty(authorizationHeader) || StringUtils.isEmpty(memberChat)){
             throw new SystemException("헤더를 추가해주세요");
         }
         long chatRoomId = Long.parseLong(chatRoomHeader);
-        boolean memberChat = Boolean.parseBoolean(memberChatHeader);
+        jwtProvider.validateBearerToken(authorizationHeader);
 
         chatService.checkExistChatRoom(chatRoomId);
 

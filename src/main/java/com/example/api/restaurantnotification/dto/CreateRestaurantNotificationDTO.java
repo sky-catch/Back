@@ -1,23 +1,21 @@
 package com.example.api.restaurantnotification.dto;
 
-import com.example.core.dto.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDate;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
-@EqualsAndHashCode(callSuper = true)
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRestaurantNotificationDTO extends BaseDTO {
+public class CreateRestaurantNotificationDTO {
 
     @NotNull
     @Schema(description = "제목", example = "공연안내")

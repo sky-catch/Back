@@ -34,13 +34,17 @@
     </select>
 
     <insert id="createChat">
-        INSERT INTO chat (chat_room_id, member_chat, content)
-        VALUES (#{chatRoomId}, ${memberChat? 1 : 0}, #{content});
+        INSERT INTO chat (chat_room_id, read_chat, member_chat, content)
+        VALUES (#{chatRoomId}, 0, ${memberChat? 1 : 0}, #{content});
     </insert>
 
     <insert id="createChatRoom">
         INSERT INTO chat_room (member_id, restaurant_id, owner_id)
-        VALUES (#{memberId}, #{restaurantId}, (SELECT owner_id FROM restaurant WHERE restaurant_id = #{restaurantId}));
+        select #{memberId}, #{restaurantId}, (SELECT owner_id FROM restaurant WHERE restaurant_id = #{restaurantId})
+        WHERE NOT EXISTS (
+            SELECT 1 FROM chat_room
+            WHERE member_id = #{memberId} AND restaurant_id = #{restaurantId}
+        );
     </insert>
 
     <select id="getChatRoomList" resultMap="GetChatRoomListRes">

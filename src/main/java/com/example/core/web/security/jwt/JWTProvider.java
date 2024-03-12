@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static com.example.core.web.security.jwt.JWTUtils.TOKEN_PREFIX;
+
 @Slf4j
 @Component
 public class JWTProvider {
@@ -78,5 +80,12 @@ public class JWTProvider {
                 .parseClaimsJws(token);
 
         return claims.getBody().get("isOwner", Boolean.class);
+    }
+
+    public void validateBearerToken(String tokenHeader) {
+        if (!tokenHeader.startsWith(TOKEN_PREFIX)) {
+            throw new SystemException("토큰이 Bearer로 시작하지 않습니다.");
+        }
+        validateToken(tokenHeader.replace(TOKEN_PREFIX, ""));
     }
 }
