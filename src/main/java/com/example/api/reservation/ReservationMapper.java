@@ -1,6 +1,6 @@
 package com.example.api.reservation;
 
-import com.example.api.reservation.ReservationController.GetMyReservationDTO;
+import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.GetReservationRes;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
