@@ -33,10 +33,10 @@
                 #{reviewAvg});
     </insert>
 
-    <select id="deleteAll">
+    <delete id="deleteAll">
         DELETE
         FROM restaurant;
-    </select>
+    </delete>
 
     <select id="findAll" resultType="com.example.api.restaurant.dto.RestaurantDTO">
         SELECT *
