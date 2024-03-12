@@ -21,14 +21,15 @@ CREATE TABLE MEMBER
 CREATE TABLE RESTAURANT
 (
     restaurant_id   bigint      NOT NULL AUTO_INCREMENT,
-    owner_id        bigint      NOT NULL,
-    name            varchar(25) NOT NULL,
+    owner_id        bigint      NOT NULL UNIQUE,
+    name            varchar(25) NOT NULL UNIQUE,
     category        varchar(25) NOT NULL,
     content         text,
     phone           varchar(25) NOT NULL,
     capacity        int         NOT NULL,
     open_time       time        NOT NULL,
     last_order_time time        NOT NULL,
+    close_time      time        NOT NULL,
     address         varchar(50) NOT NULL,
     detail_address  varchar(25) NOT NULL,
     lunch_price     int                  DEFAULT NULL,

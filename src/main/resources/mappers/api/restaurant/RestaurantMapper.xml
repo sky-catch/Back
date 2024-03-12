@@ -26,10 +26,12 @@
 
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
-        INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time, address,
-                               detail_address, lunch_price, dinner_price, saved_count, review_count, review_avg)
+        INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time,
+                               close_time, address, detail_address, lunch_price, dinner_price, saved_count,
+                               review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{capacity}, #{openTime}, #{lastOrderTime},
-                #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount}, #{reviewCount},
+                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount},
+                #{reviewCount},
                 #{reviewAvg});
     </insert>
 
@@ -59,6 +61,7 @@
         <id property="capacity" column="capacity"/>
         <id property="openTime" column="open_time"/>
         <id property="lastOrderTime" column="last_order_time"/>
+        <id property="closeTime" column="close_time"/>
         <id property="address" column="address"/>
         <id property="detailAddress" column="detail_address"/>
         <id property="lunchPrice" column="lunch_price"/>
@@ -93,6 +96,7 @@
                res.capacity,
                res.open_time,
                res.last_order_time,
+               res.close_time,
                res.address,
                res.detail_address,
                res.lunch_price,

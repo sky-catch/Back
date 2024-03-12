@@ -61,6 +61,7 @@ class RestaurantNotificationServiceTest {
                 .capacity(1)
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
+                .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
                 .build();

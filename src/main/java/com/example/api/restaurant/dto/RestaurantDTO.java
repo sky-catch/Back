@@ -25,9 +25,8 @@ public class RestaurantDTO extends BaseDTO {
     private String phone;
     private int capacity;
     private LocalTime openTime;
-    // todo 마감 시간 추가하기
-    //    private LocalTime closeTime;
     private LocalTime lastOrderTime;
+    private LocalTime closeTime;
     private String address;
     private String detailAddress;
     private int lunchPrice;
@@ -59,5 +58,10 @@ public class RestaurantDTO extends BaseDTO {
     // for mybatis
     public String getLastOrderTime() {
         return lastOrderTime.toString();
+    }
+
+    // for mybatis
+    public String getCloseTime() {
+        return closeTime.toString();
     }
 }

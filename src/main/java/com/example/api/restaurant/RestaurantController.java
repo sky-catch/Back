@@ -40,6 +40,7 @@ public class RestaurantController {
                 .capacity(dto.getCapacity())
                 .openTime(dto.getOpenTime())
                 .lastOrderTime(dto.getLastOrderTime())
+                .closeTime(dto.getCloseTime())
                 .address(dto.getAddress())
                 .detailAddress(dto.getDetailAddress())
                 .lunchPrice(dto.getLunchPrice())

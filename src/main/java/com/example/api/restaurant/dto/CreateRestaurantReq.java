@@ -41,8 +41,11 @@ public class CreateRestaurantReq extends BaseDTO {
     @Schema(description = "오픈시간", example = "11:00:00")
     private LocalTime openTime;
     @NotNull
-    @Schema(description = "마감시간", example = "22:00:00")
+    @Schema(description = "주문마감시간", example = "20:20:00")
     private LocalTime lastOrderTime;
+    @NotNull
+    @Schema(description = "마감시간", example = "22:00:00")
+    private LocalTime closeTime;
     @NotBlank
     @Schema(description = "주소", example = "압구정로데오")
     private String address;
