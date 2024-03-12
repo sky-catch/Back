@@ -94,6 +94,7 @@ class OauthServiceTest {
                 .email("test@test.com")
                 .platform("카카오")
                 .status(HumanStatus.ACTIVE)
+                .businessRegistrationNumber("101-01-00015")
                 .build();
         ownerMapper.createOwner(owner);
 
