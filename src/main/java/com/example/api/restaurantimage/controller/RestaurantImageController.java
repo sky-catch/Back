@@ -7,7 +7,7 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.RestaurantImageType;
 import com.example.api.restaurantimage.RestaurantImageService;
 import com.example.api.restaurantimage.dto.AddRestaurantImagesDTO;
-import com.example.core.web.security.login.LoginMember;
+import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,7 +44,7 @@ public class RestaurantImageController {
             @ApiResponse(responseCode = "201", description = "식당 이미지들 생성 성공"),
     })
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> addRestaurantImages(@Parameter(hidden = true) @LoginMember Owner owner,
+    public ResponseEntity<Void> addRestaurantImages(@Parameter(hidden = true) @LoginOwner Owner owner,
                                                     @PathVariable long restaurantId,
                                                     @Parameter @RequestPart AddRestaurantImagesReq addRestaurantImagesReq,
                                                     @RequestPart List<MultipartFile> files)
