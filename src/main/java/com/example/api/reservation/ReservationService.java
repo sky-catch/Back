@@ -19,7 +19,7 @@ public class ReservationService {
     private final RestaurantService restaurantService;
 
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
-        return reservationMapper.getReservationsByMemberAndStatus(dto);
+        return reservationMapper.getMyReservationsByStatus(dto);
     }
 
     public long createReservation(ReservationDTO dto) {

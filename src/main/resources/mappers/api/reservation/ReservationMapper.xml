@@ -33,7 +33,7 @@
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
 
-    <select id="getReservationsByMemberAndStatus" resultMap="myReservation">
+    <select id="getMyReservationsByStatus" resultMap="myReservation">
         SELECT rez.RESERVATION_ID,
                rez.MEMBER_ID,
                rez.RESTAURANT_ID,

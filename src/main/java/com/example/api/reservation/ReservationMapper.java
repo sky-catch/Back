@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ReservationMapper {
 
-    List<GetReservationRes> getReservationsByMemberAndStatus(GetMyReservationDTO dto);
+    List<GetReservationRes> getMyReservationsByStatus(GetMyReservationDTO dto);
 
     void save(ReservationDTO dto);
 
