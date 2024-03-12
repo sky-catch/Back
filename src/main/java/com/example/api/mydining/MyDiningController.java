@@ -26,7 +26,7 @@ public class MyDiningController {
     @GetMapping("/my/{status}")
     @Operation(summary = "나의 예약 조회", description = "방문 상태로 내가 예약한 가게를 조회할 수 있습니다.")
     public List<GetReservationRes> getMyReservations(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
-                                                     @PathVariable ReservationStatus status) {
+                                                     @Parameter(description = "방문 상태") @PathVariable ReservationStatus status) {
 
         GetMyReservationDTO dto = GetMyReservationDTO.builder()
                 .memberId(memberDTO.getMemberId())
