@@ -1,5 +1,9 @@
 package com.example.api.restaurantimage;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_OWNER;
+
+import com.example.api.restaurant.RestaurantService;
+import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantImageType;
 import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.api.restaurantimage.dto.AddRestaurantImagesDTO;
@@ -18,15 +22,18 @@ import org.springframework.web.multipart.MultipartFile;
 public class RestaurantImageService {
 
     private final RestaurantImageMapper restaurantImageMapper;
+    private final RestaurantService restaurantService;
     private final S3UploadService s3UploadService;
 
     @Transactional
-    public void addRestaurantImages(AddRestaurantImagesDTO dto) throws IOException {
-        if (dto.isEmptyImages()) {
-            throw new SystemException("식당 이미지는 한 개 이상 존재해야 합니다.");
+    public void addRestaurantImages(AddRestaurantImagesDTO dto, long ownerId) throws IOException {
+        long restaurantId = dto.getRestaurantId();
+        RestaurantDTO findRestaurant = restaurantService.getRestaurantById(restaurantId);
+        if (!findRestaurant.isOwner(ownerId)) {
+            throw new SystemException(NOT_OWNER.getMessage());
         }
 
-        restaurantImageMapper.addRestaurantImages(dto.getRestaurantId(), getAddRestaurantImageWitTypeDTOS(dto));
+        restaurantImageMapper.addRestaurantImages(restaurantId, getAddRestaurantImageWitTypeDTOS(dto));
     }
 
     private List<AddRestaurantImageWithTypeDTO> getAddRestaurantImageWitTypeDTOS(AddRestaurantImagesDTO dto)

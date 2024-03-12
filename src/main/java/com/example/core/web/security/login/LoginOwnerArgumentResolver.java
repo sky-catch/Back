@@ -1,7 +1,6 @@
 package com.example.core.web.security.login;
 
-import com.example.api.member.MemberException;
-import com.example.api.member.MemberMapper;
+import com.example.api.owner.OwnerMapper;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +17,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
+public class LoginOwnerArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final MemberMapper memberMapper;
+    private final OwnerMapper ownerMapper;
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
-        return methodParameter.hasParameterAnnotation(LoginMember.class);
+        return methodParameter.hasParameterAnnotation(LoginOwner.class);
     }
 
     @Override
@@ -32,14 +31,14 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
                                   NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory)
             throws Exception {
 
-        LoginMember loginMemberAnnotation = methodParameter.getParameterAnnotation(LoginMember.class);
-        if (!loginMemberAnnotation.required()) {
+        LoginOwner loginOwnerAnnotation = methodParameter.getParameterAnnotation(LoginOwner.class);
+        if (!loginOwnerAnnotation.required()) {
             return null;
         }
 
         String email = getAuthenticatedUserEmail();
-        return memberMapper.findByEmail(email)
-                .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND.getMessage()));
+        return ownerMapper.findByEmail(email)
+                .orElseThrow(() -> new SystemException("존재하지 않는 사장입니다."));
     }
 
     private String getAuthenticatedUserEmail() {

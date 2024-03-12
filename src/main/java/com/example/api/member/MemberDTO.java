@@ -17,6 +17,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class MemberDTO extends BaseDTO {
 
+    // todo phone 추가하기
     private long memberId;
     private String nickname;
     private String profileImageUrl;

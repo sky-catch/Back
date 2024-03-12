@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(NON_NULL)
-public class RestaurantImage extends BaseDTO {
+public class GetRestaurantImageRes extends BaseDTO {
 
     private long restaurantImageId;
     @JsonIgnore

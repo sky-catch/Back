@@ -7,6 +7,7 @@ import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ class RestaurantNotificationServiceTest {
     private RestaurantMapper restaurantMapper;
     @Autowired
     private RestaurantNotificationService restaurantNotificationService;
+
+    @BeforeEach
+    void init() {
+        restaurantMapper.deleteAll();
+    }
 
     @Test
     @DisplayName("가게 공지사항을 생성하는 테스트")

@@ -50,9 +50,8 @@ public class RestaurantController {
         return ResponseEntity.created(uri).build();
     }
 
-    // todo 리뷰, 편의시설 등 응답값으로 추가하기
     @GetMapping("/{restaurantId}")
-    @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 정렬 기준: 1. type(REPRESENTATION, NORMAL 순서), 2. id(오름차순)")
+    @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 정렬 기준: 1. type(REPRESENTATION, NORMAL 순서), 2. 등록일(오름차순)")
     public ResponseEntity<GetRestaurantRes> getRestaurant(@PathVariable long restaurantId) {
         GetRestaurantRes restaurantRes = restaurantService.getRestaurantInfoById(restaurantId);
 
