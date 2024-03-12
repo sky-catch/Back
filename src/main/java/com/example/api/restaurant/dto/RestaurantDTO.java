@@ -24,8 +24,9 @@ public class RestaurantDTO extends BaseDTO {
     private String content;
     private String phone;
     private int capacity;
-    private String openTime;
-    private String lastOrderTime;
+    private LocalTime openTime;
+    private LocalTime lastOrderTime;
+    private LocalTime closeTime;
     private String address;
     private String detailAddress;
     private int lunchPrice;
@@ -39,14 +40,28 @@ public class RestaurantDTO extends BaseDTO {
     }
 
     public void checkCanMakeReservation(ReservationDTO dto) {
-        // todo capacity 수정하기
         if (capacity < dto.getNumberOfPeople()) {
             throw new SystemException("예약 가능 인원을 초과했습니다.");
         }
+
         LocalTime reservationTime = dto.getTime().toLocalTime();
-        if (LocalTime.parse(openTime).isAfter(reservationTime) || LocalTime.parse(lastOrderTime)
-                .isBefore(reservationTime)) {
+        if (openTime.isAfter(reservationTime) || lastOrderTime.isBefore(reservationTime)) {
             throw new SystemException("예약 가능한 시간이 아닙니다.");
         }
+    }
+
+    // for mybatis
+    public String getOpenTime() {
+        return openTime.toString();
+    }
+
+    // for mybatis
+    public String getLastOrderTime() {
+        return lastOrderTime.toString();
+    }
+
+    // for mybatis
+    public String getCloseTime() {
+        return closeTime.toString();
     }
 }

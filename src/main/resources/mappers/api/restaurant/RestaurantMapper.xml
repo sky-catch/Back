@@ -26,17 +26,19 @@
 
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
-        INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time, address,
-                               detail_address, lunch_price, dinner_price, saved_count, review_count, review_avg)
+        INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time,
+                               close_time, address, detail_address, lunch_price, dinner_price, saved_count,
+                               review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{capacity}, #{openTime}, #{lastOrderTime},
-                #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount}, #{reviewCount},
+                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount},
+                #{reviewCount},
                 #{reviewAvg});
     </insert>
 
-    <select id="deleteAll">
+    <delete id="deleteAll">
         DELETE
         FROM restaurant;
-    </select>
+    </delete>
 
     <select id="findAll" resultType="com.example.api.restaurant.dto.RestaurantDTO">
         SELECT *
@@ -59,6 +61,7 @@
         <id property="capacity" column="capacity"/>
         <id property="openTime" column="open_time"/>
         <id property="lastOrderTime" column="last_order_time"/>
+        <id property="closeTime" column="close_time"/>
         <id property="address" column="address"/>
         <id property="detailAddress" column="detail_address"/>
         <id property="lunchPrice" column="lunch_price"/>
@@ -93,6 +96,7 @@
                res.capacity,
                res.open_time,
                res.last_order_time,
+               res.close_time,
                res.address,
                res.detail_address,
                res.lunch_price,
@@ -119,5 +123,44 @@
 
     <select id="isAlreadyCreated" parameterType="long" resultType="boolean">
         SELECT EXISTS (SELECT * FROM restaurant res WHERE res.owner_id = #{ownerId})
+    </select>
+
+    <select id="isAlreadyExistsName" parameterType="String" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name});
+    </select>
+
+    <select id="findRestaurantInfoByName" resultMap="restaurant">
+        SELECT res.restaurant_id,
+               res.owner_id,
+               res.name,
+               res.category,
+               res.content,
+               res.phone,
+               res.capacity,
+               res.open_time,
+               res.last_order_time,
+               res.close_time,
+               res.address,
+               res.detail_address,
+               res.lunch_price,
+               res.dinner_price,
+               res.saved_count,
+               res.review_count,
+               res.review_avg,
+               res.created_date,
+               res.updated_date,
+               resi.restaurant_image_id,
+               resi.path,
+               resi.type,
+               resn.notification_id,
+               resn.title,
+               resn.content,
+               resn.start_date,
+               resn.end_date
+        FROM restaurant res
+                 LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
+        WHERE res.name = #{name}
+        ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
 </mapper>

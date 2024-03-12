@@ -17,13 +17,41 @@
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
 
-    <select id="getReservationsByMemberAndStatus" resultMap="reservation">
-        SELECT *
+    <resultMap id="myReservation" type="com.example.api.reservation.dto.MyReservationDTO">
+        <id property="reservationId" column="RESERVATION_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="restaurantName" column="RESTAURANT_NAME"/>
+        <result property="restaurantCategory" column="RESTAURANT_CATEGORY"/>
+        <result property="restaurantAddress" column="RESTAURANT_ADDRESS"/>
+        <result property="paymentId" column="PAYMENT_ID"/>
+        <result property="time" column="TIME"/>
+        <result property="numberOfPeople" column="NUMBER_OF_PEOPLE"/>
+        <result property="memo" column="MEMO"/>
+        <result property="status" column="STATUS"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+    </resultMap>
+
+    <select id="getMyReservationsByStatus" resultMap="myReservation">
+        SELECT rez.RESERVATION_ID,
+               rez.MEMBER_ID,
+               rez.RESTAURANT_ID,
+               rt.NAME     as RESTAURANT_NAME,
+               rt.CATEGORY as RESTAURANT_CATEGORY,
+               rt.ADDRESS  as RESTAURANT_ADDRESS,
+               rez.PAYMENT_ID,
+               rez.TIME,
+               rez.NUMBER_OF_PEOPLE,
+               rez.MEMO,
+               rez.STATUS,
+               rez.CREATED_DATE,
+               rez.UPDATED_DATE
         FROM reservation rez
                  INNER JOIN restaurant rt on rt.RESTAURANT_ID = rez.RESTAURANT_ID
         WHERE rez.MEMBER_ID = #{memberId}
           AND rez.STATUS = #{status}
-        ORDER BY rez.CREATED_DATE DESC
+        ORDER BY rez.CREATED_DATE DESC;
     </select>
 
     <insert id="save" parameterType="com.example.api.reservation.ReservationDTO" useGeneratedKeys="true"

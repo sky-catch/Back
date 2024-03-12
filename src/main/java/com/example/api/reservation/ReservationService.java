@@ -1,9 +1,8 @@
 package com.example.api.reservation;
 
-
 import static com.example.api.reservation.ReservationStatus.PLANNED;
 
-import com.example.api.reservation.ReservationController.GetMyReservationDTO;
+import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.GetReservationRes;
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;
@@ -20,7 +19,7 @@ public class ReservationService {
     private final RestaurantService restaurantService;
 
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
-        return reservationMapper.getReservationsByMemberAndStatus(dto);
+        return reservationMapper.getMyReservationsByStatus(dto);
     }
 
     public long createReservation(ReservationDTO dto) {

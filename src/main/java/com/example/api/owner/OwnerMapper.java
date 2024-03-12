@@ -3,6 +3,7 @@ package com.example.api.owner;
 import com.example.api.member.UsersMapper;
 import com.example.api.owner.dto.Owner;
 import com.example.core.dto.HumanStatus;
+import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -21,4 +22,8 @@ public interface OwnerMapper extends UsersMapper<Owner> {
     Optional<Owner> findByEmail(String email);
 
     boolean isExistByEmail(String email);
+
+    List<Owner> findAll();
+
+    void deleteAll();
 }

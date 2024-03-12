@@ -90,10 +90,10 @@ class OauthServiceTest {
         // given
         Owner owner = Owner.builder()
                 .name("test owner")
-                .phone("010-1111-1111")
                 .email("test@test.com")
                 .platform("카카오")
                 .status(HumanStatus.ACTIVE)
+                .businessRegistrationNumber("101-01-00015")
                 .build();
         ownerMapper.createOwner(owner);
 

@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.api.reservation.ReservationController.GetMyReservationDTO;
+import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.GetReservationRes;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
@@ -15,6 +15,7 @@ import com.example.core.exception.SystemException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,8 @@ class ReservationServiceTest {
 
     @BeforeEach
     void init() {
+        restaurantMapper.deleteAll();
+
         restaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
@@ -46,18 +49,25 @@ class ReservationServiceTest {
                 .content("content")
                 .phone("phone")
                 .capacity(10)
-                .openTime(LocalTime.of(10, 0, 0).toString())
-                .lastOrderTime(LocalTime.of(20, 0, 0).toString())
+                .openTime(LocalTime.of(10, 0, 0))
+                .lastOrderTime(LocalTime.of(20, 0, 0))
+                .closeTime(LocalTime.of(22, 0, 0))
                 .address("address")
                 .detailAddress("detailAddress")
                 .build();
         restaurantMapper.save(restaurant);
     }
 
+    @AfterEach
+    void cleanup() {
+        restaurantMapper.deleteAll();
+        reservationMapper.deleteAll();
+    }
+
     // todo 테스트 보충하기
 
     @Test
-    @DisplayName("방문 상태로 나의 예약 조회를 할 수 있다.")
+    @DisplayName("방문 상태로 나의 예약을 조회할 수 있다.")
     void test1() {
         // given
         for (int i = 1; i <= 15; i++) {

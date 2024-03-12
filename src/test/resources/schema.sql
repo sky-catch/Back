@@ -21,14 +21,15 @@ CREATE TABLE MEMBER
 CREATE TABLE RESTAURANT
 (
     restaurant_id   bigint      NOT NULL AUTO_INCREMENT,
-    owner_id        bigint      NOT NULL,
-    name            varchar(25) NOT NULL,
+    owner_id        bigint      NOT NULL UNIQUE,
+    name            varchar(25) NOT NULL UNIQUE,
     category        varchar(25) NOT NULL,
     content         text,
     phone           varchar(25) NOT NULL,
     capacity        int         NOT NULL,
     open_time       time        NOT NULL,
     last_order_time time        NOT NULL,
+    close_time      time        NOT NULL,
     address         varchar(50) NOT NULL,
     detail_address  varchar(25) NOT NULL,
     lunch_price     int                  DEFAULT NULL,
@@ -85,14 +86,14 @@ CREATE TABLE restaurant_notification
 
 CREATE TABLE OWNER
 (
-    owner_id     bigint      NOT NULL AUTO_INCREMENT,
-    name         varchar(25) NOT NULL,
-    image_path   varchar(255)         DEFAULT NULL,
-    phone        varchar(25) NOT NULL,
-    email        varchar(25)          DEFAULT NULL,
-    platform     varchar(25) NOT NULL,
-    status       varchar(25) NOT NULL,
-    created_date timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_date timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    owner_id                     bigint      NOT NULL AUTO_INCREMENT,
+    name                         varchar(25) NOT NULL,
+    image_path                   varchar(255)         DEFAULT NULL,
+    email                        varchar(25)          DEFAULT NULL,
+    platform                     varchar(25) NOT NULL,
+    status                       varchar(25) NOT NULL,
+    business_registration_number varchar(25) NOT NULL,
+    created_date                 timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date                 timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (owner_id)
 );
