@@ -48,6 +48,8 @@ class RestaurantServiceTest {
 
     @BeforeEach
     void init() {
+        restaurantMapper.deleteAll();
+
         testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
