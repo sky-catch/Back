@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import java.util.ArrayList;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,7 +56,7 @@ public class ReservationController {
 
     @PostMapping("/availTimeSlots")
     @Operation(summary = "예약 가능한 시간 조회", description = "해당 날짜에 예약 가능한 시간들을 조회하는 API입니다.")
-    public ResponseEntity<TimeSlots> getAvailableTimeSlots(@RequestBody GetAvailableTimeSlotsReq req) {
+    public ResponseEntity<TimeSlots> getAvailableTimeSlots(@Valid @RequestBody GetAvailableTimeSlotsReq req) {
 
         RestaurantDTO restaurant = restaurantService.getRestaurantById(req.getRestaurantId());
 
