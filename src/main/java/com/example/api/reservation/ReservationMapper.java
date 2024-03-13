@@ -1,6 +1,7 @@
 package com.example.api.reservation;
 
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.reservation.dto.FindAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.GetReservationRes;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,4 +16,6 @@ public interface ReservationMapper {
     void deleteAll();
 
     ReservationDTO getReservation(long reservationId);
+
+    List<ReservationDTO> findByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime(FindAvailableTimeSlotDTO dto);
 }

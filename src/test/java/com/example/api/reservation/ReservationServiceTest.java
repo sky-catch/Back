@@ -3,15 +3,20 @@ package com.example.api.reservation;
 import static com.example.api.reservation.ReservationStatus.CANCEL;
 import static com.example.api.reservation.ReservationStatus.DONE;
 import static com.example.api.reservation.ReservationStatus.PLANNED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.GetReservationRes;
+import com.example.api.reservation.dto.TimeSlot;
+import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -36,26 +41,28 @@ class ReservationServiceTest {
     @Autowired
     private RestaurantMapper restaurantMapper;
 
-    private RestaurantDTO restaurant;
+    private RestaurantDTO testRestaurant;
+    private final LocalTime openTime = LocalTime.of(10, 0, 0);
+    private final LocalTime lastOrderTime = LocalTime.of(20, 0, 0);
 
     @BeforeEach
     void init() {
         restaurantMapper.deleteAll();
 
-        restaurant = RestaurantDTO.builder()
+        testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
                 .category("category")
                 .content("content")
                 .phone("phone")
                 .capacity(10)
-                .openTime(LocalTime.of(10, 0, 0))
-                .lastOrderTime(LocalTime.of(20, 0, 0))
+                .openTime(openTime)
+                .lastOrderTime(lastOrderTime)
                 .closeTime(LocalTime.of(22, 0, 0))
                 .address("address")
                 .detailAddress("detailAddress")
                 .build();
-        restaurantMapper.save(restaurant);
+        restaurantMapper.save(testRestaurant);
     }
 
     @AfterEach
@@ -79,7 +86,7 @@ class ReservationServiceTest {
                 status = DONE;
             }
             ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(restaurant.getRestaurantId())
+                    .restaurantId(testRestaurant.getRestaurantId())
                     .memberId(1L)
                     .reservationDayId(1L)
                     .paymentId(1L)
@@ -111,7 +118,7 @@ class ReservationServiceTest {
     void test2() {
         // given
         ReservationDTO dto = ReservationDTO.builder()
-                .restaurantId(restaurant.getRestaurantId())
+                .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
@@ -133,7 +140,7 @@ class ReservationServiceTest {
     void test3() {
         // given
         ReservationDTO dto = ReservationDTO.builder()
-                .restaurantId(restaurant.getRestaurantId())
+                .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
@@ -154,7 +161,7 @@ class ReservationServiceTest {
     void test4() {
         // given
         ReservationDTO dto = ReservationDTO.builder()
-                .restaurantId(restaurant.getRestaurantId())
+                .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
@@ -168,5 +175,94 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining("잘못된 예약 상태입니다.");
+    }
+
+    @Test
+    @DisplayName("해당 날짜에 식당의 예약이 없다면 오픈 시간부터 주문 마감 시간까지 30분 단위로 예약 가능 시간을 반환하는 테스트")
+    void test5() {
+        // given
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantDTO(testRestaurant)
+                .numberOfPeople(2)
+                .searchDate(LocalDate.now())
+                .visitTime(openTime)
+                .build();
+
+        // when
+        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
+
+        // then
+        assertThat(actual.getTimeSlots())
+                .hasSize(21)
+                .containsExactly(
+                        TimeSlot.of(LocalTime.of(10, 0, 0)),
+                        TimeSlot.of(LocalTime.of(10, 30, 0)),
+                        TimeSlot.of(LocalTime.of(11, 0, 0)),
+                        TimeSlot.of(LocalTime.of(11, 30, 0)),
+                        TimeSlot.of(LocalTime.of(12, 0, 0)),
+                        TimeSlot.of(LocalTime.of(12, 30, 0)),
+                        TimeSlot.of(LocalTime.of(13, 0, 0)),
+                        TimeSlot.of(LocalTime.of(13, 30, 0)),
+                        TimeSlot.of(LocalTime.of(14, 0, 0)),
+                        TimeSlot.of(LocalTime.of(14, 30, 0)),
+                        TimeSlot.of(LocalTime.of(15, 0, 0)),
+                        TimeSlot.of(LocalTime.of(15, 30, 0)),
+                        TimeSlot.of(LocalTime.of(16, 0, 0)),
+                        TimeSlot.of(LocalTime.of(16, 30, 0)),
+                        TimeSlot.of(LocalTime.of(17, 0, 0)),
+                        TimeSlot.of(LocalTime.of(17, 30, 0)),
+                        TimeSlot.of(LocalTime.of(18, 0, 0)),
+                        TimeSlot.of(LocalTime.of(18, 30, 0)),
+                        TimeSlot.of(LocalTime.of(19, 0, 0)),
+                        TimeSlot.of(LocalTime.of(19, 30, 0)),
+                        TimeSlot.of(LocalTime.of(20, 0, 0))
+                );
+    }
+
+    @Test
+    @DisplayName("해당 날짜에 식당의 예약이 있다면 예약 시간을 제외한 예약 가능 시간을 반환하는 테스트")
+    void test6() {
+        // given
+        for (int i = 0; i < 10; i++) {
+            ReservationDTO dto = ReservationDTO.builder()
+                    .restaurantId(testRestaurant.getRestaurantId())
+                    .memberId(1L)
+                    .reservationDayId(1L)
+                    .paymentId(1L)
+                    .time(LocalDateTime.of(LocalDate.now(), openTime.plusMinutes(i * 30)))
+                    .numberOfPeople(2)
+                    .memo("메모")
+                    .status(PLANNED)
+                    .build();
+            reservationMapper.save(dto);
+
+        }
+
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantDTO(testRestaurant)
+                .numberOfPeople(2)
+                .searchDate(LocalDate.now())
+                .visitTime(openTime)
+                .build();
+
+        // when
+        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
+
+        // then
+        assertThat(actual.getTimeSlots())
+                .hasSize(11)
+                .containsExactly(
+                        TimeSlot.of(LocalTime.of(15, 0, 0)),
+                        TimeSlot.of(LocalTime.of(15, 30, 0)),
+                        TimeSlot.of(LocalTime.of(16, 0, 0)),
+                        TimeSlot.of(LocalTime.of(16, 30, 0)),
+                        TimeSlot.of(LocalTime.of(17, 0, 0)),
+                        TimeSlot.of(LocalTime.of(17, 30, 0)),
+                        TimeSlot.of(LocalTime.of(18, 0, 0)),
+                        TimeSlot.of(LocalTime.of(18, 30, 0)),
+                        TimeSlot.of(LocalTime.of(19, 0, 0)),
+                        TimeSlot.of(LocalTime.of(19, 30, 0)),
+                        TimeSlot.of(LocalTime.of(20, 0, 0))
+                );
     }
 }

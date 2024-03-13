@@ -72,4 +72,15 @@
         FROM reservation
         WHERE reservation_id = #{reservationId}
     </select>
+
+    <select id="findByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime"
+            parameterType="com.example.api.reservation.dto.FindAvailableTimeSlotDTO"
+            resultType="com.example.api.reservation.ReservationDTO">
+        SELECT *
+        FROM reservation rez
+                 INNER JOIN restaurant rt on rt.RESTAURANT_ID = rez.RESTAURANT_ID
+        WHERE rez.STATUS = #{status}
+          AND cast(rez.TIME as DATE) = #{searchDate}
+          AND cast(rez.TIME as TIME) >= #{visitTime};
+    </select>
 </mapper>
