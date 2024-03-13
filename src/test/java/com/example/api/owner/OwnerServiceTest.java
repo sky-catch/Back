@@ -1,12 +1,9 @@
 package com.example.api.owner;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.example.api.owner.dto.CreateOwnerDTO;
+import com.example.api.member.MemberDTO;
 import com.example.core.dto.HumanStatus;
 import com.example.core.exception.SystemException;
-import com.example.core.oauth.domain.OauthServerType;
+import com.example.core.oauth.domain.OauthId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+
+import static com.example.core.oauth.domain.OauthServerType.KAKAO;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -36,18 +37,23 @@ class OwnerServiceTest {
     @DisplayName("새로운 사장을 생성하는 테스트")
     void test1() {
         // given
-        CreateOwnerDTO dto = CreateOwnerDTO.builder()
-                .name("test name")
-                .profileImageUrl("test profile image url")
-                .email("test@test.com")
-                .platform(OauthServerType.KAKAO)
+        OauthId oauthId = OauthId.builder()
+                .oauthServerId(String.valueOf(1L))
+                .oauthServerType(KAKAO)
+                .build();
+        MemberDTO dto = MemberDTO.builder()
+                .nickname("testNickname")
+                .profileImageUrl("testProfileImageUrl")
+                .email("testEmail@test.com")
+                .name("testName")
                 .status(HumanStatus.ACTIVE)
-                .businessRegistrationNumber("101-01-00015")
+                .oauthServerId(oauthId.oauthServerId())
+                .oauthServer(oauthId.oauthServer())
                 .build();
 
         // when
         long before = ownerMapper.findAll().size();
-        ownerService.createOwner(dto);
+        ownerService.createOwner(dto, "101-01-00015");
         long actual = ownerMapper.findAll().size();
 
         // then
@@ -58,18 +64,23 @@ class OwnerServiceTest {
     @DisplayName("중복 사장 생성은 예외를 반환하는 테스트")
     void test2() {
         // given
-        CreateOwnerDTO dto = CreateOwnerDTO.builder()
-                .name("test name")
-                .profileImageUrl("test profile image url")
-                .email("test@test.com")
-                .platform(OauthServerType.KAKAO)
-                .status(HumanStatus.ACTIVE)
-                .businessRegistrationNumber("101-01-00015")
+        OauthId oauthId = OauthId.builder()
+                .oauthServerId(String.valueOf(1L))
+                .oauthServerType(KAKAO)
                 .build();
-        ownerService.createOwner(dto);
+        MemberDTO dto = MemberDTO.builder()
+                .nickname("testNickname")
+                .profileImageUrl("testProfileImageUrl")
+                .email("testEmail@test.com")
+                .name("testName")
+                .status(HumanStatus.ACTIVE)
+                .oauthServerId(oauthId.oauthServerId())
+                .oauthServer(oauthId.oauthServer())
+                .build();
+        ownerService.createOwner(dto, "101-01-00015");
 
         // expected
-        assertThatThrownBy(() -> ownerService.createOwner(dto))
+        assertThatThrownBy(() -> ownerService.createOwner(dto, "101-01-00015"))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining("사장의 중복 생성은 불가능합니다.");
     }

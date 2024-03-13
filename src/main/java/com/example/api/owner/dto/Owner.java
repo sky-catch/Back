@@ -1,7 +1,9 @@
 package com.example.api.owner.dto;
 
+import com.example.api.member.MemberDTO;
 import com.example.core.dto.BaseDTO;
 import com.example.core.dto.HumanStatus;
+import com.example.core.oauth.domain.OauthServerType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,17 +21,17 @@ public class Owner extends BaseDTO {
     private String name;
     private String imagePath;
     private String email;
-    private String platform;
+    private OauthServerType oauthServer;
     private HumanStatus status;
     private String businessRegistrationNumber;
 
-    public Owner(CreateOwnerDTO createOwnerDTO) {
-        this.name = createOwnerDTO.getName();
-        this.imagePath = createOwnerDTO.getProfileImageUrl();
-        this.email = createOwnerDTO.getEmail();
-        this.platform = createOwnerDTO.getPlatformName();
-        this.status = createOwnerDTO.getStatus();
-        this.businessRegistrationNumber = createOwnerDTO.getBusinessRegistrationNumber();
+    public Owner(MemberDTO memberDTO, String businessRegistrationNumber) {
+        this.name = memberDTO.getName();
+        this.imagePath = memberDTO.getProfileImageUrl();
+        this.email = memberDTO.getEmail();
+        this.oauthServer = memberDTO.getOauthServer();
+        this.status = memberDTO.getStatus();
+        this.businessRegistrationNumber = businessRegistrationNumber;
     }
 
     public Owner(UpdateOwnerReq ownerReq) {

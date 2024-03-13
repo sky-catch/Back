@@ -90,7 +90,7 @@ CREATE TABLE OWNER
     name                         varchar(25) NOT NULL,
     image_path                   varchar(255)         DEFAULT NULL,
     email                        varchar(25)          DEFAULT NULL,
-    platform                     varchar(25) NOT NULL,
+    oauth_server                 varchar(25) NOT NULL,
     status                       varchar(25) NOT NULL,
     business_registration_number varchar(25) NOT NULL,
     created_date                 timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,

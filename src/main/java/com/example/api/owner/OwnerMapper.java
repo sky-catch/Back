@@ -10,11 +10,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface OwnerMapper extends UsersMapper<Owner> {
 
-    void createOwner(Owner dto);
+    void createOwner(Owner owner);
 
     Owner getOwner(long ownerId);
-
-    void updateOwner(Owner dto);
 
     void deleteOwner(long ownerId, HumanStatus status);
 

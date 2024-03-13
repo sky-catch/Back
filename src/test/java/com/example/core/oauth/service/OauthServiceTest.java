@@ -91,7 +91,7 @@ class OauthServiceTest {
         Owner owner = Owner.builder()
                 .name("test owner")
                 .email("test@test.com")
-                .platform("카카오")
+                .oauthServer(OauthServerType.KAKAO)
                 .status(HumanStatus.ACTIVE)
                 .businessRegistrationNumber("101-01-00015")
                 .build();
