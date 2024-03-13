@@ -11,9 +11,11 @@ import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,14 +48,22 @@ public class ReservationService {
     }
 
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
+        RestaurantDTO restaurantDTO = dto.getRestaurantDTO();
+        List<TimeSlot> allAvailableTimeSlots = createAllAvailableTimeSlots(restaurantDTO);
+
         FindAvailableTimeSlotDTO findAvailableTimeSlotDTO = FindAvailableTimeSlotDTO.builder()
                 .restaurantId(dto.getRestaurantId())
                 .searchDate(dto.getSearchDate())
                 .visitTime(dto.getVisitTime())
                 .status(PLANNED)
                 .build();
+        List<TimeSlot> availableTimeSlots = subtractReservationTimeSlots(findAvailableTimeSlotDTO,
+                allAvailableTimeSlots);
 
-        RestaurantDTO restaurantDTO = dto.getRestaurantDTO();
+        return TimeSlots.of(availableTimeSlots);
+    }
+
+    private List<TimeSlot> createAllAvailableTimeSlots(RestaurantDTO restaurantDTO) {
         List<TimeSlot> availableTimeSlots = new ArrayList<>();
         LocalTime openTime = LocalTime.parse(restaurantDTO.getOpenTime());
         LocalTime lastOrderTime = LocalTime.parse(restaurantDTO.getLastOrderTime());
@@ -61,15 +71,20 @@ public class ReservationService {
              availableTimeSlot = availableTimeSlot.getNextTimeSlot()) {
             availableTimeSlots.add(availableTimeSlot);
         }
+        return availableTimeSlots;
+    }
 
+    private List<TimeSlot> subtractReservationTimeSlots(FindAvailableTimeSlotDTO findAvailableTimeSlotDTO,
+                                                        List<TimeSlot> allAvailableTimeSlots) {
         List<ReservationDTO> reservationDTOSByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime = reservationMapper.findByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime(
                 findAvailableTimeSlotDTO);
-        for (ReservationDTO reservationDTO : reservationDTOSByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime) {
-            LocalTime reservationTime = reservationDTO.getTime().toLocalTime();
-            TimeSlot reservationTimeSlot = TimeSlot.of(reservationTime);
-            availableTimeSlots.remove(reservationTimeSlot);
-        }
+        List<TimeSlot> reservationTimeSlots = reservationDTOSByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime.stream()
+                .map(ReservationDTO::getTime)
+                .map(LocalDateTime::toLocalTime)
+                .map(TimeSlot::of)
+                .collect(Collectors.toList());
+        allAvailableTimeSlots.removeAll(reservationTimeSlots);
 
-        return TimeSlots.of(availableTimeSlots);
+        return allAvailableTimeSlots;
     }
 }
