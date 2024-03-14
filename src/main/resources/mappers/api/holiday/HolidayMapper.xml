@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.holiday.HolidayMapper">
+    <insert id="saveAll">
+        INSERT INTO holiday(restaurant_id, day)
+        VALUES
+        <foreach collection="list" item="holidayDTO" index="index" open="(" close=")" separator="),(">
+            #{holidayDTO.restaurantId},
+            #{holidayDTO.day}
+        </foreach>
+    </insert>
+
+    <select id="isAlreadyExistsDays" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM holiday h WHERE h.restaurant_id = #{restaurantId}
+        <choose>
+            <when test="days.size != 0">
+                AND h.day IN
+                <foreach collection="days" item="day" index="index" open="(" close=")" separator=",">
+                    #{day}
+                </foreach>
+            </when>
+        </choose>
+        )
+    </select>
+
+    <select id="findAll" resultType="com.example.api.holiday.HolidayDTO">
+        SELECT *
+        FROM holiday;
+    </select>
+
+    <delete id="deleteAll">
+        DELETE
+        FROM holiday;
+    </delete>
+</mapper>

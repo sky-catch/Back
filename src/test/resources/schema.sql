@@ -98,3 +98,13 @@ CREATE TABLE OWNER
     updated_date                 timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (owner_id)
 );
+
+CREATE TABLE HOLIDAY
+(
+    holiday_id    bigint      NOT NULL AUTO_INCREMENT,
+    restaurant_id bigint      NOT NULL,
+    day           varchar(25) NOT NULL,
+    created_date  timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date  timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (holiday_id)
+);

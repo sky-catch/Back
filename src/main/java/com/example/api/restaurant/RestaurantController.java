@@ -1,5 +1,6 @@
 package com.example.api.restaurant;
 
+import com.example.api.holiday.HolidayService;
 import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final HolidayService holidayService;
 
     @PostMapping
     @Operation(summary = "식당 생성", description = "사장은 식당을 생성할 수 있습니다.")
@@ -49,6 +51,9 @@ public class RestaurantController {
                 .reviewCount(dto.getReviewCount())
                 .build();
         long createdRestaurantId = restaurantService.createRestaurant(restaurantDTO);
+
+        holidayService.createHolidays(createdRestaurantId, dto.getDays());
+
         URI uri = URI.create("/restaurants/" + createdRestaurantId);
         return ResponseEntity.created(uri).build();
     }

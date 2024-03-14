@@ -1,5 +1,6 @@
 package com.example.api.restaurant.dto;
 
+import com.example.api.holiday.Days;
 import com.example.core.dto.BaseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalTime;
@@ -60,6 +61,10 @@ public class CreateRestaurantReq extends BaseDTO {
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "14만원")
     private int dinnerPrice;
+
+    @Schema(description = "휴무일", example = "월,화")
+    private Days days;
+
     private long savedCount;
     private long reviewCount;
     private float reviewAvg;
