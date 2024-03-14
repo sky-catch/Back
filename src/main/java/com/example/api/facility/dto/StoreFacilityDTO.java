@@ -1,4 +1,4 @@
-package com.example.api.facility;
+package com.example.api.facility.dto;
 
 import com.example.core.dto.BaseDTO;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FacilityDTO extends BaseDTO {
+public class StoreFacilityDTO extends BaseDTO {
 
     private long facilityId;
-    private String name;
-    private String path;
+    private long restaurantId;
 }

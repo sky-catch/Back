@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.facility.StoreFacilityMapper">
+
+    <insert id="createFacility" parameterType="com.example.api.facility.dto.FacilityReq">
+        INSERT IGNORE INTO store_facility (facility_id, restaurant_id)
+        VALUES
+        <foreach collection="facility" item="item" index="idx" separator=",">
+            (
+            (SELECT facility_id from facility where en_name = #{item})
+            , #{restaurantId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteFacility" parameterType="com.example.api.facility.dto.FacilityReq">
+        DELETE FROM store_facility
+        WHERE restaurant_id = #{restaurantId}
+        AND facility_id IN
+        <foreach collection="facility" item="item" open="(" close=")" separator=",">
+            (SELECT facility_id FROM facility WHERE en_name = #{item})
+        </foreach>
+    </delete>
+
+</mapper>

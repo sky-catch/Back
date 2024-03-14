@@ -45,9 +45,8 @@ public class RestaurantController {
                 .detailAddress(dto.getDetailAddress())
                 .lunchPrice(dto.getLunchPrice())
                 .dinnerPrice(dto.getDinnerPrice())
-                .reviewCount(dto.getReviewCount())
                 .build();
-        long createdRestaurantId = restaurantService.createRestaurant(restaurantDTO);
+        long createdRestaurantId = restaurantService.createRestaurant(restaurantDTO, dto.getFacility());
         URI uri = URI.create("/restaurants/" + createdRestaurantId);
         return ResponseEntity.created(uri).build();
     }

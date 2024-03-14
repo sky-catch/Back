@@ -27,12 +27,9 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time,
-                               close_time, address, detail_address, lunch_price, dinner_price, saved_count,
-                               review_count, review_avg)
+                               close_time, address, detail_address, lunch_price, dinner_price)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{capacity}, #{openTime}, #{lastOrderTime},
-                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount},
-                #{reviewCount},
-                #{reviewAvg});
+                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice});
     </insert>
 
     <delete id="deleteAll">
