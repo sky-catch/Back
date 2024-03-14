@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class ReservationService {
         return reservationMapper.getMyReservationsByStatus(dto);
     }
 
+    @Transactional
     public long createReservation(ReservationDTO dto) {
         // 1. 식당 존재 유무
         RestaurantDTO restaurant = restaurantService.getRestaurantById(dto.getRestaurantId());
@@ -47,6 +49,7 @@ public class ReservationService {
         return dto.getReservationId();
     }
 
+    @Transactional(readOnly = true)
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
         RestaurantDTO restaurantDTO = dto.getRestaurantDTO();
         List<TimeSlot> allAvailableTimeSlots = createAllAvailableTimeSlots(restaurantDTO);
