@@ -35,8 +35,12 @@ public class CreateRestaurantReq extends BaseDTO {
     private String phone;
     @NotNull
     @Min(1)
-    @Schema(description = "시간당 최대 예약 수", example = "5")
-    private int capacity;
+    @Schema(description = "예약 최대 인원 수", example = "2")
+    private int tablePersonMax;
+    @NotNull
+    @Min(1)
+    @Schema(description = "예약 최소 인원 수", example = "4")
+    private int tablePersonMin;
     @NotNull
     @Schema(description = "오픈시간", example = "11:00:00")
     private LocalTime openTime;

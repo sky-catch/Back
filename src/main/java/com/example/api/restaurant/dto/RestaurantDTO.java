@@ -23,7 +23,8 @@ public class RestaurantDTO extends BaseDTO {
     private String category;
     private String content;
     private String phone;
-    private int capacity;
+    private int tablePersonMax;
+    private int tablePersonMin;
     private LocalTime openTime;
     private LocalTime lastOrderTime;
     private LocalTime closeTime;
@@ -35,13 +36,16 @@ public class RestaurantDTO extends BaseDTO {
     private long reviewCount;
     private float reviewAvg;
 
+    // todo 생성자 값 검증하기 - tablePersonMax < tablePersonMin
+
     public boolean isOwner(long ownerId) {
         return this.ownerId == ownerId;
     }
 
     public void checkCanMakeReservation(ReservationDTO dto) {
-        if (capacity < dto.getNumberOfPeople()) {
-            throw new SystemException("예약 가능 인원을 초과했습니다.");
+        int numberOfPeople = dto.getNumberOfPeople();
+        if (numberOfPeople < tablePersonMin || numberOfPeople > tablePersonMax) {
+            throw new SystemException("예약 인원 수가 잘못됐습니다.");
         }
 
         LocalTime reservationTime = dto.getTime().toLocalTime();
@@ -51,7 +55,7 @@ public class RestaurantDTO extends BaseDTO {
     }
 
     public boolean checkNumberOfPeople(int numberOfPeople) {
-        return capacity < numberOfPeople;
+        return tablePersonMax < numberOfPeople || tablePersonMin > numberOfPeople;
     }
 
     // for mybatis

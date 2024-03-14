@@ -26,13 +26,12 @@
 
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
-        INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time,
-                               close_time, address, detail_address, lunch_price, dinner_price, saved_count,
-                               review_count, review_avg)
-        VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{capacity}, #{openTime}, #{lastOrderTime},
-                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, #{savedCount},
-                #{reviewCount},
-                #{reviewAvg});
+        INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
+                               last_order_time, close_time, address, detail_address, lunch_price, dinner_price,
+                               saved_count, review_count, review_avg)
+        VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
+                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice},
+                #{dinnerPrice}, #{savedCount}, #{reviewCount}, #{reviewAvg});
     </insert>
 
     <delete id="deleteAll">
@@ -58,7 +57,8 @@
         <id property="category" column="category"/>
         <id property="content" column="content"/>
         <id property="phone" column="phone"/>
-        <id property="capacity" column="capacity"/>
+        <id property="tablePersonMax" column="table_person_max"/>
+        <id property="tablePersonMin" column="table_person_min"/>
         <id property="openTime" column="open_time"/>
         <id property="lastOrderTime" column="last_order_time"/>
         <id property="closeTime" column="close_time"/>
@@ -93,7 +93,8 @@
                res.category,
                res.content,
                res.phone,
-               res.capacity,
+               res.table_person_max,
+               res.table_person_min,
                res.open_time,
                res.last_order_time,
                res.close_time,
@@ -136,7 +137,8 @@
                res.category,
                res.content,
                res.phone,
-               res.capacity,
+               res.table_person_max,
+               res.table_person_min,
                res.open_time,
                res.last_order_time,
                res.close_time,
