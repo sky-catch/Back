@@ -31,4 +31,8 @@ public enum Day {
                 .findFirst()
                 .orElseThrow(() -> new SystemException("존재하지 않는 요일입니다."));
     }
+
+    public boolean isSameDay(Day day) {
+        return this.equals(day);
+    }
 }

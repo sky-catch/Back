@@ -6,6 +6,7 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_U
 
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,12 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public GetRestaurantRes getRestaurantInfoByName(String name) {
         return restaurantMapper.findRestaurantInfoByName(name)
+                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantWithHolidayDTO getRestaurantWithHolidayById(long restaurantId) {
+        return restaurantMapper.findRestaurantWithHolidayById(restaurantId)
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
     }
 }

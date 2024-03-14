@@ -54,10 +54,6 @@ public class RestaurantDTO extends BaseDTO {
         }
     }
 
-    public boolean checkNumberOfPeople(int numberOfPeople) {
-        return tablePersonMax < numberOfPeople || tablePersonMin > numberOfPeople;
-    }
-
     // for mybatis
     public String getOpenTime() {
         return openTime.toString();

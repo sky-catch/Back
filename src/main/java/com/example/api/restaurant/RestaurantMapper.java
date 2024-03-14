@@ -2,6 +2,7 @@ package com.example.api.restaurant;
 
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
 import com.example.api.review.dto.ReviewDTO;
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,6 @@ public interface RestaurantMapper {
     boolean isAlreadyExistsName(String name);
 
     Optional<GetRestaurantRes> findRestaurantInfoByName(String name);
+
+    Optional<RestaurantWithHolidayDTO> findRestaurantWithHolidayById(long restaurantId);
 }
