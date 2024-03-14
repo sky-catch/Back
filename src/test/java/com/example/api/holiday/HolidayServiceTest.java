@@ -3,6 +3,7 @@ package com.example.api.holiday;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.api.holiday.exception.HolidayExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
@@ -98,6 +99,6 @@ class HolidayServiceTest {
         // when
         assertThatThrownBy(() -> holidayService.createHolidays(restaurantId, days))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("이미 설정한 요일입니다.");
+                .hasMessageContaining(HolidayExceptionType.ALREADY_EXISTS.getMessage());
     }
 }
