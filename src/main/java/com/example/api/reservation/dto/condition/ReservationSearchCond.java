@@ -1,4 +1,4 @@
-package com.example.api.reservation.dto;
+package com.example.api.reservation.dto.condition;
 
 import com.example.api.reservation.ReservationStatus;
 import java.time.LocalDate;

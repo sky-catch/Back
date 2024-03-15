@@ -4,10 +4,10 @@ import static com.example.api.reservation.ReservationStatus.PLANNED;
 
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.GetReservationRes;
-import com.example.api.reservation.dto.ReservationSearchCond;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.condition.ReservationSearchCond;
+import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;

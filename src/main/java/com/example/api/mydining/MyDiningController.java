@@ -3,7 +3,7 @@ package com.example.api.mydining;
 import com.example.api.member.MemberDTO;
 import com.example.api.reservation.ReservationService;
 import com.example.api.reservation.ReservationStatus;
-import com.example.api.reservation.dto.GetReservationRes;
+import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

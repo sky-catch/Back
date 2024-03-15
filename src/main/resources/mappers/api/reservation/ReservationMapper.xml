@@ -74,7 +74,7 @@
     </select>
 
     <select id="findByRestaurantIdAndStatusAndSearchDateAndGreaterThanOrEqualToVisitTime"
-            parameterType="com.example.api.reservation.dto.ReservationSearchCond"
+            parameterType="com.example.api.reservation.dto.condition.ReservationSearchCond"
             resultType="com.example.api.reservation.ReservationDTO">
         SELECT *
         FROM reservation rez
