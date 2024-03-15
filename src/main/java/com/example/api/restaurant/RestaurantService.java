@@ -1,12 +1,8 @@
 package com.example.api.restaurant;
 
-import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
-
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.facility.dto.Facility;
-import com.example.api.facility.dto.FacilityReq;
+import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
@@ -16,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.*;
+
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
@@ -24,18 +22,20 @@ public class RestaurantService {
     private final StoreFacilityMapper storeFacilityMapper;
 
     @Transactional
-    public long createRestaurant(RestaurantDTO dto, List<Facility> facility) {
-        /*if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
+    public long createRestaurant(CreateRestaurantReq req) {
+
+        RestaurantDTO dto = new RestaurantDTO(req);
+        if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
             throw new SystemException(CAN_CREATE_ONLY_ONE.getMessage());
-        }*/
+        }
 
         if (restaurantMapper.isAlreadyExistsName(dto.getName())) {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
         restaurantMapper.save(dto);
-        if(facility != null && !facility.isEmpty()){
-            storeFacilityMapper.createFacility(dto.getRestaurantId(), facility);
+        if(req.getFacilities() != null && !req.getFacilities().isEmpty()){
+            storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
         }
 
         return dto.getRestaurantId();

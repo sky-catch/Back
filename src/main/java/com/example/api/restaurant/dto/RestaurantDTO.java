@@ -3,7 +3,9 @@ package com.example.api.restaurant.dto;
 import com.example.api.reservation.ReservationDTO;
 import com.example.core.dto.BaseDTO;
 import com.example.core.exception.SystemException;
+
 import java.time.LocalTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,6 +36,22 @@ public class RestaurantDTO extends BaseDTO {
     private long savedCount;
     private long reviewCount;
     private float reviewAvg;
+
+    public RestaurantDTO(CreateRestaurantReq req) {
+        this.ownerId = req.getOwnerId();
+        this.name = req.getName();
+        this.category = req.getCategory();
+        this.content = req.getContent();
+        this.phone = req.getPhone();
+        this.capacity = req.getCapacity();
+        this.openTime = req.getOpenTime();
+        this.lastOrderTime = req.getLastOrderTime();
+        this.closeTime = req.getCloseTime();
+        this.address = req.getAddress();
+        this.detailAddress = req.getDetailAddress();
+        this.lunchPrice = req.getLunchPrice();
+        this.dinnerPrice = req.getDinnerPrice();
+    }
 
     public boolean isOwner(long ownerId) {
         return this.ownerId == ownerId;

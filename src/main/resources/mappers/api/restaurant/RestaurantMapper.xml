@@ -27,9 +27,9 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, capacity, open_time, last_order_time,
-                               close_time, address, detail_address, lunch_price, dinner_price)
+                               close_time, address, detail_address, lunch_price, dinner_price, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{capacity}, #{openTime}, #{lastOrderTime},
-                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice});
+                #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
     </insert>
 
     <delete id="deleteAll">
@@ -77,9 +77,13 @@
                     ofType="com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes">
             <id property="notificationId" column="notification_id"/>
             <id property="title" column="title"/>
-            <id property="content" column="content"/>
+            <id property="content" column="notification_content"/>
             <id property="startDate" column="start_date"/>
             <id property="endDate" column="end_date"/>
+        </collection>
+        <collection property="facilities" ofType="com.example.api.facility.dto.GetFacilityRes">
+            <result property="name" column="facility_name"/>
+            <result property="path" column="facility_path"/>
         </collection>
     </resultMap>
 
@@ -108,12 +112,16 @@
                resi.type,
                resn.notification_id,
                resn.title,
-               resn.content,
+               resn.content as notification_content,
                resn.start_date,
-               resn.end_date
+               resn.end_date,
+               fc.name as facility_name,
+               fc.path as facility_path
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN store_facility sfc on sfc.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN facility fc on fc.facility_id = sfc.facility_id
         WHERE res.restaurant_id = #{restaurantId}
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
@@ -151,12 +159,16 @@
                resi.type,
                resn.notification_id,
                resn.title,
-               resn.content,
+               resn.content as notification_content,
                resn.start_date,
-               resn.end_date
+               resn.end_date,
+               fc.name as facility_name,
+               fc.path as facility_path
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN store_facility sfc on sfc.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN facility fc on fc.facility_id = sfc.facility_id
         WHERE res.name = #{name}
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>

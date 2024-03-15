@@ -62,11 +62,7 @@
 
     <insert id="createReview" parameterType="com.example.api.review.dto.ReviewDTO" useGeneratedKeys="true" keyProperty="reviewId">
         INSERT INTO review(member_id, restaurant_id, reservation_id, rate, comment)
-        VALUES (#{memberId},
-                (SELECT rs.restaurant_id
-                 FROM reservation rs
-                          JOIN restaurant rt ON rs.restaurant_id = rt.restaurant_id
-                 WHERE rs.reservation_id = ${reservationId}),
+        VALUES (#{memberId}, #{restaurantId},
                 #{reservationId}, #{rate}, #{comment})
     </insert>
 

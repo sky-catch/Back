@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -15,5 +14,5 @@ public class FacilityReq {
 
     private long restaurantId;
     @Schema(example = "[\"PARKING\", \"CORKAGE\"]")
-    private List<Facility> facility;
+    private List<Facility> facilities;
 }

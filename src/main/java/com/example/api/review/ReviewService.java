@@ -3,11 +3,9 @@ package com.example.api.review;
 import com.example.api.comment.CommentMapper;
 import com.example.api.reservation.ReservationDTO;
 import com.example.api.reservation.ReservationMapper;
-import com.example.api.reservation.ReservationStatus;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.review.dto.CreateReviewReq;
 import com.example.api.review.dto.ReviewDTO;
-import com.example.api.review.dto.ReviewImageDTO;
 import com.example.api.review.dto.UpdateReviewReq;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -63,7 +60,10 @@ public class ReviewService {
         reviewImageMapper.deleteReviewImages(reviewId);
 
         reviewMapper.updateReview(reviewDTO);
-        reviewImageMapper.createReviewImage(reviewId, s3UploadService.upload(files));
+        if (!files.isEmpty()) {
+            reviewImageMapper.createReviewImage(reviewId, s3UploadService.upload(files));
+        }
+
     }
 
     @Transactional

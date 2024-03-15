@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateReviewReq {
 
+    @Schema(description = "리뷰 ID")
     private long reviewId;
     @Schema(description = "평점 : 1부터 5까지 정수만")
     private int rate;
+    @Schema(description = "리뷰 내용")
     private String comment;
 
 }

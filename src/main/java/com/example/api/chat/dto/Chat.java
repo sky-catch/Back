@@ -1,5 +1,6 @@
 package com.example.api.chat.dto;
 
+import com.example.core.dto.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Chat{
+public class Chat extends BaseDTO {
 
     private long chatId;
     @JsonIgnore

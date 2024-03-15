@@ -7,7 +7,7 @@
     <insert id="createFacility" parameterType="com.example.api.facility.dto.FacilityReq">
         INSERT IGNORE INTO store_facility (facility_id, restaurant_id)
         VALUES
-        <foreach collection="facility" item="item" index="idx" separator=",">
+        <foreach collection="facilities" item="item" index="idx" separator=",">
             (
             (SELECT facility_id from facility where en_name = #{item})
             , #{restaurantId}
@@ -19,7 +19,7 @@
         DELETE FROM store_facility
         WHERE restaurant_id = #{restaurantId}
         AND facility_id IN
-        <foreach collection="facility" item="item" open="(" close=")" separator=",">
+        <foreach collection="facilities" item="item" open="(" close=")" separator=",">
             (SELECT facility_id FROM facility WHERE en_name = #{item})
         </foreach>
     </delete>

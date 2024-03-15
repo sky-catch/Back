@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface StoreFacilityMapper {
 
-    void createFacility(long restaurantId, List<Facility> facility);
+    void createFacility(long restaurantId, List<Facility> facilities);
 
     void deleteFacility(FacilityReq dto);
 }

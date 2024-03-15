@@ -11,10 +11,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.api.facility.dto.Facility;
-import com.example.api.restaurant.dto.GetRestaurantImageRes;
-import com.example.api.restaurant.dto.GetRestaurantRes;
-import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantNotificationDTO;
+import com.example.api.restaurant.dto.*;
 import com.example.api.restaurantimage.RestaurantImageMapper;
 import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.api.restaurantnotification.RestaurantNotificationMapper;
@@ -49,11 +46,27 @@ class RestaurantServiceTest {
 
     private RestaurantDTO testRestaurant;
 
+    private CreateRestaurantReq createRestaurantReq;
+
     @BeforeEach
     void init() {
         restaurantMapper.deleteAll();
 
         testRestaurant = RestaurantDTO.builder()
+                .ownerId(1L)
+                .name("name")
+                .category("category")
+                .content("content")
+                .phone("phone")
+                .capacity(1)
+                .openTime(LocalTime.now())
+                .lastOrderTime(LocalTime.now())
+                .closeTime(LocalTime.now())
+                .address("address")
+                .detailAddress("detailAddress")
+                .build();
+
+        createRestaurantReq = CreateRestaurantReq.builder()
                 .ownerId(1L)
                 .name("name")
                 .category("category")
@@ -89,7 +102,7 @@ class RestaurantServiceTest {
         long before = restaurantMapper.findAll().size();
 
         // when
-        restaurantService.createRestaurant(testRestaurant, null);
+        restaurantService.createRestaurant(createRestaurantReq);
 
         // then
         long after = restaurantMapper.findAll().size();
@@ -100,10 +113,10 @@ class RestaurantServiceTest {
     @DisplayName("여러 식당을 생성하면 예외가 발생하는 테스트")
     void test2() {
         // given
-        restaurantService.createRestaurant(testRestaurant, dto.getFacility());
+        restaurantService.createRestaurant(createRestaurantReq);
 
         // expected
-        assertThatThrownBy(() -> restaurantService.createRestaurant(testRestaurant, dto.getFacility()))
+        assertThatThrownBy(() -> restaurantService.createRestaurant(createRestaurantReq))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(CAN_CREATE_ONLY_ONE.getMessage());
     }
@@ -128,7 +141,7 @@ class RestaurantServiceTest {
         restaurantMapper.save(dto);
 
         // expected
-        assertThatThrownBy(() -> restaurantService.createRestaurant(testRestaurant, dto.getFacility()))
+        assertThatThrownBy(() -> restaurantService.createRestaurant(createRestaurantReq))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(NOT_UNIQUE_NAME.getMessage());
     }
@@ -137,10 +150,12 @@ class RestaurantServiceTest {
     @DisplayName("식당 상세 정보를 조회하는 테스트")
     void test4() {
         // given
-        long createdRestaurantId = restaurantService.createRestaurant(testRestaurant, dto.getFacility());
+        long createdRestaurantId = restaurantService.createRestaurant(createRestaurantReq);
+
 
         // when
         GetRestaurantRes actual = restaurantService.getRestaurantInfoById(createdRestaurantId);
+        System.out.println("actual = " + actual);
 
         // then
         assertThat(actual)
@@ -167,7 +182,7 @@ class RestaurantServiceTest {
     @DisplayName("식당 상세 정보 조회 시 식당 이미지들이 정렬되는지 테스트")
     void test6() {
         // given
-        long createdRestaurantId = restaurantService.createRestaurant(testRestaurant, dto.getFacility());
+        long createdRestaurantId = restaurantService.createRestaurant(createRestaurantReq);
 
         int expectedImageSize = getCreatedTestImageSize(createdRestaurantId);
 
@@ -192,7 +207,7 @@ class RestaurantServiceTest {
     @DisplayName("식당 상세 정보 조회 시 식당 공지사항들이 정렬되는지 테스트")
     void test7() {
         // given
-        long createdRestaurantId = restaurantService.createRestaurant(testRestaurant, dto.getFacility());
+        long createdRestaurantId = restaurantService.createRestaurant(createRestaurantReq);
 
         int expectedNotificationSize = getCreatedTestNotificationSize(createdRestaurantId);
 
@@ -214,10 +229,10 @@ class RestaurantServiceTest {
     @DisplayName("식당 생성 시 이미 식당을 만든 경우 예외 발생하는 테스트")
     void test8() {
         // given
-        restaurantService.createRestaurant(testRestaurant, dto.getFacility());
+        restaurantService.createRestaurant(createRestaurantReq);
 
         // expected
-        assertThatThrownBy(() -> restaurantService.createRestaurant(testRestaurant, dto.getFacility()))
+        assertThatThrownBy(() -> restaurantService.createRestaurant(createRestaurantReq))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(CAN_CREATE_ONLY_ONE.getMessage());
     }

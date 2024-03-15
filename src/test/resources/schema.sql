@@ -97,3 +97,25 @@ CREATE TABLE OWNER
     updated_date                 timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (owner_id)
 );
+
+CREATE TABLE facility
+(
+    facility_id  bigint not null auto_increment,
+    name         varchar(25)                         not null,
+    en_name      varchar(25)                         not null,
+    path         varchar(255)                        null,
+    created_date timestamp not null default CURRENT_TIMESTAMP ,
+    updated_date timestamp not null default CURRENT_TIMESTAMP  ON UPDATE CURRENT_TIMESTAMP,
+    primary key(facility_id)
+);
+
+CREATE TABLE store_facility
+(
+    facility_id   bigint                              not null,
+    restaurant_id bigint                              not null,
+    created_date  timestamp default CURRENT_TIMESTAMP not null,
+    updated_date  timestamp not null default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    primary key (facility_id, restaurant_id)
+);
+
+

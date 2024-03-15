@@ -1,27 +1,25 @@
 package com.example.api.restaurant.dto;
 
 import com.example.api.facility.dto.Facility;
-import com.example.core.dto.BaseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalTime;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import java.time.LocalTime;
+import java.util.List;
 
 @Schema(description = "식당 생성 요청값")
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRestaurantReq extends BaseDTO {
+public class CreateRestaurantReq {
 
     @NotBlank
     @Schema(description = "이름", example = "스시미루")
@@ -54,12 +52,16 @@ public class CreateRestaurantReq extends BaseDTO {
     @NotBlank
     @Schema(description = "상세주소", example = "서울특별시 강남구 언주로170길 26-6 2층")
     private String detailAddress;
-    @Schema(description = "점심가격", example = "7만원")
+    @Schema(description = "점심가격", example = "70000")
     private int lunchPrice;
-    @Schema(description = "저녁가격", example = "14만원")
+    @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
     @Schema(description = "[(PARKING, 주차 가능), (VALET_PARKING, 발렛 가능), (CORKAGE, 콜키지 가능), (CORKAGE_FREE, 콜키지 프리)," +
             " (RENT, 대관 가능), (NO_KIDS, 노키즈존), (WINE_DELIVERY, 와인배송), (LETTERING, 레터링), (SOMMELIER, 전문 소믈리에)," +
             " (PET, 반려동물 동반), (ACCESSIBLE, 장애인 편의시설)]", example = "[\"PARKING\", \"CORKAGE\"]")
-    private List<Facility> facility;
+    private List<Facility> facilities;
+
+    @Schema(hidden = true)
+    private long ownerId;
+
 }
