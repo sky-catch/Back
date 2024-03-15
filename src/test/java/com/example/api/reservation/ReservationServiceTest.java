@@ -17,6 +17,7 @@ import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.GetReservationRes;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
@@ -303,6 +304,27 @@ class ReservationServiceTest {
         assertTrue(actual.getTimeSlots().isEmpty());
     }
 
+    @Test
+    @DisplayName("방문일에 식당의 예약이 없고, 방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이 아닌 경우 "
+            + "예외 발생하는 테스트")
+    void test8() {
+        // given
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+
+        LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
+        LocalTime notOpenTime = openTime.minusMinutes(1);
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(2)
+                .searchDate(notHoliday)
+                .visitTime(notOpenTime)
+                .build();
+
+        // expected
+        assertThatThrownBy(() -> reservationService.getAvailableTimeSlots(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
+    }
 
     private List<HolidayDTO> getMondayAndTuesdayHolidays() {
         HolidayDTO monday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.MONDAY).build();
