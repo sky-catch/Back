@@ -30,7 +30,7 @@ public class ReservationController {
     @PostMapping("/{restaurantId}")
     public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
                                                   @PathVariable long restaurantId,
-                                                  @RequestBody CreateReservationReq req) {
+                                                  @Valid @RequestBody CreateReservationReq req) {
 
         // todo reservationDayId, paymentId 수정하기
         ReservationDTO dto = ReservationDTO.builder()
