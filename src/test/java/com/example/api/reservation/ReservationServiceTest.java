@@ -30,6 +30,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -52,6 +54,10 @@ class ReservationServiceTest {
     private RestaurantDTO testRestaurant;
     private final LocalTime openTime = LocalTime.of(10, 0, 0);
     private final LocalTime lastOrderTime = LocalTime.of(20, 0, 0);
+    private final int tablePersonMax = 4;
+    private final int tablePersonMin = 2;
+    private final int minNumberOfPeople = tablePersonMin - 1;
+    private final int maxNumberOfPeople = tablePersonMax + 1;
 
     @BeforeEach
     void init() {
@@ -63,8 +69,8 @@ class ReservationServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .tablePersonMax(4)
-                .tablePersonMin(2)
+                .tablePersonMax(tablePersonMax)
+                .tablePersonMin(tablePersonMin)
                 .openTime(openTime)
                 .lastOrderTime(lastOrderTime)
                 .closeTime(LocalTime.of(22, 0, 0))
@@ -101,7 +107,7 @@ class ReservationServiceTest {
                     .reservationDayId(1L)
                     .paymentId(1L)
                     .time(LocalDateTime.now())
-                    .numberOfPeople(2)
+                    .numberOfPeople(tablePersonMin)
                     .memo("메모")
                     .status(status)
                     .build();
@@ -133,7 +139,7 @@ class ReservationServiceTest {
                 .reservationDayId(1L)
                 .paymentId(1L)
                 .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .memo("메모")
                 .status(PLANNED)
                 .build();
@@ -155,7 +161,7 @@ class ReservationServiceTest {
                 .reservationDayId(1L)
                 .paymentId(1L)
                 .time(LocalDateTime.of(2024, 1, 1, 9, 0, 0))
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .memo("메모")
                 .status(PLANNED)
                 .build();
@@ -176,7 +182,7 @@ class ReservationServiceTest {
                 .reservationDayId(1L)
                 .paymentId(1L)
                 .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .memo("메모")
                 .status(DONE)
                 .build();
@@ -197,7 +203,7 @@ class ReservationServiceTest {
         LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .searchDate(notHoliday)
                 .visitTime(openTime)
                 .build();
@@ -248,7 +254,7 @@ class ReservationServiceTest {
                     .reservationDayId(1L)
                     .paymentId(1L)
                     .time(LocalDateTime.of(notHoliday, openTime.plusMinutes(i * 30)))
-                    .numberOfPeople(2)
+                    .numberOfPeople(tablePersonMin)
                     .memo("메모")
                     .status(PLANNED)
                     .build();
@@ -257,7 +263,7 @@ class ReservationServiceTest {
 
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .searchDate(notHoliday)
                 .visitTime(openTime)
                 .build();
@@ -292,7 +298,7 @@ class ReservationServiceTest {
         LocalDate holiday = LocalDate.of(2024, 3, 11); // MONDAY
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .searchDate(holiday)
                 .visitTime(openTime)
                 .build();
@@ -305,7 +311,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("방문일에 식당의 예약이 없고, 방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이 아닌 경우 "
+    @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이 아닌 경우 "
             + "예외 발생하는 테스트")
     void test8() {
         // given
@@ -315,7 +321,7 @@ class ReservationServiceTest {
         LocalTime notOpenTime = openTime.minusMinutes(1);
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
-                .numberOfPeople(2)
+                .numberOfPeople(tablePersonMin)
                 .searchDate(notHoliday)
                 .visitTime(notOpenTime)
                 .build();
@@ -324,6 +330,29 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.getAvailableTimeSlots(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {minNumberOfPeople, maxNumberOfPeople})
+    @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이고, 예약 가능 인원을 벗어난 경우 "
+            + "빈 리스트를 반환하는 테스트")
+    void test9(int outboundNumberOfPeople) {
+        // given
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+
+        LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(outboundNumberOfPeople)
+                .searchDate(notHoliday)
+                .visitTime(openTime)
+                .build();
+
+        // when
+        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
+
+        // then
+        assertTrue(actual.getTimeSlots().isEmpty());
     }
 
     private List<HolidayDTO> getMondayAndTuesdayHolidays() {

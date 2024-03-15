@@ -56,13 +56,13 @@ public class ReservationService {
         RestaurantWithHolidayDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayById(
                 dto.getRestaurantId());
 
-        if (restaurantWithHoliday.isNotValidNumberOfPeople(dto.getNumberOfPeople())) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_NUMBER_OF_PEOPLE.getMessage());
-        }
         if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
             throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
         }
         if (restaurantWithHoliday.isHoliday(dto.getSearchDate())) {
+            return TimeSlots.of(new ArrayList<>());
+        }
+        if (restaurantWithHoliday.isOutboundTablePerson(dto.getNumberOfPeople())) {
             return TimeSlots.of(new ArrayList<>());
         }
 

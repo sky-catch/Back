@@ -41,7 +41,7 @@ public class RestaurantWithHolidayDTO extends BaseDTO {
     private float reviewAvg;
     private List<HolidayDTO> holidays;
 
-    public boolean isNotValidNumberOfPeople(int numberOfPeople) {
+    public boolean isOutboundTablePerson(int numberOfPeople) {
         return tablePersonMax < numberOfPeople || tablePersonMin > numberOfPeople;
     }
 
