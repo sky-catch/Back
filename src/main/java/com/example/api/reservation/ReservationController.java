@@ -1,9 +1,9 @@
 package com.example.api.reservation;
 
 import com.example.api.member.MemberDTO;
-import com.example.api.reservation.dto.CreateReservationReq;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;

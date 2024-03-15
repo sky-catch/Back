@@ -1,4 +1,4 @@
-package com.example.api.reservation.dto;
+package com.example.api.reservation.dto.request;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
