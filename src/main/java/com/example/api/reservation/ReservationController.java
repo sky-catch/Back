@@ -28,6 +28,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping("/{restaurantId}")
+    @Operation(summary = "예약 생성", description = "방문일과 방문 시간에 식당 예약하는 API입니다.")
     public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
                                                   @PathVariable long restaurantId,
                                                   @Valid @RequestBody CreateReservationReq req) {
@@ -51,7 +52,7 @@ public class ReservationController {
     }
 
     @PostMapping("/availTimeSlots")
-    @Operation(summary = "예약 가능한 시간 조회", description = "해당 날짜에 예약 가능한 시간들을 조회하는 API입니다.")
+    @Operation(summary = "예약 가능한 시간 조회", description = "방문일에 예약 가능한 시간들을 조회하는 API입니다.")
     public ResponseEntity<TimeSlots> getAvailableTimeSlots(@Valid @RequestBody GetAvailableTimeSlotsReq req) {
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(req.getRestaurantId())
