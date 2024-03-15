@@ -17,7 +17,7 @@ public class CreateReservationReq {
     // todo 프론트와 방문일 + 방문 시간 정하기
     @NotNull
     @Schema(description = "방문일 + 방문 시간", example = "2024-03-13")
-    private LocalDateTime time;
+    private LocalDateTime visitDateTime;
     @NotNull
     @Min(1)
     @Schema(description = "방문 인원 수", example = "2")

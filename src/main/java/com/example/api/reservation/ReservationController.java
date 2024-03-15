@@ -1,6 +1,7 @@
 package com.example.api.reservation;
 
 import com.example.api.member.MemberDTO;
+import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
@@ -29,21 +30,13 @@ public class ReservationController {
 
     @PostMapping("/{restaurantId}")
     @Operation(summary = "예약 생성", description = "방문일과 방문 시간에 식당 예약하는 API입니다.")
-    public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
+    public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
                                                   @PathVariable long restaurantId,
                                                   @Valid @RequestBody CreateReservationReq req) {
 
         // todo reservationDayId, paymentId 수정하기
-        ReservationDTO dto = ReservationDTO.builder()
-                .restaurantId(restaurantId)
-                .memberId(memberDTO.getMemberId())
-                .reservationDayId(1L)
-                .paymentId(1L)
-                .time(req.getTime())
-                .numberOfPeople(req.getNumberOfPeople())
-                .memo(req.getMemo())
-                .status(ReservationStatus.PLANNED)
-                .build();
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(restaurantId,
+                loginMember.getMemberId(), req);
 
         long reservationId = reservationService.createReservation(dto);
 

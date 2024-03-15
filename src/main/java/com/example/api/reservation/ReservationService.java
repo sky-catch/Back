@@ -3,6 +3,7 @@ package com.example.api.reservation;
 import static com.example.api.reservation.ReservationStatus.PLANNED;
 
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
@@ -10,7 +11,6 @@ import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantService;
-import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalDateTime;
@@ -34,21 +34,33 @@ public class ReservationService {
     }
 
     @Transactional
-    public long createReservation(ReservationDTO dto) {
-        // 1. 식당 존재 유무
-        RestaurantDTO restaurant = restaurantService.getRestaurantById(dto.getRestaurantId());
+    public long createReservation(CreateReservationDTO dto) {
+        // 식당 존재 유무
+        RestaurantWithHolidayDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayById(
+                dto.getRestaurantId());
 
-        // 2. 예약 상태
+        // 예약 상태
         if (dto.getStatus() != PLANNED) {
             throw new SystemException("잘못된 예약 상태입니다.");
         }
+        // 인원
+        if (restaurantWithHoliday.isOutboundTablePerson(dto.getNumberOfPeople())) {
+            throw new SystemException("방문 인원 수가 잘못됐습니다.");
+        }
+        // 예약 날짜
+        if (restaurantWithHoliday.isHoliday(dto.getVisitDate())) {
+            throw new SystemException("휴일에는 예약할 수 없습니다.");
+        }
+        // 시간
+        if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
+            throw new SystemException("방문 시간이 잘못됐습니다.");
+        }
 
-        // 3. 예약 날짜, 시간, 인원
-        restaurant.checkCanMakeReservation(dto);
+        ReservationDTO reservation = dto.toReservationDTO();
 
-        reservationMapper.save(dto);
+        reservationMapper.save(reservation);
 
-        return dto.getReservationId();
+        return reservation.getReservationId();
     }
 
     @Transactional(readOnly = true)

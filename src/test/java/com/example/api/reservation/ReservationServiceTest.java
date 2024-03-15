@@ -13,6 +13,7 @@ import com.example.api.holiday.Day;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayMapper;
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
@@ -133,12 +134,15 @@ class ReservationServiceTest {
     @DisplayName("새로운 예약을 생성하는 테스트")
     void test2() {
         // given
-        ReservationDTO dto = ReservationDTO.builder()
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+        LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
+        LocalDateTime visitTime = LocalDateTime.of(notHoliday, openTime);
+        CreateReservationDTO dto = CreateReservationDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
-                .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
+                .time(visitTime)
                 .numberOfPeople(tablePersonMin)
                 .memo("메모")
                 .status(PLANNED)
