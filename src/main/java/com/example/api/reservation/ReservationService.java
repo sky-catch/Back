@@ -8,6 +8,7 @@ import com.example.api.reservation.dto.GetReservationRes;
 import com.example.api.reservation.dto.ReservationSearchCond;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
@@ -56,10 +57,10 @@ public class ReservationService {
                 dto.getRestaurantId());
 
         if (restaurantWithHoliday.isNotValidNumberOfPeople(dto.getNumberOfPeople())) {
-            throw new SystemException("방문 인원이 올바르지 않습니다.");
+            throw new SystemException(ReservationExceptionType.NOT_VALID_NUMBER_OF_PEOPLE.getMessage());
         }
         if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
-            throw new SystemException("방문 시간이 올바르지 않습니다.");
+            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
         }
         if (restaurantWithHoliday.isHoliday(dto.getSearchDate())) {
             return TimeSlots.of(new ArrayList<>());
