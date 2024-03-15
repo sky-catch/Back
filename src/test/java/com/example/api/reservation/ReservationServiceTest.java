@@ -7,7 +7,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.example.api.holiday.Day;
+import com.example.api.holiday.HolidayDTO;
+import com.example.api.holiday.HolidayMapper;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.GetReservationRes;
@@ -19,6 +23,7 @@ import com.example.core.exception.SystemException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +45,8 @@ class ReservationServiceTest {
     private ReservationMapper reservationMapper;
     @Autowired
     private RestaurantMapper restaurantMapper;
+    @Autowired
+    private HolidayMapper holidayMapper;
 
     private RestaurantDTO testRestaurant;
     private final LocalTime openTime = LocalTime.of(10, 0, 0);
@@ -70,6 +77,7 @@ class ReservationServiceTest {
     void cleanup() {
         restaurantMapper.deleteAll();
         reservationMapper.deleteAll();
+        holidayMapper.deleteAll();
     }
 
     // todo 테스트 보충하기
@@ -179,13 +187,17 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("해당 날짜에 식당의 예약이 없다면 오픈 시간부터 주문 마감 시간까지 30분 단위로 예약 가능 시간을 반환하는 테스트")
+    @DisplayName("방문일에 식당의 예약이 없고, 방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간인 경우 "
+            + "방문 시간 ~ 주문 마감 시간까지 30분 단위로 예약 가능 시간을 반환하는 테스트")
     void test5() {
         // given
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+
+        LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantDTO(testRestaurant)
+                .restaurantId(testRestaurant.getRestaurantId())
                 .numberOfPeople(2)
-                .searchDate(LocalDate.now())
+                .searchDate(notHoliday)
                 .visitTime(openTime)
                 .build();
 
@@ -221,28 +233,31 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("해당 날짜에 식당의 예약이 있다면 예약 시간을 제외한 예약 가능 시간을 반환하는 테스트")
+    @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이지만, 방문일에 식당의 예약이 존재하는 경우 "
+            + "예약 시간을 제외한 예약 가능 시간을 반환하는 테스트")
     void test6() {
         // given
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+
+        LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
         for (int i = 0; i < 10; i++) {
             ReservationDTO dto = ReservationDTO.builder()
                     .restaurantId(testRestaurant.getRestaurantId())
                     .memberId(1L)
                     .reservationDayId(1L)
                     .paymentId(1L)
-                    .time(LocalDateTime.of(LocalDate.now(), openTime.plusMinutes(i * 30)))
+                    .time(LocalDateTime.of(notHoliday, openTime.plusMinutes(i * 30)))
                     .numberOfPeople(2)
                     .memo("메모")
                     .status(PLANNED)
                     .build();
             reservationMapper.save(dto);
-
         }
 
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantDTO(testRestaurant)
+                .restaurantId(testRestaurant.getRestaurantId())
                 .numberOfPeople(2)
-                .searchDate(LocalDate.now())
+                .searchDate(notHoliday)
                 .visitTime(openTime)
                 .build();
 
@@ -265,5 +280,34 @@ class ReservationServiceTest {
                         TimeSlot.of(LocalTime.of(19, 30, 0)),
                         TimeSlot.of(LocalTime.of(20, 0, 0))
                 );
+    }
+
+    @Test
+    @DisplayName("방문 시간이 오픈 시간 ~ 주문 마감 시간이지만 방문일이 휴일인 경우 빈 리스트를 반환하는 테스트")
+    void test7() {
+        // given
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+
+        LocalDate holiday = LocalDate.of(2024, 3, 11); // MONDAY
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(2)
+                .searchDate(holiday)
+                .visitTime(openTime)
+                .build();
+
+        // when
+        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
+
+        // then
+        assertTrue(actual.getTimeSlots().isEmpty());
+    }
+
+
+    private List<HolidayDTO> getMondayAndTuesdayHolidays() {
+        HolidayDTO monday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.MONDAY).build();
+        HolidayDTO tuesday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.TUESDAY)
+                .build();
+        return Arrays.asList(monday, tuesday);
     }
 }

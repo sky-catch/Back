@@ -5,14 +5,11 @@ import com.example.api.reservation.dto.CreateReservationReq;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
-import com.example.api.restaurant.RestaurantService;
-import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
-import java.util.ArrayList;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final RestaurantService restaurantService;
 
     @PostMapping("/{restaurantId}")
     public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
@@ -57,21 +53,8 @@ public class ReservationController {
     @PostMapping("/availTimeSlots")
     @Operation(summary = "예약 가능한 시간 조회", description = "해당 날짜에 예약 가능한 시간들을 조회하는 API입니다.")
     public ResponseEntity<TimeSlots> getAvailableTimeSlots(@Valid @RequestBody GetAvailableTimeSlotsReq req) {
-
-        // todo refactoring 하기
-        RestaurantWithHolidayDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayById(
-                req.getRestaurantId());
-
-        if (restaurantWithHoliday.checkNumberOfPeople(req.getNumberOfPeople())) {
-            return ResponseEntity.ok(new TimeSlots(new ArrayList<>()));
-        }
-
-        if (restaurantWithHoliday.checkHoliday(req.getSearchDate())) {
-            return ResponseEntity.ok(new TimeSlots(new ArrayList<>()));
-        }
-
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantDTO(restaurantWithHoliday.toRestaurantDTO())
+                .restaurantId(req.getRestaurantId())
                 .numberOfPeople(req.getNumberOfPeople())
                 .searchDate(req.getSearchDate())
                 .visitTime(req.getVisitTime())

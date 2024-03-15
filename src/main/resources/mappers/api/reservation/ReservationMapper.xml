@@ -73,8 +73,8 @@
         WHERE reservation_id = #{reservationId}
     </select>
 
-    <select id="findByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime"
-            parameterType="com.example.api.reservation.dto.FindAvailableTimeSlotDTO"
+    <select id="findByRestaurantIdAndStatusAndSearchDateAndGreaterThanOrEqualToVisitTime"
+            parameterType="com.example.api.reservation.dto.ReservationSearchCond"
             resultType="com.example.api.reservation.ReservationDTO">
         SELECT *
         FROM reservation rez

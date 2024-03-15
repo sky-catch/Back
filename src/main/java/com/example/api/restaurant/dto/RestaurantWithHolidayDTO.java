@@ -41,11 +41,11 @@ public class RestaurantWithHolidayDTO extends BaseDTO {
     private float reviewAvg;
     private List<HolidayDTO> holidays;
 
-    public boolean checkNumberOfPeople(int numberOfPeople) {
+    public boolean isNotValidNumberOfPeople(int numberOfPeople) {
         return tablePersonMax < numberOfPeople || tablePersonMin > numberOfPeople;
     }
 
-    public boolean checkHoliday(LocalDate date) {
+    public boolean isHoliday(LocalDate date) {
         return holidays.stream()
                 .anyMatch(holidayDTO -> holidayDTO.isSameDay(toDay(date)));
     }
@@ -55,26 +55,7 @@ public class RestaurantWithHolidayDTO extends BaseDTO {
         return Day.findByValue(dateDayValue);
     }
 
-    public RestaurantDTO toRestaurantDTO() {
-        return RestaurantDTO.builder()
-                .restaurantId(restaurantId)
-                .ownerId(ownerId)
-                .name(name)
-                .category(category)
-                .content(content)
-                .phone(phone)
-                .tablePersonMax(tablePersonMax)
-                .tablePersonMin(tablePersonMin)
-                .openTime(openTime)
-                .lastOrderTime(lastOrderTime)
-                .closeTime(closeTime)
-                .address(address)
-                .detailAddress(detailAddress)
-                .lunchPrice(lunchPrice)
-                .dinnerPrice(dinnerPrice)
-                .savedCount(savedCount)
-                .restaurantId(reviewCount)
-                .reviewAvg(reviewAvg)
-                .build();
+    public boolean isNotValidVisitTime(LocalTime time) {
+        return openTime.isAfter(time) || lastOrderTime.isBefore(time);
     }
 }

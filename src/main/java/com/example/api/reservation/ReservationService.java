@@ -3,13 +3,14 @@ package com.example.api.reservation;
 import static com.example.api.reservation.ReservationStatus.PLANNED;
 
 import com.example.api.mydining.GetMyReservationDTO;
-import com.example.api.reservation.dto.FindAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.GetReservationRes;
+import com.example.api.reservation.dto.ReservationSearchCond;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -51,43 +52,51 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
-        RestaurantDTO restaurantDTO = dto.getRestaurantDTO();
-        List<TimeSlot> allAvailableTimeSlots = createAllAvailableTimeSlots(restaurantDTO);
+        RestaurantWithHolidayDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayById(
+                dto.getRestaurantId());
 
-        FindAvailableTimeSlotDTO findAvailableTimeSlotDTO = FindAvailableTimeSlotDTO.builder()
+        if (restaurantWithHoliday.isNotValidNumberOfPeople(dto.getNumberOfPeople())) {
+            throw new SystemException("방문 인원이 올바르지 않습니다.");
+        }
+        if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
+            throw new SystemException("방문 시간이 올바르지 않습니다.");
+        }
+        if (restaurantWithHoliday.isHoliday(dto.getSearchDate())) {
+            return TimeSlots.of(new ArrayList<>());
+        }
+
+        TimeSlots allAvailableTimeSlotsFromVisitTimeToLastOrderTime = createAllAvailableTimeSlotsFromVisitTimeToLastOrderTime(
+                dto.getVisitTime(), restaurantWithHoliday.getLastOrderTime());
+        TimeSlots reservationTimeSlots = getReservationTimeSlots(dto);
+        return allAvailableTimeSlotsFromVisitTimeToLastOrderTime.subtract(reservationTimeSlots);
+    }
+
+    private TimeSlots createAllAvailableTimeSlotsFromVisitTimeToLastOrderTime(LocalTime visitTime,
+                                                                              LocalTime lastOrderTime) {
+        List<TimeSlot> availableTimeSlots = new ArrayList<>();
+        TimeSlot availableTimeSlot = TimeSlot.of(visitTime);
+        while (availableTimeSlot.isBeforeOrEqual(lastOrderTime)) {
+            availableTimeSlots.add(availableTimeSlot);
+            availableTimeSlot = availableTimeSlot.getNextTimeSlot();
+        }
+        return TimeSlots.of(availableTimeSlots);
+    }
+
+    private TimeSlots getReservationTimeSlots(GetAvailableTimeSlotDTO dto) {
+        ReservationSearchCond cond = ReservationSearchCond.builder()
                 .restaurantId(dto.getRestaurantId())
                 .searchDate(dto.getSearchDate())
                 .visitTime(dto.getVisitTime())
                 .status(PLANNED)
                 .build();
-        List<TimeSlot> availableTimeSlots = subtractReservationTimeSlots(findAvailableTimeSlotDTO,
-                allAvailableTimeSlots);
+        List<ReservationDTO> findReservations = reservationMapper.findByRestaurantIdAndStatusAndSearchDateAndGreaterThanOrEqualToVisitTime(
+                cond);
 
-        return TimeSlots.of(availableTimeSlots);
-    }
-
-    private List<TimeSlot> createAllAvailableTimeSlots(RestaurantDTO restaurantDTO) {
-        List<TimeSlot> availableTimeSlots = new ArrayList<>();
-        LocalTime openTime = LocalTime.parse(restaurantDTO.getOpenTime());
-        LocalTime lastOrderTime = LocalTime.parse(restaurantDTO.getLastOrderTime());
-        for (TimeSlot availableTimeSlot = TimeSlot.of(openTime); availableTimeSlot.isBeforeOrEqual(lastOrderTime);
-             availableTimeSlot = availableTimeSlot.getNextTimeSlot()) {
-            availableTimeSlots.add(availableTimeSlot);
-        }
-        return availableTimeSlots;
-    }
-
-    private List<TimeSlot> subtractReservationTimeSlots(FindAvailableTimeSlotDTO findAvailableTimeSlotDTO,
-                                                        List<TimeSlot> allAvailableTimeSlots) {
-        List<ReservationDTO> reservationDTOSByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime = reservationMapper.findByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime(
-                findAvailableTimeSlotDTO);
-        List<TimeSlot> reservationTimeSlots = reservationDTOSByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime.stream()
+        List<TimeSlot> reservationTimeSlots = findReservations.stream()
                 .map(ReservationDTO::getTime)
                 .map(LocalDateTime::toLocalTime)
                 .map(TimeSlot::of)
                 .collect(Collectors.toList());
-        allAvailableTimeSlots.removeAll(reservationTimeSlots);
-
-        return allAvailableTimeSlots;
+        return TimeSlots.of(reservationTimeSlots);
     }
 }

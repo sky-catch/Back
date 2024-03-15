@@ -9,20 +9,20 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class FindAvailableTimeSlotDTO {
+public class ReservationSearchCond {
 
     private long restaurantId;
+    private ReservationStatus status;
     private LocalDate searchDate;
     private LocalTime visitTime;
-    private ReservationStatus status;
 
     @Builder
-    public FindAvailableTimeSlotDTO(long restaurantId, LocalDate searchDate, LocalTime visitTime,
-                                    ReservationStatus status) {
+    public ReservationSearchCond(long restaurantId, ReservationStatus status, LocalDate searchDate,
+                                 LocalTime visitTime) {
         this.restaurantId = restaurantId;
+        this.status = status;
         this.searchDate = searchDate;
         this.visitTime = visitTime;
-        this.status = status;
     }
 
     // for mybatis
