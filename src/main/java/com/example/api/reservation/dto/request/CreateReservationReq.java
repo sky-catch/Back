@@ -18,13 +18,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class CreateReservationReq {
 
     @NotNull
-    @Schema(description = "방문일 + 방문 시간", example = "2024-03-13 10:00:00")
+    @Schema(description = "방문일 + 방문 시간", example = "2024-03-13 10:00:00", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime visitDateTime;
+
     @NotNull
     @Min(1)
     @Schema(description = "방문 인원 수", example = "2")
     private int numberOfPeople;
+
     @Schema(description = "메모", example = "창가 자리 부탁드려요.")
     private String memo;
 }
