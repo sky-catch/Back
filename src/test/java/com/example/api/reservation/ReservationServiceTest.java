@@ -159,6 +159,44 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("휴일이 없는 식당에 새로운 예약을 생성하는 테스트")
+    void create_reservation_with_no_holiday() {
+        // given
+        RestaurantDTO testRestaurant2 = RestaurantDTO.builder()
+                .ownerId(2L)
+                .name("name2")
+                .category("category2")
+                .content("content2")
+                .phone("phone2")
+                .tablePersonMax(tablePersonMax)
+                .tablePersonMin(tablePersonMin)
+                .openTime(openTime)
+                .lastOrderTime(lastOrderTime)
+                .closeTime(LocalTime.of(22, 0, 0))
+                .address("address2")
+                .detailAddress("detailAddress2")
+                .build();
+        restaurantMapper.save(testRestaurant2);
+
+        CreateReservationDTO dto = CreateReservationDTO.builder()
+                .restaurantId(testRestaurant2.getRestaurantId())
+                .memberId(1L)
+                .reservationDayId(1L)
+                .paymentId(1L)
+                .time(LocalDateTime.of(LocalDate.now(), openTime))
+                .numberOfPeople(tablePersonMin)
+                .memo("메모")
+                .status(PLANNED)
+                .build();
+
+        // when
+        long actual = reservationService.createReservation(dto);
+
+        // then
+        assertEquals(1L, actual);
+    }
+
+    @Test
     @DisplayName("예약 상태가 PLANNED가 아닌 경우 예외 발생하는 테스트")
     void createReservation_with_not_valid_status() {
         // given
@@ -230,6 +268,21 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining("방문 시간이 잘못됐습니다.");
+    }
+
+    @Test
+    @DisplayName("방문일의 방문 시간에 예약이 이미 존재하는 경우 예외 발생하는 테스트")
+    void createReservation_with_duplicate() {
+        // given
+        CreateReservationReq req = new CreateReservationReq(validVisitTime, tablePersonMin, "메모");
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(testRestaurant.getRestaurantId(), 1L,
+                req);
+        reservationService.createReservation(dto);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("해당 방문일의 방문 시간에 예약이 이미 존재합니다.");
     }
 
     @Test

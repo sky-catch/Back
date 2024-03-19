@@ -83,4 +83,14 @@
           AND cast(rez.TIME as DATE) = #{searchDate}
           AND cast(rez.TIME as TIME) >= #{visitTime};
     </select>
+
+    <select id="isAlreadyExistsByRestaurantIdAndMemberIdAndTime"
+            parameterType="com.example.api.reservation.dto.condition.DuplicateReservationSearchCond"
+            resultType="boolean">
+        SELECT EXISTS (SELECT *
+                       FROM reservation rez
+                       WHERE rez.RESTAURANT_ID = #{restaurantId}
+                         AND rez.MEMBER_ID = #{memberId}
+                         AND rez.TIME = #{time});
+    </select>
 </mapper>

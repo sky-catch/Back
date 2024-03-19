@@ -7,6 +7,7 @@ import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
@@ -55,6 +56,16 @@ public class ReservationService {
         // 시간
         if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
             throw new SystemException("방문 시간이 잘못됐습니다.");
+        }
+
+        // 중복 확인
+        DuplicateReservationSearchCond cond = DuplicateReservationSearchCond.builder()
+                .restaurantId(dto.getRestaurantId())
+                .memberId(dto.getMemberId())
+                .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
+                .build();
+        if (reservationMapper.isAlreadyExistsByRestaurantIdAndMemberIdAndTime(cond)) {
+            throw new SystemException("해당 방문일의 방문 시간에 예약이 이미 존재합니다.");
         }
 
         ReservationDTO reservation = dto.toReservationDTO();

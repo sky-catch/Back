@@ -46,8 +46,17 @@ public class RestaurantWithHolidayDTO extends BaseDTO {
     }
 
     public boolean isHoliday(LocalDate date) {
+        if (hasNoHoliday()) {
+            return false;
+        }
+
         return holidays.stream()
                 .anyMatch(holidayDTO -> holidayDTO.isSameDay(toDay(date)));
+    }
+
+    private boolean hasNoHoliday() {
+        return holidays.stream()
+                .anyMatch(holidayDTO -> holidayDTO.getDay() == null);
     }
 
     private Day toDay(LocalDate date) {
