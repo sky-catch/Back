@@ -29,6 +29,7 @@ public class ReservationService {
     private final ReservationMapper reservationMapper;
     private final RestaurantService restaurantService;
 
+    @Transactional(readOnly = true)
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
         return reservationMapper.getMyReservationsByStatus(dto);
     }
