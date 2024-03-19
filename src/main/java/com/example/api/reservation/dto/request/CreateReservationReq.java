@@ -1,5 +1,7 @@
 package com.example.api.reservation.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import javax.validation.constraints.Min;
@@ -7,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @NoArgsConstructor
@@ -14,9 +17,9 @@ import lombok.NoArgsConstructor;
 @Schema(description = "예약 생성 요청값")
 public class CreateReservationReq {
 
-    // todo 프론트와 방문일 + 방문 시간 정하기
     @NotNull
-    @Schema(description = "방문일 + 방문 시간", example = "2024-03-13")
+    @Schema(description = "방문일 + 방문 시간", example = "2024-03-13 10:00:00")
+    @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime visitDateTime;
     @NotNull
     @Min(1)
