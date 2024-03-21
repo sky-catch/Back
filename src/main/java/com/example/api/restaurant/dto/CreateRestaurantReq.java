@@ -1,6 +1,7 @@
 package com.example.api.restaurant.dto;
 
 import com.example.api.facility.dto.Facility;
+import com.example.api.holiday.Days;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,8 +36,12 @@ public class CreateRestaurantReq {
     private String phone;
     @NotNull
     @Min(1)
-    @Schema(description = "시간당 최대 예약 수", example = "5")
-    private int capacity;
+    @Schema(description = "예약 최대 인원 수", example = "2")
+    private int tablePersonMax;
+    @NotNull
+    @Min(1)
+    @Schema(description = "예약 최소 인원 수", example = "4")
+    private int tablePersonMin;
     @NotNull
     @Schema(description = "오픈시간", example = "11:00:00")
     private LocalTime openTime;
@@ -56,6 +61,8 @@ public class CreateRestaurantReq {
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
+    @Schema(description = "휴무일", example = "월,화")
+    private Days days;
     @Schema(description = "[(PARKING, 주차 가능), (VALET_PARKING, 발렛 가능), (CORKAGE, 콜키지 가능), (CORKAGE_FREE, 콜키지 프리)," +
             " (RENT, 대관 가능), (NO_KIDS, 노키즈존), (WINE_DELIVERY, 와인배송), (LETTERING, 레터링), (SOMMELIER, 전문 소믈리에)," +
             " (PET, 반려동물 동반), (ACCESSIBLE, 장애인 편의시설)]", example = "[\"PARKING\", \"CORKAGE\"]")
@@ -63,5 +70,4 @@ public class CreateRestaurantReq {
 
     @Schema(hidden = true)
     private long ownerId;
-
 }

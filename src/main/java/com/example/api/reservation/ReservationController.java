@@ -1,18 +1,16 @@
 package com.example.api.reservation;
 
 import com.example.api.member.MemberDTO;
-import com.example.api.reservation.dto.CreateReservationReq;
+import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
-import com.example.api.restaurant.RestaurantService;
-import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
-import java.util.ArrayList;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,24 +27,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final RestaurantService restaurantService;
 
     @PostMapping("/{restaurantId}")
-    public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO memberDTO,
+    @Operation(summary = "예약 생성", description = "방문일과 방문 시간에 식당 예약하는 API입니다.")
+    public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
                                                   @PathVariable long restaurantId,
-                                                  @RequestBody CreateReservationReq req) {
+                                                  @Valid @RequestBody CreateReservationReq req) {
 
         // todo reservationDayId, paymentId 수정하기
-        ReservationDTO dto = ReservationDTO.builder()
-                .restaurantId(restaurantId)
-                .memberId(memberDTO.getMemberId())
-                .reservationDayId(1L)
-                .paymentId(1L)
-                .time(req.getTime())
-                .numberOfPeople(req.getNumberOfPeople())
-                .memo(req.getMemo())
-                .status(ReservationStatus.PLANNED)
-                .build();
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(restaurantId,
+                loginMember.getMemberId(), req);
 
         long reservationId = reservationService.createReservation(dto);
 
@@ -55,17 +45,10 @@ public class ReservationController {
     }
 
     @PostMapping("/availTimeSlots")
-    @Operation(summary = "예약 가능한 시간 조회", description = "해당 날짜에 예약 가능한 시간들을 조회하는 API입니다.")
+    @Operation(summary = "예약 가능한 시간 조회", description = "방문일에 예약 가능한 시간들을 조회하는 API입니다.")
     public ResponseEntity<TimeSlots> getAvailableTimeSlots(@Valid @RequestBody GetAvailableTimeSlotsReq req) {
-
-        RestaurantDTO restaurant = restaurantService.getRestaurantById(req.getRestaurantId());
-
-        if (restaurant.checkNumberOfPeople(req.getNumberOfPeople())) {
-            return ResponseEntity.ok(new TimeSlots(new ArrayList<>()));
-        }
-
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantDTO(restaurant)
+                .restaurantId(req.getRestaurantId())
                 .numberOfPeople(req.getNumberOfPeople())
                 .searchDate(req.getSearchDate())
                 .visitTime(req.getVisitTime())

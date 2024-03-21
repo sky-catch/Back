@@ -13,8 +13,10 @@ import com.example.core.web.security.dto.UsersDTO;
 import com.example.core.web.security.jwt.JWTProvider;
 import com.example.core.web.security.jwt.dto.AccessToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OauthService {
@@ -33,6 +35,7 @@ public class OauthService {
         MemberDTO member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
         MemberDTO saved = memberMapper.findByOauthId(member.oauthId())
                 .orElseGet(() -> {
+                    log.info("새로운 member = {}", member);
                     memberMapper.save(member);
                     return memberMapper.findByOauthId(member.oauthId())
                             .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND.getMessage()));

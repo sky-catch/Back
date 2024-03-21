@@ -22,6 +22,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,8 @@ class RestaurantServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .capacity(1)
+                .tablePersonMax(4)
+                .tablePersonMin(2)
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
@@ -81,6 +83,11 @@ class RestaurantServiceTest {
                 .build();
     }
 
+    @AfterEach
+    void cleanup() {
+        restaurantMapper.deleteAll();
+    }
+
     @Test
     @DisplayName("새로운 식당을 생성하는 테스트")
     void test1() {
@@ -91,7 +98,8 @@ class RestaurantServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .capacity(1)
+                .tablePersonMax(4)
+                .tablePersonMin(2)
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
@@ -131,7 +139,8 @@ class RestaurantServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .capacity(1)
+                .tablePersonMax(4)
+                .tablePersonMin(2)
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())

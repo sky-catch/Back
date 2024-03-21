@@ -25,7 +25,8 @@ public class GetRestaurantRes extends BaseDTO {
     private String category;
     private String content;
     private String phone;
-    private int capacity;
+    private int tablePersonMax;
+    private int tablePersonMin;
     private String openTime;
     private String lastOrderTime;
     private String closeTime;

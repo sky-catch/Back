@@ -7,23 +7,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.example.api.holiday.Day;
+import com.example.api.holiday.HolidayDTO;
+import com.example.api.holiday.HolidayMapper;
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.GetReservationRes;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.request.CreateReservationReq;
+import com.example.api.reservation.dto.response.GetReservationRes;
+import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,10 +50,19 @@ class ReservationServiceTest {
     private ReservationMapper reservationMapper;
     @Autowired
     private RestaurantMapper restaurantMapper;
+    @Autowired
+    private HolidayMapper holidayMapper;
 
     private RestaurantDTO testRestaurant;
     private final LocalTime openTime = LocalTime.of(10, 0, 0);
     private final LocalTime lastOrderTime = LocalTime.of(20, 0, 0);
+    private final int tablePersonMax = 4;
+    private final int tablePersonMin = 2;
+    private final int underTablePersonMin = tablePersonMin - 1;
+    private final int overTablePersonMax = tablePersonMax + 1;
+    private final LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
+    private final LocalDate holiday = LocalDate.of(2024, 3, 11); // MONDAY
+    private final LocalDateTime validVisitTime = LocalDateTime.of(notHoliday, openTime);
 
     @BeforeEach
     void init() {
@@ -55,7 +74,8 @@ class ReservationServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .capacity(10)
+                .tablePersonMax(tablePersonMax)
+                .tablePersonMin(tablePersonMin)
                 .openTime(openTime)
                 .lastOrderTime(lastOrderTime)
                 .closeTime(LocalTime.of(22, 0, 0))
@@ -63,19 +83,22 @@ class ReservationServiceTest {
                 .detailAddress("detailAddress")
                 .build();
         restaurantMapper.save(testRestaurant);
+
+        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
     }
 
     @AfterEach
     void cleanup() {
         restaurantMapper.deleteAll();
         reservationMapper.deleteAll();
+        holidayMapper.deleteAll();
     }
 
     // todo 테스트 보충하기
 
     @Test
     @DisplayName("방문 상태로 나의 예약을 조회할 수 있다.")
-    void test1() {
+    void get_my_reservations_test() {
         // given
         for (int i = 1; i <= 15; i++) {
             ReservationStatus status = CANCEL;
@@ -90,8 +113,8 @@ class ReservationServiceTest {
                     .memberId(1L)
                     .reservationDayId(1L)
                     .paymentId(1L)
-                    .time(LocalDateTime.now())
-                    .numberOfPeople(2)
+                    .time(validVisitTime)
+                    .numberOfPeople(tablePersonMin)
                     .memo("메모")
                     .status(status)
                     .build();
@@ -115,15 +138,15 @@ class ReservationServiceTest {
     // todo 예약 가능 시간 올바른지 테스트 보충하기
     @Test
     @DisplayName("새로운 예약을 생성하는 테스트")
-    void test2() {
+    void create_reservation() {
         // given
-        ReservationDTO dto = ReservationDTO.builder()
+        CreateReservationDTO dto = CreateReservationDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
-                .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
-                .numberOfPeople(2)
+                .time(validVisitTime)
+                .numberOfPeople(tablePersonMin)
                 .memo("메모")
                 .status(PLANNED)
                 .build();
@@ -136,37 +159,76 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("예약 불가능한 시간에 예약하는 경우 예외 발생하는 테스트")
-    void test3() {
+    @DisplayName("휴일이 없는 식당에 새로운 예약을 생성하는 테스트")
+    void create_reservation_with_no_holiday() {
         // given
-        ReservationDTO dto = ReservationDTO.builder()
+        RestaurantDTO testRestaurant2 = RestaurantDTO.builder()
+                .ownerId(2L)
+                .name("name2")
+                .category("category2")
+                .content("content2")
+                .phone("phone2")
+                .tablePersonMax(tablePersonMax)
+                .tablePersonMin(tablePersonMin)
+                .openTime(openTime)
+                .lastOrderTime(lastOrderTime)
+                .closeTime(LocalTime.of(22, 0, 0))
+                .address("address2")
+                .detailAddress("detailAddress2")
+                .build();
+        restaurantMapper.save(testRestaurant2);
+
+        CreateReservationDTO dto = CreateReservationDTO.builder()
+                .restaurantId(testRestaurant2.getRestaurantId())
+                .memberId(1L)
+                .reservationDayId(1L)
+                .paymentId(1L)
+                .time(LocalDateTime.of(LocalDate.now(), openTime))
+                .numberOfPeople(tablePersonMin)
+                .memo("메모")
+                .status(PLANNED)
+                .build();
+
+        // when
+        long actual = reservationService.createReservation(dto);
+
+        // then
+        assertEquals(1L, actual);
+    }
+
+    @Test
+    @DisplayName("예약 상태가 PLANNED가 아닌 경우 예외 발생하는 테스트")
+    void createReservation_with_not_valid_status() {
+        // given
+        CreateReservationDTO dto = CreateReservationDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
-                .time(LocalDateTime.of(2024, 1, 1, 9, 0, 0))
-                .numberOfPeople(2)
+                .time(validVisitTime)
+                .numberOfPeople(tablePersonMin)
                 .memo("메모")
-                .status(PLANNED)
+                .status(DONE)
                 .build();
 
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("예약 가능한 시간이 아닙니다.");
+                .hasMessageContaining("잘못된 예약 상태입니다.");
     }
 
-    @Test
-    @DisplayName("PLANNED 상태가 아닌 경우 예외 발생하는 테스트")
-    void test4() {
+    @ParameterizedTest
+    @ValueSource(ints = {underTablePersonMin, overTablePersonMax})
+    @DisplayName("방문 인원수가 잘못된 경우 예외 발생하는 테스트")
+    void createReservation_with_outbound_table_person(int outboundTablePerson) {
         // given
-        ReservationDTO dto = ReservationDTO.builder()
+        CreateReservationDTO dto = CreateReservationDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
                 .memberId(1L)
                 .reservationDayId(1L)
                 .paymentId(1L)
-                .time(LocalDateTime.of(2024, 1, 1, 15, 0, 0))
-                .numberOfPeople(2)
+                .time(validVisitTime)
+                .numberOfPeople(outboundTablePerson)
                 .memo("메모")
                 .status(DONE)
                 .build();
@@ -178,13 +240,60 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("해당 날짜에 식당의 예약이 없다면 오픈 시간부터 주문 마감 시간까지 30분 단위로 예약 가능 시간을 반환하는 테스트")
-    void test5() {
+    @DisplayName("휴일에 예약을 하는 경우 예외 발생하는 테스트")
+    void createReservation_with_holiday() {
+        // given
+        LocalDateTime notValidVisitDateTime = LocalDateTime.of(holiday, openTime);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모");
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(testRestaurant.getRestaurantId(), 1L,
+                req);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("휴일에는 예약할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("방문 시간이 잘못된 예약을 하는 경우 예외 발생하는 테스트")
+    void createReservation_with_not_valid_visit_time() {
+        // given
+        LocalTime notOpenTime = openTime.minusMinutes(1);
+        LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모");
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(testRestaurant.getRestaurantId(), 1L,
+                req);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("방문 시간이 잘못됐습니다.");
+    }
+
+    @Test
+    @DisplayName("방문일의 방문 시간에 예약이 이미 존재하는 경우 예외 발생하는 테스트")
+    void createReservation_with_duplicate() {
+        // given
+        CreateReservationReq req = new CreateReservationReq(validVisitTime, tablePersonMin, "메모");
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(testRestaurant.getRestaurantId(), 1L,
+                req);
+        reservationService.createReservation(dto);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("해당 방문일의 방문 시간에 예약이 이미 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("방문일에 식당의 예약이 없고, 방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간인 경우 "
+            + "방문 시간 ~ 주문 마감 시간까지 30분 단위로 예약 가능 시간을 반환하는 테스트")
+    void get_available_time_slots_with_all() {
         // given
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantDTO(testRestaurant)
-                .numberOfPeople(2)
-                .searchDate(LocalDate.now())
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(tablePersonMin)
+                .searchDate(notHoliday)
                 .visitTime(openTime)
                 .build();
 
@@ -220,8 +329,9 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("해당 날짜에 식당의 예약이 있다면 예약 시간을 제외한 예약 가능 시간을 반환하는 테스트")
-    void test6() {
+    @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이지만, 방문일에 식당의 예약이 존재하는 경우 "
+            + "예약 시간을 제외한 예약 가능 시간을 반환하는 테스트")
+    void get_available_time_slots_with_not_include_reservation_time() {
         // given
         for (int i = 0; i < 10; i++) {
             ReservationDTO dto = ReservationDTO.builder()
@@ -229,19 +339,18 @@ class ReservationServiceTest {
                     .memberId(1L)
                     .reservationDayId(1L)
                     .paymentId(1L)
-                    .time(LocalDateTime.of(LocalDate.now(), openTime.plusMinutes(i * 30)))
-                    .numberOfPeople(2)
+                    .time(LocalDateTime.of(notHoliday, openTime.plusMinutes(i * 30)))
+                    .numberOfPeople(tablePersonMin)
                     .memo("메모")
                     .status(PLANNED)
                     .build();
             reservationMapper.save(dto);
-
         }
 
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantDTO(testRestaurant)
-                .numberOfPeople(2)
-                .searchDate(LocalDate.now())
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(tablePersonMin)
+                .searchDate(notHoliday)
                 .visitTime(openTime)
                 .build();
 
@@ -264,5 +373,69 @@ class ReservationServiceTest {
                         TimeSlot.of(LocalTime.of(19, 30, 0)),
                         TimeSlot.of(LocalTime.of(20, 0, 0))
                 );
+    }
+
+    @Test
+    @DisplayName("방문 시간이 오픈 시간 ~ 주문 마감 시간이지만 방문일이 휴일인 경우 빈 리스트를 반환하는 테스트")
+    void get_available_time_slots_with_holiday() {
+        // given
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(tablePersonMin)
+                .searchDate(holiday)
+                .visitTime(openTime)
+                .build();
+
+        // when
+        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
+
+        // then
+        assertTrue(actual.getTimeSlots().isEmpty());
+    }
+
+    @Test
+    @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이 아닌 경우 "
+            + "예외 발생하는 테스트")
+    void get_available_time_slots_with_not_valid_visit_time() {
+        // given
+        LocalTime notOpenTime = openTime.minusMinutes(1);
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(tablePersonMin)
+                .searchDate(notHoliday)
+                .visitTime(notOpenTime)
+                .build();
+
+        // expected
+        assertThatThrownBy(() -> reservationService.getAvailableTimeSlots(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {underTablePersonMin, overTablePersonMax})
+    @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이고, 예약 가능 인원을 벗어난 경우 "
+            + "빈 리스트를 반환하는 테스트")
+    void get_available_time_slots_with_outbound_table_person(int outboundNumberOfPeople) {
+        // given
+        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .numberOfPeople(outboundNumberOfPeople)
+                .searchDate(notHoliday)
+                .visitTime(openTime)
+                .build();
+
+        // when
+        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
+
+        // then
+        assertTrue(actual.getTimeSlots().isEmpty());
+    }
+
+    private List<HolidayDTO> getMondayAndTuesdayHolidays() {
+        HolidayDTO monday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.MONDAY).build();
+        HolidayDTO tuesday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.TUESDAY)
+                .build();
+        return Arrays.asList(monday, tuesday);
     }
 }

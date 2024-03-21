@@ -1,8 +1,9 @@
 package com.example.api.reservation;
 
 import com.example.api.mydining.GetMyReservationDTO;
-import com.example.api.reservation.dto.FindAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.GetReservationRes;
+import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
+import com.example.api.reservation.dto.condition.ReservationSearchCond;
+import com.example.api.reservation.dto.response.GetReservationRes;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,5 +18,8 @@ public interface ReservationMapper {
 
     ReservationDTO getReservation(long reservationId);
 
-    List<ReservationDTO> findByRestaurantIdAndSearchDateAndGreaterThanOrEqualToVisitTime(FindAvailableTimeSlotDTO dto);
+    List<ReservationDTO> findByRestaurantIdAndStatusAndSearchDateAndGreaterThanOrEqualToVisitTime(
+            ReservationSearchCond cond);
+
+    boolean isAlreadyExistsByRestaurantIdAndMemberIdAndTime(DuplicateReservationSearchCond cond);
 }

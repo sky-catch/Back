@@ -26,7 +26,8 @@ CREATE TABLE RESTAURANT
     category        varchar(25) NOT NULL,
     content         text,
     phone           varchar(25) NOT NULL,
-    capacity        int         NOT NULL,
+    table_person_max  int         NOT NULL,
+    table_person_min  int         NOT NULL,
     open_time       time        NOT NULL,
     last_order_time time        NOT NULL,
     close_time      time        NOT NULL,
@@ -119,3 +120,14 @@ CREATE TABLE store_facility
 );
 
 
+
+
+CREATE TABLE HOLIDAY
+(
+    holiday_id    bigint      NOT NULL AUTO_INCREMENT,
+    restaurant_id bigint      NOT NULL,
+    day           varchar(25) NOT NULL,
+    created_date  timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date  timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (holiday_id)
+);

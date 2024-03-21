@@ -1,9 +1,6 @@
 package com.example.api.restaurant.dto;
 
-import com.example.api.reservation.ReservationDTO;
 import com.example.core.dto.BaseDTO;
-import com.example.core.exception.SystemException;
-
 import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +22,8 @@ public class RestaurantDTO extends BaseDTO {
     private String category;
     private String content;
     private String phone;
-    private int capacity;
+    private int tablePersonMax;
+    private int tablePersonMin;
     private LocalTime openTime;
     private LocalTime lastOrderTime;
     private LocalTime closeTime;
@@ -37,13 +35,16 @@ public class RestaurantDTO extends BaseDTO {
     private long reviewCount;
     private float reviewAvg;
 
+    // todo 생성자 값 검증하기 - tablePersonMax < tablePersonMin
+
     public RestaurantDTO(CreateRestaurantReq req) {
         this.ownerId = req.getOwnerId();
         this.name = req.getName();
         this.category = req.getCategory();
         this.content = req.getContent();
         this.phone = req.getPhone();
-        this.capacity = req.getCapacity();
+        this.tablePersonMax = req.getTablePersonMax();
+        this.tablePersonMin = req.getTablePersonMin();
         this.openTime = req.getOpenTime();
         this.lastOrderTime = req.getLastOrderTime();
         this.closeTime = req.getCloseTime();
@@ -55,21 +56,6 @@ public class RestaurantDTO extends BaseDTO {
 
     public boolean isOwner(long ownerId) {
         return this.ownerId == ownerId;
-    }
-
-    public void checkCanMakeReservation(ReservationDTO dto) {
-        if (capacity < dto.getNumberOfPeople()) {
-            throw new SystemException("예약 가능 인원을 초과했습니다.");
-        }
-
-        LocalTime reservationTime = dto.getTime().toLocalTime();
-        if (openTime.isAfter(reservationTime) || lastOrderTime.isBefore(reservationTime)) {
-            throw new SystemException("예약 가능한 시간이 아닙니다.");
-        }
-    }
-
-    public boolean checkNumberOfPeople(int numberOfPeople) {
-        return capacity < numberOfPeople;
     }
 
     // for mybatis
