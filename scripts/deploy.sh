@@ -28,4 +28,4 @@ else
 fi
 
 echo "> Deploy - $JAR_PATH "
-nohup java -jar $JAR_PATH > nohup.out 2>&1 &
+nohup java -jar $JAR_PATH &
