@@ -10,8 +10,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.api.facility.dto.Facility;
-import com.example.api.restaurant.dto.*;
+import com.example.api.restaurant.dto.CreateRestaurantReq;
+import com.example.api.restaurant.dto.GetRestaurantImageRes;
+import com.example.api.restaurant.dto.GetRestaurantRes;
+import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import com.example.api.restaurantimage.RestaurantImageMapper;
 import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.api.restaurantnotification.RestaurantNotificationMapper;
@@ -20,7 +23,6 @@ import com.example.core.exception.SystemException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +76,8 @@ class RestaurantServiceTest {
                 .category("category")
                 .content("content")
                 .phone("phone")
-                .capacity(1)
+                .tablePersonMax(4)
+                .tablePersonMin(2)
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
@@ -160,7 +163,6 @@ class RestaurantServiceTest {
     void test4() {
         // given
         long createdRestaurantId = restaurantService.createRestaurant(createRestaurantReq);
-
 
         // when
         GetRestaurantRes actual = restaurantService.getRestaurantInfoById(createdRestaurantId);

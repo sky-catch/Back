@@ -8,12 +8,16 @@ import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -29,7 +33,7 @@ public class RestaurantController {
     public ResponseEntity<Void> createRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
                                                  @Valid @RequestBody CreateRestaurantReq dto) {
         dto.setOwnerId(owner.getOwnerId());
-        long createdRestaurantId = restaurantService.createRestaurant(restaurantDTO);
+        long createdRestaurantId = restaurantService.createRestaurant(dto);
 
         holidayService.createHolidays(createdRestaurantId, dto.getDays());
 
