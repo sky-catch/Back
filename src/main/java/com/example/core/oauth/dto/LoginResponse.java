@@ -1,5 +1,6 @@
 package com.example.core.oauth.dto;
 
+import com.example.core.web.security.dto.UsersDTO;
 import com.example.core.web.security.jwt.dto.AccessToken;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
 
     private AccessToken accessToken;
-    private boolean isOwner;
+    private UsersDTO usersDTO;
 }

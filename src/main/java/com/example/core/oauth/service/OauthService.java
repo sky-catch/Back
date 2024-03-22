@@ -47,18 +47,15 @@ public class OauthService {
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
-                .isOwner(usersDTO.isOwner())
+                .usersDTO(usersDTO)
                 .build();
     }
 
     private UsersDTO getUsersDTO(MemberDTO saved) {
-        UsersDTO usersDTO = UsersDTO.builder()
-                .email(saved.getEmail())
-                .isOwner(false)
-                .build();
+        UsersDTO usersDTO = UsersDTO.createNotOwner(saved);
 
         if (ownerMapper.isExistByEmail(saved.getEmail())) {
-            usersDTO.setOwner(true);
+            usersDTO.setMemberToOwner();
         }
         return usersDTO;
     }

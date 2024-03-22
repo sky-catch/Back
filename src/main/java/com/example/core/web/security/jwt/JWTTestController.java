@@ -5,8 +5,6 @@ import com.example.api.member.MemberService;
 import com.example.api.owner.OwnerService;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
-import com.example.core.dto.HumanStatus;
-import com.example.core.oauth.domain.OauthServerType;
 import com.example.core.oauth.dto.LoginResponse;
 import com.example.core.web.security.dto.UsersDTO;
 import com.example.core.web.security.jwt.dto.AccessToken;
@@ -33,42 +31,17 @@ public class JWTTestController {
     private final MemberService memberService;
     private final OwnerService ownerService;
 
-    @GetMapping("/oauth/jwt/test")
-    @Operation(summary = "회원용 테스트 JWT 발급", description = "test@test.com 회원의 JWT를 발급한다.")
-    public ResponseEntity<LoginResponse> createTestJWT() {
-        MemberDTO testMember = MemberDTO.builder()
-                .nickname("test nickname")
-                .profileImageUrl("test profileImageUrl")
-                .email("test@test.com")
-                .name("test name")
-                .status(HumanStatus.ACTIVE)
-                .oauthServerId("1")
-                .oauthServer(OauthServerType.KAKAO)
-                .build();
-
-        UsersDTO usersDTO = UsersDTO.of(testMember);
-
-        AccessToken accessToken = jwtProvider.createToken(usersDTO);
-
-        LoginResponse response = LoginResponse.builder()
-                .accessToken(accessToken)
-                .isOwner(false)
-                .build();
-
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/oauth/jwt/test/{memberId}")
     @Operation(summary = "회원용 테스트 JWT 발급 - memberId 입력")
     public ResponseEntity<LoginResponse> createTestJWTById(@PathVariable long memberId) {
         MemberDTO testMember = memberService.getMemberById(memberId);
 
-        UsersDTO usersDTO = UsersDTO.of(testMember);
+        UsersDTO notOwner = UsersDTO.createNotOwner(testMember);
 
-        AccessToken accessToken = jwtProvider.createToken(usersDTO);
+        AccessToken accessToken = jwtProvider.createToken(notOwner);
         LoginResponse response = LoginResponse.builder()
                 .accessToken(accessToken)
-                .isOwner(false)
+                .usersDTO(notOwner)
                 .build();
 
         return ResponseEntity.ok(response);
@@ -79,12 +52,12 @@ public class JWTTestController {
     public ResponseEntity<LoginResponse> createTestOwnerJWTById(@PathVariable long ownerId) {
         GetOwnerRes testOwner = ownerService.getOwner(ownerId);
 
-        UsersDTO usersDTO = UsersDTO.of(testOwner);
+        UsersDTO owner = UsersDTO.createOwner(testOwner);
 
-        AccessToken accessToken = jwtProvider.createToken(usersDTO);
+        AccessToken accessToken = jwtProvider.createToken(owner);
         LoginResponse response = LoginResponse.builder()
                 .accessToken(accessToken)
-                .isOwner(true)
+                .usersDTO(owner)
                 .build();
 
         return ResponseEntity.ok(response);

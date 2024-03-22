@@ -81,7 +81,7 @@ class OauthServiceTest {
 
         // then
         assertNotNull(actual.getAccessToken());
-        assertFalse(actual.isOwner());
+        assertFalse(actual.getUsersDTO().isOwner());
     }
 
     @Test
@@ -105,6 +105,6 @@ class OauthServiceTest {
 
         // then
         assertNotNull(actual.getAccessToken());
-        assertTrue(actual.isOwner());
+        assertTrue(actual.getUsersDTO().isOwner());
     }
 }
