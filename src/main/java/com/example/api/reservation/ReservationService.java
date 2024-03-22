@@ -12,7 +12,7 @@ import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantService;
-import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
+import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,7 +38,7 @@ public class ReservationService {
     @Transactional
     public long createReservation(CreateReservationDTO dto) {
         // 식당 존재 유무
-        RestaurantWithHolidayDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayById(
+        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantService.getRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId());
 
         // 예약 상태
@@ -46,16 +46,20 @@ public class ReservationService {
             throw new SystemException("잘못된 예약 상태입니다.");
         }
         // 인원
-        if (restaurantWithHoliday.isOutboundTablePerson(dto.getNumberOfPeople())) {
+        if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
             throw new SystemException("방문 인원 수가 잘못됐습니다.");
         }
         // 예약 날짜
-        if (restaurantWithHoliday.isHoliday(dto.getVisitDate())) {
+        if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
             throw new SystemException("휴일에는 예약할 수 없습니다.");
         }
         // 시간
-        if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
+        if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(dto.getVisitTime())) {
             throw new SystemException("방문 시간이 잘못됐습니다.");
+        }
+        // 예약 가능한 기간
+        if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
+            throw new SystemException("예약 가능한 기간이 아닙니다.");
         }
 
         // 중복 확인
@@ -77,7 +81,7 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
-        RestaurantWithHolidayDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayById(
+        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId());
 
         if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {

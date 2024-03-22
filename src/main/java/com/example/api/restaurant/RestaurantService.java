@@ -1,19 +1,18 @@
 package com.example.api.restaurant;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
+
 import com.example.api.facility.StoreFacilityMapper;
-import com.example.api.facility.dto.Facility;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantWithHolidayDTO;
+import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.example.api.restaurant.exception.RestaurantExceptionType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class RestaurantService {
         }
 
         restaurantMapper.save(dto);
-        if(req.getFacilities() != null && !req.getFacilities().isEmpty()){
+        if (req.getFacilities() != null && !req.getFacilities().isEmpty()) {
             storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
         }
 
@@ -64,8 +63,8 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public RestaurantWithHolidayDTO getRestaurantWithHolidayById(long restaurantId) {
-        return restaurantMapper.findRestaurantWithHolidayById(restaurantId)
+    public RestaurantWithHolidayAndAvailableDateDTO getRestaurantWithHolidayAndAvailableDateById(long restaurantId) {
+        return restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(restaurantId)
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
     }
 }

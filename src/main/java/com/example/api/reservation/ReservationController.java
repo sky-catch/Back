@@ -34,7 +34,7 @@ public class ReservationController {
                                                   @PathVariable long restaurantId,
                                                   @Valid @RequestBody CreateReservationReq req) {
 
-        // todo reservationDayId, paymentId 수정하기
+        // todo paymentId 수정하기
         CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(restaurantId,
                 loginMember.getMemberId(), req);
 

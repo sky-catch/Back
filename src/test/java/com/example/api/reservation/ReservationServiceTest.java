@@ -20,6 +20,8 @@ import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
+import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
+import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
@@ -52,6 +54,8 @@ class ReservationServiceTest {
     private RestaurantMapper restaurantMapper;
     @Autowired
     private HolidayMapper holidayMapper;
+    @Autowired
+    private ReservationAvailableDateMapper reservationAvailableDateMapper;
 
     private RestaurantDTO testRestaurant;
     private final LocalTime openTime = LocalTime.of(10, 0, 0);
@@ -63,6 +67,10 @@ class ReservationServiceTest {
     private final LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
     private final LocalDate holiday = LocalDate.of(2024, 3, 11); // MONDAY
     private final LocalDateTime validVisitTime = LocalDateTime.of(notHoliday, openTime);
+    private final LocalDate availableBeginDate = LocalDate.of(2024, 1, 1);
+    private final LocalDate availableEndDate = LocalDate.of(2024, 12, 31);
+    private final LocalDate notAvailableDate = availableBeginDate.minusDays(1); // 예약 가능일이 아님
+    private final LocalDateTime notValidVisitTime = LocalDateTime.of(notAvailableDate, openTime);
 
     @BeforeEach
     void init() {
@@ -85,6 +93,8 @@ class ReservationServiceTest {
         restaurantMapper.save(testRestaurant);
 
         holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+
+        reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
     }
 
     @AfterEach
@@ -92,9 +102,8 @@ class ReservationServiceTest {
         restaurantMapper.deleteAll();
         reservationMapper.deleteAll();
         holidayMapper.deleteAll();
+        reservationAvailableDateMapper.deleteAll();
     }
-
-    // todo 테스트 보충하기
 
     @Test
     @DisplayName("방문 상태로 나의 예약을 조회할 수 있다.")
@@ -135,7 +144,6 @@ class ReservationServiceTest {
         });
     }
 
-    // todo 예약 가능 시간 올바른지 테스트 보충하기
     @Test
     @DisplayName("새로운 예약을 생성하는 테스트")
     void create_reservation() {
@@ -177,6 +185,7 @@ class ReservationServiceTest {
                 .detailAddress("detailAddress2")
                 .build();
         restaurantMapper.save(testRestaurant2);
+        reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant2.getRestaurantId()));
 
         CreateReservationDTO dto = CreateReservationDTO.builder()
                 .restaurantId(testRestaurant2.getRestaurantId())
@@ -268,6 +277,20 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining("방문 시간이 잘못됐습니다.");
+    }
+
+    @Test
+    @DisplayName("방문일이 잘못된 경우 예외 발생하는 테스트")
+    void createReservation_with_not_valid_visit_date() {
+        // given
+        CreateReservationReq req = new CreateReservationReq(notValidVisitTime, tablePersonMin, "메모");
+        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(testRestaurant.getRestaurantId(), 1L,
+                req);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining("예약 가능한 기간이 아닙니다.");
     }
 
     @Test
@@ -437,5 +460,13 @@ class ReservationServiceTest {
         HolidayDTO tuesday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.TUESDAY)
                 .build();
         return Arrays.asList(monday, tuesday);
+    }
+
+    private ReservationAvailableDateDTO getTestReservationAvailableDate(long restaurantId) {
+        return ReservationAvailableDateDTO.builder()
+                .restaurantId(restaurantId)
+                .beginDate(availableBeginDate)
+                .endDate(availableEndDate)
+                .build();
     }
 }

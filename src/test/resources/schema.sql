@@ -131,3 +131,14 @@ CREATE TABLE HOLIDAY
     updated_date  timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (holiday_id)
 );
+
+CREATE TABLE RESERVATION_AVAILABLE_DATE
+(
+    reservation_available_date_id bigint    NOT NULL AUTO_INCREMENT,
+    restaurant_id                 bigint    NOT NULL,
+    begin_date                    date      NOT NULL,
+    end_date                      date      NOT NULL,
+    created_date                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (reservation_available_date_id)
+);

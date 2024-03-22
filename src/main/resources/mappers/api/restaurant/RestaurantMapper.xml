@@ -27,7 +27,8 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
-                               last_order_time,close_time, address, detail_address, lunch_price, dinner_price, saved_count, review_count, review_avg)
+                               last_order_time, close_time, address, detail_address, lunch_price, dinner_price,
+                               saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
                 #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice},
                 #{dinnerPrice}, 0, 0, 0);
@@ -118,8 +119,8 @@
                resn.content as notification_content,
                resn.start_date,
                resn.end_date,
-               fc.name as facility_name,
-               fc.path as facility_path
+               fc.name      as facility_name,
+               fc.path      as facility_path
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
@@ -166,8 +167,8 @@
                resn.content as notification_content,
                resn.start_date,
                resn.end_date,
-               fc.name as facility_name,
-               fc.path as facility_path
+               fc.name      as facility_name,
+               fc.path      as facility_path
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
@@ -177,7 +178,8 @@
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
 
-    <resultMap id="restaurantWithHoliday" type="com.example.api.restaurant.dto.RestaurantWithHolidayDTO">
+    <resultMap id="restaurantWithHolidayAndAvailableDate"
+               type="com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO">
         <id property="restaurantId" column="restaurant_id"/>
         <id property="ownerId" column="owner_id"/>
         <id property="name" column="name"/>
@@ -198,6 +200,13 @@
         <id property="reviewAvg" column="review_avg"/>
         <id property="createdDate" column="created_date"/>
         <id property="updatedDate" column="updated_date"/>
+        <association property="availableDate"
+                     javaType="com.example.api.reservationavailabledate.ReservationAvailableDateDTO">
+            <result property="reservationAvailableDateId" column="reservation_available_date_id"/>
+            <result property="restaurantId" column="restaurant_id"/>
+            <result property="beginDate" column="begin_date"/>
+            <result property="endDate" column="end_date"/>
+        </association>
         <collection property="holidays" ofType="com.example.api.holiday.HolidayDTO">
             <id property="holidayId" column="holiday_id"/>
             <id property="restaurantId" column="restaurant_id"/>
@@ -205,7 +214,7 @@
         </collection>
     </resultMap>
 
-    <select id="findRestaurantWithHolidayById" resultMap="restaurantWithHoliday">
+    <select id="findRestaurantWithHolidayAndAvailableDateById" resultMap="restaurantWithHolidayAndAvailableDate">
         SELECT res.restaurant_id,
                res.owner_id,
                res.name,
@@ -226,11 +235,16 @@
                res.review_avg,
                res.created_date,
                res.updated_date,
+               rad.reservation_available_date_id,
+               rad.restaurant_id,
+               rad.begin_date,
+               rad.end_date,
                h.holiday_id,
                h.restaurant_id,
                h.day
         FROM restaurant res
                  LEFT OUTER JOIN holiday h ON h.restaurant_id = res.restaurant_id
+                 INNER JOIN reservation_available_date as rad ON rad.restaurant_id = res.restaurant_id
         WHERE res.restaurant_id = #{restaurantId};
     </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.example.api.restaurant.dto;
 
 import com.example.api.holiday.Day;
 import com.example.api.holiday.HolidayDTO;
+import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.core.dto.BaseDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RestaurantWithHolidayDTO extends BaseDTO {
+public class RestaurantWithHolidayAndAvailableDateDTO extends BaseDTO {
 
     private long restaurantId;
     private long ownerId;
@@ -40,6 +41,7 @@ public class RestaurantWithHolidayDTO extends BaseDTO {
     private long reviewCount;
     private float reviewAvg;
     private List<HolidayDTO> holidays;
+    private ReservationAvailableDateDTO availableDate;
 
     public boolean isOutboundTablePerson(int numberOfPeople) {
         return tablePersonMax < numberOfPeople || tablePersonMin > numberOfPeople;
@@ -66,5 +68,9 @@ public class RestaurantWithHolidayDTO extends BaseDTO {
 
     public boolean isNotValidVisitTime(LocalTime time) {
         return openTime.isAfter(time) || lastOrderTime.isBefore(time);
+    }
+
+    public boolean isNotAvailableDate(LocalDate date) {
+        return !availableDate.isValid(date);
     }
 }
