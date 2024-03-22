@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.savedrestaurant.SavedRestaurantMapper">
+    <select id="isAlreadyExistsByRestaurantIdAndMemberId" parameterType="long" resultType="boolean">
+        SELECT EXISTS (SELECT *
+                       FROM saved_restaurant sr
+                       WHERE sr.member_id = #{memberId}
+                         AND sr.restaurant_id = #{restaurantId});
+    </select>
+
+    <insert id="save" parameterType="com.example.api.savedrestaurant.SavedRestaurantDTO">
+        INSERT INTO saved_restaurant(member_id, restaurant_id)
+        VALUES (#{memberId}, #{restaurantId});
+    </insert>
+
+    <delete id="deleteAll">
+        DELETE
+        FROM saved_restaurant;
+    </delete>
+
+    <select id="findAll" resultType="com.example.api.savedrestaurant.SavedRestaurantDTO">
+        SELECT *
+        FROM saved_restaurant;
+    </select>
+</mapper>

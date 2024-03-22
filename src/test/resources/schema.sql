@@ -142,3 +142,12 @@ CREATE TABLE RESERVATION_AVAILABLE_DATE
     updated_date                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (reservation_available_date_id)
 );
+
+CREATE TABLE SAVED_RESTAURANT
+(
+    member_id     bigint    NOT NULL,
+    restaurant_id bigint    NOT NULL,
+    created_date  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (member_id, restaurant_id)
+);
