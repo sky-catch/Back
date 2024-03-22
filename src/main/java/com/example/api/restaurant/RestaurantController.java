@@ -2,6 +2,7 @@ package com.example.api.restaurant;
 
 import com.example.api.holiday.HolidayService;
 import com.example.api.owner.dto.Owner;
+import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.core.web.security.login.LoginOwner;
@@ -27,6 +28,7 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
     private final HolidayService holidayService;
+    private final ReservationAvailableDateService reservationAvailableDateService;
 
     @PostMapping
     @Operation(summary = "식당 생성", description = "사장은 식당을 생성할 수 있습니다.")
@@ -36,6 +38,8 @@ public class RestaurantController {
         long createdRestaurantId = restaurantService.createRestaurant(dto);
 
         holidayService.createHolidays(createdRestaurantId, dto.getDays());
+        reservationAvailableDateService.createReservationAvailableDate(createdRestaurantId,
+                dto.getReservationBeginDate(), dto.getReservationBeginDate());
 
         URI uri = URI.create("/restaurants/" + createdRestaurantId);
         return ResponseEntity.created(uri).build();
