@@ -1,5 +1,6 @@
 package com.example.api.member;
 
+import com.example.api.member.dto.UpdateMemberDTO;
 import com.example.core.oauth.domain.OauthId;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,4 +19,6 @@ public interface MemberMapper extends UsersMapper<MemberDTO> {
     void deleteAll();
 
     MemberDTO findById(long memberId);
+
+    void updateMember(UpdateMemberDTO dto);
 }

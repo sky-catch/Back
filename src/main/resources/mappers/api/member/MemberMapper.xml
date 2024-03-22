@@ -52,6 +52,15 @@
     </select>
 
     <select id="findById" resultType="com.example.api.member.MemberDTO">
-        SELECT * FROM member WHERE member_id = #{memberId}
+        SELECT *
+        FROM member
+        WHERE member_id = #{memberId}
     </select>
+
+    <update id="updateMember" parameterType="com.example.api.member.dto.UpdateMemberDTO">
+        UPDATE member
+        SET nickname          = #{nickname},
+            profile_image_url = #{profileImageUrl}
+        WHERE member_id = #{memberId};
+    </update>
 </mapper>
