@@ -3,17 +3,16 @@ package com.example.api.restaurant.dto;
 import com.example.api.facility.dto.Facility;
 import com.example.api.holiday.Days;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.time.LocalTime;
+import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.time.LocalTime;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Schema(description = "식당 생성 요청값")
 @Data
@@ -61,7 +60,7 @@ public class CreateRestaurantReq {
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
-    @Schema(description = "휴무일", example = "월,화")
+    @Schema(description = "휴무일", example = "{\"days\": [\"MONDAY\", \"TUESDAY\"]}")
     private Days days;
     @Schema(description = "[(PARKING, 주차 가능), (VALET_PARKING, 발렛 가능), (CORKAGE, 콜키지 가능), (CORKAGE_FREE, 콜키지 프리)," +
             " (RENT, 대관 가능), (NO_KIDS, 노키즈존), (WINE_DELIVERY, 와인배송), (LETTERING, 레터링), (SOMMELIER, 전문 소믈리에)," +
