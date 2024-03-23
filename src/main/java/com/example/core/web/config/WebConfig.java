@@ -5,8 +5,10 @@ import com.example.api.restaurantimage.controller.converter.RestaurantImageTypeC
 import com.example.core.oauth.controller.OauthServerTypeConverter;
 import com.example.core.web.security.login.LoginMemberArgumentResolver;
 import com.example.core.web.security.login.LoginOwnerArgumentResolver;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.HttpMethod;
@@ -17,14 +19,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+    @Value("${cors.pathPattern}")
+    private String pathPattern;
+    @Value("${cors.allowedOrigins}")
+    private String[] allowedOrigins;
 
     private final LoginMemberArgumentResolver loginMemberArgumentResolver;
     private final LoginOwnerArgumentResolver loginOwnerArgumentResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+        registry.addMapping(pathPattern)
+                .allowedOrigins(allowedOrigins)
                 .allowedMethods(
                         HttpMethod.GET.name(),
                         HttpMethod.POST.name(),
