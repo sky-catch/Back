@@ -5,6 +5,7 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
+import com.example.api.restaurant.dto.UpdateRestaurantReq;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,12 +14,7 @@ import java.net.URI;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -43,6 +39,14 @@ public class RestaurantController {
 
         URI uri = URI.create("/restaurants/" + createdRestaurantId);
         return ResponseEntity.created(uri).build();
+    }
+
+    @PutMapping("")
+    @Operation(hidden = true, summary = "식당 수정", description = "전체 수정이므로 기존의 모든 데이터를 주셔야합니다.")
+    public void updateRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
+                                 @Valid @RequestBody UpdateRestaurantReq dto){
+        dto.setOwnerId(owner.getOwnerId());
+        restaurantService.updateRestaurant(dto);
     }
 
     @GetMapping("/{name}")

@@ -5,14 +5,16 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_F
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
 
 import com.example.api.facility.StoreFacilityMapper;
-import com.example.api.restaurant.dto.CreateRestaurantReq;
-import com.example.api.restaurant.dto.GetRestaurantRes;
-import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
+import com.example.api.holiday.HolidayDTO;
+import com.example.api.holiday.HolidayMapper;
+import com.example.api.restaurant.dto.*;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
+    private final HolidayMapper holidayMapper;
 
     @Transactional
     public long createRestaurant(CreateRestaurantReq req) {
@@ -39,6 +42,25 @@ public class RestaurantService {
         }
 
         return dto.getRestaurantId();
+    }
+
+    @Transactional
+    public void updateRestaurant(UpdateRestaurantReq req) {
+        //todo reservationAvailableDateService부분 추가해야함.
+        RestaurantDTO dto = new RestaurantDTO(req);
+
+        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), dto.getRestaurantId())) {
+            throw new SystemException(NOT_UNIQUE_NAME.getMessage());
+        }
+
+        restaurantMapper.updateRestaurant(dto);
+
+        List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()
+                .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
+                .collect(Collectors.toList());
+
+        holidayMapper.delete(dto.getRestaurantId());
+        holidayMapper.saveAll(holidayDTOs);
     }
 
     @Transactional(readOnly = true)
@@ -67,4 +89,5 @@ public class RestaurantService {
         return restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(restaurantId)
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
     }
+
 }

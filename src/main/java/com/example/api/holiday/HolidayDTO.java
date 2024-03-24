@@ -18,6 +18,11 @@ public class HolidayDTO extends BaseDTO {
     private long restaurantId;
     private Day day;
 
+    public HolidayDTO(long restaurantId, Day day){
+        this.restaurantId = restaurantId;
+        this.day = day;
+    }
+
     public boolean isSameDay(Day day) {
         return this.day.isSameDay(day);
     }

@@ -25,6 +25,11 @@
         )
     </select>
 
+    <delete id="delete" parameterType="com.example.api.holiday.HolidayDTO">
+        DELETE FROM holiday
+        WHERE restaurant_id = #{restaurantId}
+    </delete>
+
     <select id="findAll" resultType="com.example.api.holiday.HolidayDTO">
         SELECT *
         FROM holiday;

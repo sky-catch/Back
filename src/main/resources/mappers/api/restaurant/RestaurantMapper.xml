@@ -31,8 +31,27 @@
                                saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
                 #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice},
-                #{dinnerPrice}, 0, 0, 0);
+                #{dinnerPrice}, 0, 0, 0)
     </insert>
+
+    <update id="updateRestaurant" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
+        UPDATE restaurant
+        SET
+            name = #{name},
+            category = #{category},
+            content = #{content},
+            phone = #{phone},
+            table_person_max = #{tablePersonMax},
+            table_person_min = #{tablePersonMin},
+            open_time = #{openTime},
+            last_order_time = #{lastOrderTime},
+            close_time = #{closeTime},
+            address = #{address},
+            detail_address = #{detailAddress},
+            lunch_price = #{lunchPrice},
+            dinner_price = #{dinnerPrice}
+        WHERE owner_id = #{ownerId}
+    </update>
 
     <delete id="deleteAll">
         DELETE
@@ -136,6 +155,10 @@
 
     <select id="isAlreadyExistsName" parameterType="String" resultType="boolean">
         SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name});
+    </select>
+
+    <select id="isAlreadyExistsNameExcludeSelf" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name} and res.restaurant_id != #{restaurantId});
     </select>
 
     <select id="findRestaurantInfoByName" resultMap="restaurant">

@@ -54,6 +54,24 @@ public class RestaurantDTO extends BaseDTO {
         this.dinnerPrice = req.getDinnerPrice();
     }
 
+    public RestaurantDTO(UpdateRestaurantReq req) {
+        this.restaurantId = req.getRestaurantId();
+        this.ownerId = req.getOwnerId();
+        this.name = req.getName();
+        this.category = req.getCategory();
+        this.content = req.getContent();
+        this.phone = req.getPhone();
+        this.tablePersonMax = req.getTablePersonMax();
+        this.tablePersonMin = req.getTablePersonMin();
+        this.openTime = req.getOpenTime();
+        this.lastOrderTime = req.getLastOrderTime();
+        this.closeTime = req.getCloseTime();
+        this.address = req.getAddress();
+        this.detailAddress = req.getDetailAddress();
+        this.lunchPrice = req.getLunchPrice();
+        this.dinnerPrice = req.getDinnerPrice();
+    }
+
     public boolean isOwner(long ownerId) {
         return this.ownerId == ownerId;
     }

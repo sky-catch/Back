@@ -28,7 +28,11 @@ public interface RestaurantMapper {
 
     boolean isAlreadyExistsName(String name);
 
+    boolean isAlreadyExistsNameExcludeSelf(String name, long restaurantId);
+
     Optional<GetRestaurantRes> findRestaurantInfoByName(String name);
 
     Optional<RestaurantWithHolidayAndAvailableDateDTO> findRestaurantWithHolidayAndAvailableDateById(long restaurantId);
+
+    void updateRestaurant(RestaurantDTO dto);
 }

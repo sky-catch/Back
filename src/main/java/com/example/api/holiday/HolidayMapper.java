@@ -13,4 +13,6 @@ public interface HolidayMapper {
     List<HolidayDTO> findAll();
 
     void deleteAll();
+
+    void delete(long restaurantId);
 }
