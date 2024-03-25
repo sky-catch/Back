@@ -21,6 +21,7 @@ public class Chat extends BaseDTO {
     private boolean memberChat;
     @Schema(description = "채팅을 읽었으면 true, 안 읽었으면 false")
     private boolean readChat;
+    @Schema(description = "내용")
     private String content;
 
 }

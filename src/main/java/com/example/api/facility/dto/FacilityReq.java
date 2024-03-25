@@ -13,6 +13,6 @@ import java.util.List;
 public class FacilityReq {
 
     private long restaurantId;
-    @Schema(example = "[\"PARKING\", \"CORKAGE\"]")
+    @Schema(example = "[\"PARKING\", \"CORKAGE\"]", description = "시설들")
     private List<Facility> facilities;
 }
