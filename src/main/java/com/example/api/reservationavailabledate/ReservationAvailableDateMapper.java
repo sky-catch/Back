@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ReservationAvailableDateMapper {
     void save(ReservationAvailableDateDTO dto);
 
+    void update(ReservationAvailableDateDTO dto);
+
     List<ReservationAvailableDateDTO> findAll();
 
     void deleteAll();

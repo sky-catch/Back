@@ -7,6 +7,8 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_U
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayMapper;
+import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
+import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
 import com.example.api.restaurant.dto.*;
 import com.example.core.exception.SystemException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class RestaurantService {
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
     private final HolidayMapper holidayMapper;
+    private final ReservationAvailableDateMapper reservationAvailableDateMapper;
 
     @Transactional
     public long createRestaurant(CreateRestaurantReq req) {
@@ -46,7 +49,6 @@ public class RestaurantService {
 
     @Transactional
     public void updateRestaurant(UpdateRestaurantReq req) {
-        //todo reservationAvailableDateService부분 추가해야함.
         RestaurantDTO dto = new RestaurantDTO(req);
 
         if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), dto.getRestaurantId())) {
@@ -61,6 +63,8 @@ public class RestaurantService {
 
         holidayMapper.delete(dto.getRestaurantId());
         holidayMapper.saveAll(holidayDTOs);
+        reservationAvailableDateMapper.update(new ReservationAvailableDateDTO(req));
+
     }
 
     @Transactional(readOnly = true)

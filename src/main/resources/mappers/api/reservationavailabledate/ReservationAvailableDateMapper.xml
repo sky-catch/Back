@@ -10,6 +10,11 @@
         VALUES (#{restaurantId}, #{beginDate}, #{endDate});
     </insert>
 
+    <update id="update" parameterType="com.example.api.reservationavailabledate.ReservationAvailableDateDTO">
+        UPDATE reservation_available_date SET begin_date = #{beginDate}, end_date = #{endDate}
+        WHERE restaurant_id = #{restaurantId}
+    </update>
+
     <select id="findAll" resultType="com.example.api.reservationavailabledate.ReservationAvailableDateDTO">
         SELECT *
         FROM reservation_available_date;

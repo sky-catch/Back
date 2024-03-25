@@ -42,7 +42,7 @@ public class RestaurantController {
     }
 
     @PutMapping("")
-    @Operation(hidden = true, summary = "식당 수정", description = "전체 수정이므로 기존의 모든 데이터를 주셔야합니다.")
+    @Operation(summary = "식당 수정", description = "전체 수정이므로 기존의 모든 데이터를 주셔야합니다.")
     public void updateRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
                                  @Valid @RequestBody UpdateRestaurantReq dto){
         dto.setOwnerId(owner.getOwnerId());
