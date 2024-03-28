@@ -1,6 +1,7 @@
 package com.example.api.chat;
 
 import com.example.api.chat.dto.Chat;
+import com.example.api.chat.dto.ChatRoom;
 import com.example.api.chat.dto.GetChatRoom;
 import com.example.api.chat.dto.GetChatRoomListRes;
 import com.example.core.exception.SystemException;
@@ -29,8 +30,10 @@ public class ChatService {
     }
 
     @Transactional
-    public void createChatRoom(long restaurantId, long memberId) {
-        chatMapper.createChatRoom(restaurantId, memberId);
+    public long createChatRoom(long restaurantId, long memberId) {
+        ChatRoom chatRoom = new ChatRoom(memberId, restaurantId);
+        chatMapper.createChatRoom(chatRoom);
+        return chatRoom.getChatRoomId();
     }
 
     @Transactional(readOnly = true)

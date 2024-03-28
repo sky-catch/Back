@@ -19,4 +19,8 @@ public class ChatRoom extends BaseDTO {
     private long restaurantId;
     private long ownerId;
 
+    public ChatRoom(long memberId, long restaurantId) {
+        this.memberId = memberId;
+        this.restaurantId = restaurantId;
+    }
 }

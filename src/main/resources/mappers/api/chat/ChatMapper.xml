@@ -40,7 +40,7 @@
         VALUES (#{chatRoomId}, 0, ${memberChat? 1 : 0}, #{content});
     </insert>
 
-    <insert id="createChatRoom">
+    <insert id="createChatRoom" useGeneratedKeys="true" keyProperty="chatRoomId">
         INSERT INTO chat_room (member_id, restaurant_id, owner_id)
         select #{memberId}, #{restaurantId}, (SELECT owner_id FROM restaurant WHERE restaurant_id = #{restaurantId})
         WHERE NOT EXISTS (

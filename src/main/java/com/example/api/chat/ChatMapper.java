@@ -1,6 +1,7 @@
 package com.example.api.chat;
 
 import com.example.api.chat.dto.Chat;
+import com.example.api.chat.dto.ChatRoom;
 import com.example.api.chat.dto.GetChatRoom;
 import com.example.api.chat.dto.GetChatRoomListRes;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface ChatMapper {
 
     void createChat(Chat chat);
 
-    void createChatRoom(long restaurantId, long memberId);
+    void createChatRoom(ChatRoom chatRoom);
 
     List<GetChatRoomListRes> getChatRoomList(long memberId);
 

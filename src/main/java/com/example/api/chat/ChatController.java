@@ -2,8 +2,8 @@ package com.example.api.chat;
 
 import com.example.api.chat.dto.GetChatRoom;
 import com.example.api.chat.dto.GetChatRoomListRes;
+import com.example.api.chat.dto.PostChatRoomRes;
 import com.example.api.member.MemberDTO;
-import com.example.api.owner.dto.Owner;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,8 +23,9 @@ public class ChatController {
 
     @Operation(summary = "채팅방 생성")
     @PostMapping("/{restaurantId}")
-    public void createChatRoom(@PathVariable long restaurantId, @Parameter(hidden = true) @LoginMember MemberDTO memberDTO){
-        chatService.createChatRoom(restaurantId, memberDTO.getMemberId());
+    public PostChatRoomRes createChatRoom(@PathVariable long restaurantId, @Parameter(hidden = true) @LoginMember MemberDTO memberDTO){
+        long chatRoomId = chatService.createChatRoom(restaurantId, memberDTO.getMemberId());
+        return new PostChatRoomRes(chatRoomId);
     }
 
     @Operation(summary = "채팅방 목록 보기")
