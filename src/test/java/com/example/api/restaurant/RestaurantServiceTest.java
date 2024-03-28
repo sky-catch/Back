@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.api.holiday.Days;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantImageRes;
 import com.example.api.restaurant.dto.GetRestaurantRes;
@@ -83,6 +84,7 @@ class RestaurantServiceTest {
                 .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .days(Days.of(new ArrayList<>()))
                 .build();
     }
 

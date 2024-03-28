@@ -6,17 +6,20 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_U
 
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
-import com.example.api.holiday.HolidayMapper;
+import com.example.api.holiday.HolidayService;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
-import com.example.api.restaurant.dto.*;
+import com.example.api.restaurant.dto.CreateRestaurantReq;
+import com.example.api.restaurant.dto.GetRestaurantRes;
+import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
+import com.example.api.restaurant.dto.UpdateRestaurantReq;
 import com.example.core.exception.SystemException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
-    private final HolidayMapper holidayMapper;
+    private final HolidayService holidayService;
     private final ReservationAvailableDateMapper reservationAvailableDateMapper;
 
     @Transactional
@@ -40,6 +43,9 @@ public class RestaurantService {
         }
 
         restaurantMapper.save(dto);
+
+        holidayService.createHolidays(dto.getRestaurantId(), req.getDays());
+
         if (req.getFacilities() != null && !req.getFacilities().isEmpty()) {
             storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
         }
@@ -61,8 +67,7 @@ public class RestaurantService {
                 .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
                 .collect(Collectors.toList());
 
-        holidayMapper.delete(dto.getRestaurantId());
-        holidayMapper.saveAll(holidayDTOs);
+        holidayService.updateHolidays(dto.getRestaurantId(), holidayDTOs);
         reservationAvailableDateMapper.update(new ReservationAvailableDateDTO(req));
 
     }
