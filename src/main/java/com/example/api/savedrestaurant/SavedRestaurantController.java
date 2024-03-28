@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +36,18 @@ public class SavedRestaurantController {
 
         URI uri = URI.create("/savedRestaurant/" + restaurantId);
         return ResponseEntity.created(uri).build();
+    }
+
+    @DeleteMapping("/{restaurantId}")
+    @Operation(summary = "식당 저장 삭제", description = "식당 저장을 삭제하는 API입니다.")
+    public void deleteSavedRestaurant(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
+                                      @PathVariable long restaurantId) {
+
+        DeleteSavedRestaurantDTO dto = DeleteSavedRestaurantDTO.builder()
+                .memberId(loginMember.getMemberId())
+                .restaurantId(restaurantId)
+                .build();
+
+        savedRestaurantService.deleteSavedRestaurant(dto);
     }
 }

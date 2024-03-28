@@ -21,4 +21,9 @@ public class SavedRestaurantService {
 
         savedRestaurantMapper.save(savedRestaurant);
     }
+
+    public void deleteSavedRestaurant(DeleteSavedRestaurantDTO dto) {
+        SavedRestaurantDTO savedRestaurant = dto.toSavedRestaurantDTO();
+        savedRestaurantMapper.delete(savedRestaurant);
+    }
 }

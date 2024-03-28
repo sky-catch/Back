@@ -15,6 +15,13 @@
         VALUES (#{memberId}, #{restaurantId});
     </insert>
 
+    <delete id="delete" parameterType="com.example.api.savedrestaurant.SavedRestaurantDTO">
+        DELETE
+        FROM saved_restaurant AS sr
+        WHERE sr.member_id = #{memberId}
+          AND sr.restaurant_id = #{restaurantId}
+    </delete>
+
     <delete id="deleteAll">
         DELETE
         FROM saved_restaurant;

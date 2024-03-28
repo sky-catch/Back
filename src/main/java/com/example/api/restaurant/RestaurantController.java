@@ -27,6 +27,7 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+    // todo 이미지 생성도 여기서 하기
     @PostMapping
     @Operation(summary = "식당 생성", description = "사장은 식당을 생성할 수 있습니다.")
     public void createRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
