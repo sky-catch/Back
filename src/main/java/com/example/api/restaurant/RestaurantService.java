@@ -8,7 +8,7 @@ import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayService;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
-import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
+import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
@@ -28,7 +28,7 @@ public class RestaurantService {
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
     private final HolidayService holidayService;
-    private final ReservationAvailableDateMapper reservationAvailableDateMapper;
+    private final ReservationAvailableDateService reservationAvailableDateService;
 
     @Transactional
     public long createRestaurant(CreateRestaurantReq req) {
@@ -45,6 +45,9 @@ public class RestaurantService {
         restaurantMapper.save(dto);
 
         holidayService.createHolidays(dto.getRestaurantId(), req.getDays());
+
+        reservationAvailableDateService.create(dto.getRestaurantId(),
+                req.getReservationBeginDate(), req.getReservationEndDate());
 
         if (req.getFacilities() != null && !req.getFacilities().isEmpty()) {
             storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
@@ -67,8 +70,8 @@ public class RestaurantService {
                 .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
                 .collect(Collectors.toList());
 
-        holidayService.updateHolidays(dto.getRestaurantId(), holidayDTOs);
-        reservationAvailableDateMapper.update(new ReservationAvailableDateDTO(req));
+        holidayService.update(dto.getRestaurantId(), holidayDTOs);
+        reservationAvailableDateService.update(new ReservationAvailableDateDTO(req));
 
     }
 

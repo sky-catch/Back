@@ -82,6 +82,8 @@ class RestaurantServiceTest {
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
+                .reservationBeginDate(LocalDate.now())
+                .reservationEndDate(LocalDate.now())
                 .address("address")
                 .detailAddress("detailAddress")
                 .days(Days.of(new ArrayList<>()))

@@ -38,7 +38,7 @@ public class HolidayService {
         holidayMapper.saveAll(holidayDTOs);
     }
 
-    public void updateHolidays(long restaurantId, List<HolidayDTO> holidayDTOs) {
+    public void update(long restaurantId, List<HolidayDTO> holidayDTOs) {
         holidayMapper.delete(restaurantId);
         holidayMapper.saveAll(holidayDTOs);
     }

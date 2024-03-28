@@ -12,7 +12,7 @@ public class ReservationAvailableDateService {
     private final ReservationAvailableDateMapper reservationAvailableDateMapper;
 
     @Transactional
-    public void createReservationAvailableDate(long restaurantId, LocalDate beginDate, LocalDate endDate) {
+    public void create(long restaurantId, LocalDate beginDate, LocalDate endDate) {
         ReservationAvailableDateDTO reservationAvailableDateDTO = ReservationAvailableDateDTO.builder()
                 .restaurantId(restaurantId)
                 .beginDate(beginDate)
@@ -20,5 +20,10 @@ public class ReservationAvailableDateService {
                 .build();
 
         reservationAvailableDateMapper.save(reservationAvailableDateDTO);
+    }
+
+    @Transactional
+    public void update(ReservationAvailableDateDTO dto) {
+        reservationAvailableDateMapper.update(dto);
     }
 }
