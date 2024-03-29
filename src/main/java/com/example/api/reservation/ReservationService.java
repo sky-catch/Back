@@ -48,23 +48,23 @@ public class ReservationService {
 
         // 예약 상태
         if (dto.getStatus() != PLANNED) {
-            throw new SystemException("잘못된 예약 상태입니다.");
+            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
         }
         // 인원
         if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
-            throw new SystemException("방문 인원 수가 잘못됐습니다.");
+            throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON.getMessage());
         }
         // 예약 날짜
         if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
-            throw new SystemException("휴일에는 예약할 수 없습니다.");
+            throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY.getMessage());
         }
         // 시간
         if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(dto.getVisitTime())) {
-            throw new SystemException("방문 시간이 잘못됐습니다.");
+            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
         }
         // 예약 가능한 기간
         if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
-            throw new SystemException("예약 가능한 기간이 아닙니다.");
+            throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE.getMessage());
         }
 
         // 중복 확인
@@ -74,7 +74,7 @@ public class ReservationService {
                 .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
                 .build();
         if (reservationMapper.isAlreadyExistsByRestaurantIdAndMemberIdAndTime(cond)) {
-            throw new SystemException("해당 방문일의 방문 시간에 예약이 이미 존재합니다.");
+            throw new SystemException(ReservationExceptionType.ALREADY_EXISTS.getMessage());
         }
 
         PaymentDTO paymentReady = PaymentDTO.ofReadyStatus(dto.getAmountToPay());
