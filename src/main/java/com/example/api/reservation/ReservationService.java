@@ -3,6 +3,8 @@ package com.example.api.reservation;
 import static com.example.api.reservation.ReservationStatus.PLANNED;
 
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.payment.PaymentMapper;
+import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.TimeSlot;
@@ -31,7 +33,7 @@ public class ReservationService {
     // todo restaurantService -> restaurantMapper로 변경하기
     private final RestaurantService restaurantService;
 
-    // todo 예약과 결제가 같이 생성되도록 수정하기
+    private final PaymentMapper paymentMapper;
 
     @Transactional(readOnly = true)
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
@@ -39,7 +41,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public long createReservation(CreateReservationDTO dto) {
+    public void createReservation(CreateReservationDTO dto) {
         // 식당 존재 유무
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantService.getRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId());
@@ -75,11 +77,12 @@ public class ReservationService {
             throw new SystemException("해당 방문일의 방문 시간에 예약이 이미 존재합니다.");
         }
 
+        PaymentDTO paymentReady = PaymentDTO.ofReadyStatus(dto.getAmountToPay());
+        paymentMapper.save(paymentReady);
+
         ReservationDTO reservation = dto.toReservationDTO();
-
+        reservation.setPaymentId(paymentReady.getPaymentId());
         reservationMapper.save(reservation);
-
-        return reservation.getReservationId();
     }
 
     @Transactional(readOnly = true)

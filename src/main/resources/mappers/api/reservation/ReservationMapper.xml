@@ -95,8 +95,13 @@
         WHERE reservation_id = #{reservationId}
     </select>
 
-    <select id="deleteAll">
-        DELETE
+    <select id="findAll" resultType="com.example.api.reservation.ReservationDTO">
+        SELECT *
         FROM reservation;
     </select>
+
+    <delete id="deleteAll">
+        DELETE
+        FROM reservation;
+    </delete>
 </mapper>

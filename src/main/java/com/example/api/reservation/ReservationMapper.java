@@ -24,5 +24,7 @@ public interface ReservationMapper {
 
     void deleteById(long reservationId);
 
+    List<ReservationDTO> findAll();
+
     void deleteAll();
 }

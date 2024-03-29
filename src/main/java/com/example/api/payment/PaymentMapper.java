@@ -1,5 +1,6 @@
 package com.example.api.payment;
 
+import com.example.api.payment.domain.PaymentDTO;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,6 +12,8 @@ public interface PaymentMapper {
     void deleteById(long paymentId);
 
     void update(PaymentDTO payment);
+
+    void save(PaymentDTO payment);
 
     void deleteAll();
 }

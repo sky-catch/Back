@@ -1,7 +1,7 @@
 package com.example.api.payment.service;
 
-import com.example.api.payment.PaymentDTO;
 import com.example.api.payment.PaymentMapper;
+import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.payment.dto.PaymentCallbackRequest;
 import com.example.api.payment.exception.PaymentExceptionType;
 import com.example.api.reservation.ReservationDTO;

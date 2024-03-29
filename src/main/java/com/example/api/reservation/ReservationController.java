@@ -10,7 +10,6 @@ import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.net.URI;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +29,13 @@ public class ReservationController {
 
     @PostMapping("/{restaurantId}")
     @Operation(summary = "예약 생성", description = "방문일과 방문 시간에 식당 예약하는 API입니다.")
-    public ResponseEntity<Void> createReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
-                                                  @PathVariable long restaurantId,
-                                                  @Valid @RequestBody CreateReservationReq req) {
+    public void createReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
+                                  @PathVariable long restaurantId,
+                                  @Valid @RequestBody CreateReservationReq req) {
 
-        // todo paymentId 수정하기
-        CreateReservationDTO dto = CreateReservationDTO.reqToPlannedReservationDTO(restaurantId,
-                loginMember.getMemberId(), req);
+        CreateReservationDTO dto = CreateReservationDTO.of(restaurantId, loginMember.getMemberId(), req);
 
-        long reservationId = reservationService.createReservation(dto);
-
-        URI uri = URI.create("/reservations/" + restaurantId + "/" + reservationId);
-        return ResponseEntity.created(uri).build();
+        reservationService.createReservation(dto);
     }
 
     @PostMapping("/availTimeSlots")

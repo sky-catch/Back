@@ -4,13 +4,13 @@
 
 <mapper namespace="com.example.api.payment.PaymentMapper">
 
-    <select id="getPaymentById" resultType="com.example.api.payment.PaymentDTO">
+    <select id="getPaymentById" resultType="com.example.api.payment.domain.PaymentDTO">
         SELECT *
         FROM payment
         WHERE payment_id = #{paymentId}
     </select>
 
-    <insert id="save" parameterType="com.example.api.payment.PaymentDTO" useGeneratedKeys="true"
+    <insert id="save" parameterType="com.example.api.payment.domain.PaymentDTO" useGeneratedKeys="true"
             keyProperty="paymentId">
         INSERT INTO payment(imp_uid, pay_method, price, status)
         VALUES (#{impUid}, #{payMethod}, #{price}, #{status});
@@ -22,7 +22,7 @@
         WHERE payment_id = #{paymentId}
     </select>
 
-    <update id="update" parameterType="com.example.api.payment.PaymentDTO">
+    <update id="update" parameterType="com.example.api.payment.domain.PaymentDTO">
         UPDATE payment
         SET imp_uid    = #{impUid},
             pay_method = #{payMethod},
