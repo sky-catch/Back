@@ -42,40 +42,15 @@ public class ReservationService {
 
     @Transactional
     public void createReservation(CreateReservationDTO dto) {
-        // 식당 존재 유무
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantService.getRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId());
 
-        // 예약 상태
-        if (dto.getStatus() != PLANNED) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
-        }
-        // 인원
-        if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
-            throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON.getMessage());
-        }
-        // 예약 날짜
-        if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
-            throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY.getMessage());
-        }
-        // 시간
-        if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(dto.getVisitTime())) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
-        }
-        // 예약 가능한 기간
-        if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
-            throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE.getMessage());
-        }
-
-        // 중복 확인
-        DuplicateReservationSearchCond cond = DuplicateReservationSearchCond.builder()
-                .restaurantId(dto.getRestaurantId())
-                .memberId(dto.getMemberId())
-                .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
-                .build();
-        if (reservationMapper.isAlreadyExistsByRestaurantIdAndMemberIdAndTime(cond)) {
-            throw new SystemException(ReservationExceptionType.ALREADY_EXISTS.getMessage());
-        }
+        validateStatus(dto);
+        validatePerson(dto, restaurantWithHolidayAndAvailableDate);
+        validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
+        validateVisitTime(dto, restaurantWithHolidayAndAvailableDate);
+        validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
+        validateDuplicate(dto);
 
         PaymentDTO paymentReady = PaymentDTO.ofReadyStatus(dto.getAmountToPay());
         paymentMapper.save(paymentReady);
@@ -83,6 +58,51 @@ public class ReservationService {
         ReservationDTO reservation = dto.toReservationDTO();
         reservation.setPaymentId(paymentReady.getPaymentId());
         reservationMapper.save(reservation);
+    }
+
+    private void validateStatus(CreateReservationDTO dto) {
+        if (dto.getStatus() != PLANNED) {
+            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
+        }
+    }
+
+    private void validatePerson(CreateReservationDTO dto,
+                                RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
+        if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
+            throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON.getMessage());
+        }
+    }
+
+    private void validateHoliday(CreateReservationDTO dto,
+                                 RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
+        if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
+            throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY.getMessage());
+        }
+    }
+
+    private void validateVisitTime(CreateReservationDTO dto,
+                                   RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
+        if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(dto.getVisitTime())) {
+            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
+        }
+    }
+
+    private void validateAvailableDate(CreateReservationDTO dto,
+                                       RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
+        if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
+            throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE.getMessage());
+        }
+    }
+
+    private void validateDuplicate(CreateReservationDTO dto) {
+        DuplicateReservationSearchCond cond = DuplicateReservationSearchCond.builder()
+                .restaurantId(dto.getRestaurantId())
+                .memberId(dto.getMemberId())
+                .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
+                .build();
+        if (reservationMapper.isAlreadyExistsByRestaurantIdAndMemberIdAndTime(cond)) {
+            throw new SystemException(ReservationExceptionType.ALREADY_EXISTS_AT_TIME.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)
