@@ -28,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
 
     private final ReservationMapper reservationMapper;
+    // todo restaurantService -> restaurantMapper로 변경하기
     private final RestaurantService restaurantService;
+
+    // todo 예약과 결제가 같이 생성되도록 수정하기
 
     @Transactional(readOnly = true)
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {

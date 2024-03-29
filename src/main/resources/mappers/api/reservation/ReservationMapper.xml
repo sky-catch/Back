@@ -62,11 +62,6 @@
                 #{status});
     </insert>
 
-    <select id="deleteAll">
-        DELETE
-        FROM reservation;
-    </select>
-
     <select id="getReservation" resultType="com.example.api.reservation.ReservationDTO">
         SELECT *
         FROM reservation
@@ -92,5 +87,16 @@
                        WHERE rez.RESTAURANT_ID = #{restaurantId}
                          AND rez.MEMBER_ID = #{memberId}
                          AND rez.TIME = #{time});
+    </select>
+
+    <select id="deleteById">
+        DELETE
+        FROM reservation
+        WHERE reservation_id = #{reservationId}
+    </select>
+
+    <select id="deleteAll">
+        DELETE
+        FROM reservation;
     </select>
 </mapper>

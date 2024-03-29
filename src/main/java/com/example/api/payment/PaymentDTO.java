@@ -17,4 +17,9 @@ public class PaymentDTO extends BaseDTO {
     private String payMethod;
     private int price;
     private String status;
+
+    public void changeToPaid(String impUid) {
+        this.impUid = impUid;
+        this.status = "OK";
+    }
 }

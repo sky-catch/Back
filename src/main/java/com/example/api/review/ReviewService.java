@@ -9,12 +9,11 @@ import com.example.api.review.dto.ReviewDTO;
 import com.example.api.review.dto.UpdateReviewReq;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -32,7 +31,8 @@ public class ReviewService {
         ReviewDTO reviewDTO = new ReviewDTO(dto);
 
         //todo forTest
-        ReservationDTO reservationDTO = reservationMapper.getReservation(dto.getReservationId());
+        ReservationDTO reservationDTO = reservationMapper.getReservation(dto.getReservationId())
+                .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
         /*if(reservationDTO.getStatus() != ReservationStatus.DONE){
             throw new SystemException("리뷰를 작성할 수 있는 상태가 아닙니다.");
         }
@@ -50,7 +50,7 @@ public class ReviewService {
 
     @Transactional
     public void updateReview(UpdateReviewReq dto, List<MultipartFile> files) {
-        if(reviewMapper.getReview(dto.getReviewId()) == null){
+        if (reviewMapper.getReview(dto.getReviewId()) == null) {
             throw new SystemException("해당 리뷰가 없습니다.");
         }
         ReviewDTO reviewDTO = new ReviewDTO(dto);
