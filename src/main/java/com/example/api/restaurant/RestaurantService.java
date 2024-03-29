@@ -12,7 +12,6 @@ import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
 import com.example.core.exception.SystemException;
 import java.util.List;
@@ -95,11 +94,4 @@ public class RestaurantService {
         return restaurantMapper.findRestaurantInfoByName(name)
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
     }
-
-    @Transactional(readOnly = true)
-    public RestaurantWithHolidayAndAvailableDateDTO getRestaurantWithHolidayAndAvailableDateById(long restaurantId) {
-        return restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(restaurantId)
-                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
-    }
-
 }

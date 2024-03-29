@@ -1,6 +1,7 @@
 package com.example.api.reservation;
 
 import static com.example.api.reservation.ReservationStatus.PLANNED;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
@@ -13,7 +14,7 @@ import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
-import com.example.api.restaurant.RestaurantService;
+import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalDateTime;
@@ -30,9 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
 
     private final ReservationMapper reservationMapper;
-    // todo restaurantService -> restaurantMapper로 변경하기
-    private final RestaurantService restaurantService;
-
+    private final RestaurantMapper restaurantMapper;
     private final PaymentMapper paymentMapper;
 
     @Transactional(readOnly = true)
@@ -42,9 +41,8 @@ public class ReservationService {
 
     @Transactional
     public void createReservation(CreateReservationDTO dto) {
-        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantService.getRestaurantWithHolidayAndAvailableDateById(
-                dto.getRestaurantId());
-
+        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
+                dto.getRestaurantId()).orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
         validateStatus(dto);
         validatePerson(dto, restaurantWithHolidayAndAvailableDate);
         validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
@@ -107,8 +105,8 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
-        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHoliday = restaurantService.getRestaurantWithHolidayAndAvailableDateById(
-                dto.getRestaurantId());
+        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHoliday = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
+                dto.getRestaurantId()).orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
 
         if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
             throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
