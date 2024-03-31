@@ -40,10 +40,10 @@ public class PaymentService {
             log.info("iamportResponse = {}", iamportResponse.toString());
 
             ReservationDTO reservation = reservationMapper.getReservation(request.getReservationId())
-                    .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND.getMessage()));
+                    .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
             validMyReservation(loginMember, reservation);
             PaymentDTO payment = paymentMapper.getPaymentById(reservation.getPaymentId())
-                    .orElseThrow(() -> new SystemException(PaymentExceptionType.NOT_FOUND.getMessage()));
+                    .orElseThrow(() -> new SystemException(PaymentExceptionType.NOT_FOUND));
 
             validPaymentStatus(iamportResponse, reservation, payment);
             validAmountOfPayment(payment, iamportResponse, reservation);
@@ -59,7 +59,7 @@ public class PaymentService {
 
     private void validMyReservation(MemberDTO loginMember, ReservationDTO reservation) {
         if (!loginMember.isMine(reservation)) {
-            throw new SystemException(ReservationExceptionType.NOT_MINE.getMessage());
+            throw new SystemException(ReservationExceptionType.NOT_MINE);
         }
     }
 
@@ -69,7 +69,7 @@ public class PaymentService {
             reservationMapper.deleteById(reservation.getReservationId());
             paymentMapper.deleteById(payment.getPaymentId());
 
-            throw new SystemException(PaymentExceptionType.NOT_PAID.getMessage());
+            throw new SystemException(PaymentExceptionType.NOT_PAID);
         }
     }
 
@@ -90,7 +90,7 @@ public class PaymentService {
             iamportClient.cancelPaymentByImpUid(new CancelData(iamportResponse.getResponse().getImpUid(), true,
                     new BigDecimal(actualPaymentPrice)));
 
-            throw new SystemException(PaymentExceptionType.NOT_MATCH_PAYMENT_PRICE.getMessage());
+            throw new SystemException(PaymentExceptionType.NOT_MATCH_PAYMENT_PRICE);
         }
     }
 }

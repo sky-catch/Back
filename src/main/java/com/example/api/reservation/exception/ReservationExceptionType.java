@@ -1,12 +1,13 @@
 package com.example.api.reservation.exception;
 
+import com.example.core.exception.ExceptionType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ReservationExceptionType {
+public enum ReservationExceptionType implements ExceptionType {
 
     NOT_VALID_VISIT_TIME("방문 시간이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     NOT_FOUND("예약이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
@@ -19,5 +20,5 @@ public enum ReservationExceptionType {
     ;
 
     private final String message;
-    private final HttpStatus status;
+    private final HttpStatus httpStatus;
 }
