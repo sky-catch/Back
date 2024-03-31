@@ -1,7 +1,6 @@
 package com.example.api.reservation;
 
 import static com.example.api.reservation.ReservationStatus.PLANNED;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
@@ -42,7 +41,7 @@ public class ReservationService {
     @Transactional
     public void createReservation(CreateReservationDTO dto) {
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
-                dto.getRestaurantId()).orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+                dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
         validateStatus(dto);
         validatePerson(dto, restaurantWithHolidayAndAvailableDate);
         validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
@@ -60,35 +59,35 @@ public class ReservationService {
 
     private void validateStatus(CreateReservationDTO dto) {
         if (dto.getStatus() != PLANNED) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
+            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
         }
     }
 
     private void validatePerson(CreateReservationDTO dto,
                                 RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
-            throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON.getMessage());
+            throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON);
         }
     }
 
     private void validateHoliday(CreateReservationDTO dto,
                                  RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
-            throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY.getMessage());
+            throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY);
         }
     }
 
     private void validateVisitTime(CreateReservationDTO dto,
                                    RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(dto.getVisitTime())) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
+            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME);
         }
     }
 
     private void validateAvailableDate(CreateReservationDTO dto,
                                        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
-            throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE.getMessage());
+            throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE);
         }
     }
 
@@ -99,17 +98,17 @@ public class ReservationService {
                 .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
                 .build();
         if (reservationMapper.isAlreadyExistsByRestaurantIdAndMemberIdAndTime(cond)) {
-            throw new SystemException(ReservationExceptionType.ALREADY_EXISTS_AT_TIME.getMessage());
+            throw new SystemException(ReservationExceptionType.ALREADY_EXISTS_AT_TIME);
         }
     }
 
     @Transactional(readOnly = true)
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHoliday = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
-                dto.getRestaurantId()).orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+                dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
 
         if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
+            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME);
         }
         if (restaurantWithHoliday.isHoliday(dto.getSearchDate())) {
             return TimeSlots.of(new ArrayList<>());
