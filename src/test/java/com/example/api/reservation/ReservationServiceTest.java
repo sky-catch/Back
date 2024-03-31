@@ -222,7 +222,7 @@ class ReservationServiceTest {
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("잘못된 예약 상태입니다.");
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
     }
 
     @ParameterizedTest
@@ -243,7 +243,7 @@ class ReservationServiceTest {
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("방문 인원 수가 잘못됐습니다.");
+                .hasMessageContaining(ReservationExceptionType.OUTBOUND_PERSON.getMessage());
     }
 
     @Test
@@ -258,7 +258,7 @@ class ReservationServiceTest {
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("휴일에는 예약할 수 없습니다.");
+                .hasMessageContaining(ReservationExceptionType.RESERVATION_ON_HOLIDAY.getMessage());
     }
 
     @Test
@@ -274,7 +274,7 @@ class ReservationServiceTest {
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("방문 시간이 잘못됐습니다.");
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_VISIT_TIME.getMessage());
     }
 
     @Test
@@ -288,7 +288,7 @@ class ReservationServiceTest {
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("예약 가능한 기간이 아닙니다.");
+                .hasMessageContaining(ReservationExceptionType.NOT_AVAILABLE_DATE.getMessage());
     }
 
     @Test
@@ -303,7 +303,7 @@ class ReservationServiceTest {
         // expected
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
-                .hasMessageContaining("해당 방문일의 방문 시간에 예약이 이미 존재합니다.");
+                .hasMessageContaining(ReservationExceptionType.ALREADY_EXISTS_AT_TIME.getMessage());
     }
 
     @Test
