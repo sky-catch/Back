@@ -1,5 +1,6 @@
 package com.example.api.payment.service;
 
+import com.example.api.member.MemberDTO;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.payment.dto.PaymentCallbackRequest;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,13 +34,14 @@ public class PaymentService {
 
     // todo 테스트 추가하기
     @Transactional
-    public IamportResponse<Payment> paymentByCallback(PaymentCallbackRequest request) {
+    public IamportResponse<Payment> paymentByCallback(MemberDTO loginMember, PaymentCallbackRequest request) {
         try {
             IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.getImpUid());
             log.info("iamportResponse = {}", iamportResponse.toString());
 
             ReservationDTO reservation = reservationMapper.getReservation(request.getReservationId())
                     .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND.getMessage()));
+            validMyReservation(loginMember, reservation);
             PaymentDTO payment = paymentMapper.getPaymentById(reservation.getPaymentId())
                     .orElseThrow(() -> new SystemException(PaymentExceptionType.NOT_FOUND.getMessage()));
 
@@ -50,7 +53,13 @@ public class PaymentService {
 
             return iamportResponse;
         } catch (IamportResponseException | IOException e) {
-            throw new RuntimeException(e);
+            throw new SystemException(e.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    private void validMyReservation(MemberDTO loginMember, ReservationDTO reservation) {
+        if (!loginMember.isMine(reservation)) {
+            throw new SystemException(ReservationExceptionType.NOT_MINE.getMessage());
         }
     }
 

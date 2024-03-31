@@ -1,5 +1,6 @@
 package com.example.api.member;
 
+import com.example.api.reservation.ReservationDTO;
 import com.example.core.dto.BaseDTO;
 import com.example.core.dto.HumanStatus;
 import com.example.core.oauth.domain.OauthId;
@@ -41,5 +42,9 @@ public class MemberDTO extends BaseDTO {
 
     public OauthId oauthId() {
         return new OauthId(oauthServerId, oauthServer);
+    }
+
+    public boolean isMine(ReservationDTO reservation) {
+        return this.memberId == reservation.getMemberId();
     }
 }
