@@ -14,6 +14,7 @@ import com.example.core.oauth.domain.client.OauthMemberClient;
 import com.example.core.oauth.infra.oauth.kakao.dto.KakaoMemberResponse;
 import com.example.core.oauth.infra.oauth.kakao.dto.KakaoToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class KakaoMemberClient implements OauthMemberClient {
@@ -47,7 +49,7 @@ public class KakaoMemberClient implements OauthMemberClient {
         params.add("redirect_uri", kakaoOauthConfig.getRedirectUri());
         params.add("code", authCode);
         params.add("client_secret", kakaoOauthConfig.getClientSecret());
-        System.out.println("params = " + params);
+        log.info("params = {}", params);
         return params;
     }
 
