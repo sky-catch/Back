@@ -17,7 +17,10 @@ public interface ReviewMapper {
 
     ReviewDTO getReview(long reviewId);
 
-    List<GetReviewCommentRes> getReviewCommentPage(@Param("restaurantId") long restaurantId, @Param("pageable") Pageable pageable);
+    //List<GetReviewCommentRes> getReviewCommentPage(@Param("restaurantId") long restaurantId, @Param("pageable") Pageable pageable);
+
+    //todo 이거를 레스토랑 response에 추가 근데 GetReviewCommentRes이거 comment랑 review 분리해야할수도
+    List<GetReviewCommentRes> getReviewComments(long restaurantId);
 
     List<GetReviewRes> getReviewByMember(long memberId);
 

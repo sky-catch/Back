@@ -270,4 +270,44 @@
                  INNER JOIN reservation_available_date as rad ON rad.restaurant_id = res.restaurant_id
         WHERE res.restaurant_id = #{restaurantId};
     </select>
+
+    <select id="findRestaurantInfoByOwnerId" resultMap="restaurant">
+        SELECT res.restaurant_id,
+               res.owner_id,
+               res.name,
+               res.category,
+               res.content,
+               res.phone,
+               res.table_person_max,
+               res.table_person_min,
+               res.open_time,
+               res.last_order_time,
+               res.close_time,
+               res.address,
+               res.detail_address,
+               res.lunch_price,
+               res.dinner_price,
+               res.saved_count,
+               res.review_count,
+               res.review_avg,
+               res.created_date,
+               res.updated_date,
+               resi.restaurant_image_id,
+               resi.path,
+               resi.type,
+               resn.notification_id,
+               resn.title,
+               resn.content as notification_content,
+               resn.start_date,
+               resn.end_date,
+               fc.name      as facility_name,
+               fc.path      as facility_path
+        FROM restaurant res
+                 LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN store_facility sfc on sfc.restaurant_id = res.restaurant_id
+                 LEFT OUTER JOIN facility fc on fc.facility_id = sfc.facility_id
+        WHERE res.owner_id = #{ownerId}
+        ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
+    </select>
 </mapper>

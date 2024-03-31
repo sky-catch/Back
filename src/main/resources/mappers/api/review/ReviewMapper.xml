@@ -21,12 +21,12 @@
         <result property="imagePath" column="PROFILE_IMAGE_URL"/>
         <result property="memberId" column="MEMBER_ID"/>
         <result property="rate" column="RATE"/>
-        <result property="comment" column="COMMENT"/>
+        <result property="reviewContent" column="REVIEW_CONTENT"/>
         <result property="reviewCreatedDate" column="REVIEW_CREATED_DATE"/>
         <result property="reviewUpdatedDate" column="REVIEW_UPDATED_DATE"/>
 
         <result property="commentId" column="COMMENT_ID"/>
-        <result property="content" column="CONTENT"/>
+        <result property="commentContent" column="COMMENT_CONTENT"/>
         <result property="commentCreatedDate" column="COMMENT_CREATED_DATE"/>
         <result property="commentUpdatedDate" column="COMMENT_UPDATED_DATE"/>
 
@@ -72,7 +72,7 @@
         WHERE r.review_id = #{reviewId}
     </select>
 
-    <select id="getReviewCommentPage" resultMap="reviewAndComment" parameterType="map">
+    <!--<select id="getReviewCommentPage" resultMap="reviewAndComment" parameterType="map">
         SELECT m.NICKNAME,
                m.PROFILE_IMAGE_URL,
                r.REVIEW_ID,
@@ -95,6 +95,28 @@
         LEFT JOIN member m ON m.MEMBER_ID = r.MEMBER_ID
         LEFT JOIN review_image ri ON ri.REVIEW_ID = r.REVIEW_ID
         LEFT JOIN comment c ON c.REVIEW_ID = r.REVIEW_ID
+    </select>-->
+
+    <select id="getReviewComments" resultMap="reviewAndComment" parameterType="long">
+        SELECT m.NICKNAME,
+               m.PROFILE_IMAGE_URL,
+               r.REVIEW_ID,
+               r.MEMBER_ID,
+               r.RATE,
+               r.COMMENT AS REVIEW_CONTENT,
+               r.CREATED_DATE AS REVIEW_CREATED_DATE,
+               r.UPDATED_DATE AS REVIEW_UPDATED_DATE,
+               ri.REVIEW_IMAGE_ID,
+               ri.PATH,
+               c.COMMENT_ID,
+               c.CONTENT AS COMMENT_CONTENT,
+               c.CREATED_DATE AS COMMENT_CREATED_DATE,
+               c.UPDATED_DATE AS COMMENT_UPDATED_DATE
+        FROM review r
+        LEFT JOIN member m ON m.MEMBER_ID = r.MEMBER_ID
+        LEFT JOIN review_image ri ON ri.REVIEW_ID = r.REVIEW_ID
+        LEFT JOIN comment c ON c.REVIEW_ID = r.REVIEW_ID
+        WHERE r.restaurant_id = #{restaurantId}
     </select>
 
     <select id="getReviewByMember" parameterType="long" resultMap="reviewAndImage">

@@ -20,13 +20,13 @@ public class GetReviewCommentRes {
     private String nickname;
     private String imagePath;
     private int rate;
-    private String comment;
+    private String reviewContent;
     private List<ReviewImageDTO> images;
     private LocalDateTime reviewCreatedDate;
     private LocalDateTime reviewUpdatedDate;
 
     private long commentId;
-    private String content;
+    private String commentContent;
     private LocalDateTime commentCreatedDate;
     private LocalDateTime commentUpdatedDate;
 }

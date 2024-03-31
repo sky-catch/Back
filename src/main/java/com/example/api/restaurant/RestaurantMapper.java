@@ -35,4 +35,6 @@ public interface RestaurantMapper {
     Optional<RestaurantWithHolidayAndAvailableDateDTO> findRestaurantWithHolidayAndAvailableDateById(long restaurantId);
 
     void updateRestaurant(RestaurantDTO dto);
+
+    Optional<GetRestaurantRes> findRestaurantInfoByOwnerId(long ownerId);
 }
