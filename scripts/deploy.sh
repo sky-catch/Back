@@ -28,4 +28,4 @@ else
 fi
 
 echo "> Deploy - $JAR_PATH "
-nohup java -jar $JAR_PATH > $REPOSITORY/target/nohup.out 2>&1 &
+nohup java -Duser.timezone=Asia/Seoul -jar $JAR_PATH > $REPOSITORY/target/nohup.out 2>&1 &
