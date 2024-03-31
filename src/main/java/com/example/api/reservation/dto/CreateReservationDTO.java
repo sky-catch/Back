@@ -20,37 +20,37 @@ public class CreateReservationDTO {
 
     private long restaurantId;
     private long memberId;
+    // todo reservationDayId 수정하기
     private long reservationDayId;
-    private long paymentId;
     private LocalDateTime time;
     private int numberOfPeople;
     private String memo;
     private ReservationStatus status;
+    private int amountToPay;
 
     @Builder
-    private CreateReservationDTO(long restaurantId, long memberId, long reservationDayId, long paymentId,
-                                 LocalDateTime time, int numberOfPeople, String memo, ReservationStatus status) {
+    private CreateReservationDTO(long restaurantId, long memberId, long reservationDayId, LocalDateTime time,
+                                 int numberOfPeople, String memo, ReservationStatus status, int amountToPay) {
         this.restaurantId = restaurantId;
         this.memberId = memberId;
         this.reservationDayId = reservationDayId;
-        this.paymentId = paymentId;
         this.time = time;
         this.numberOfPeople = numberOfPeople;
         this.memo = memo;
         this.status = status;
+        this.amountToPay = amountToPay;
     }
 
-    public static CreateReservationDTO reqToPlannedReservationDTO(long restaurantId, long memberId,
-                                                                  CreateReservationReq req) {
+    public static CreateReservationDTO of(long restaurantId, long memberId, CreateReservationReq req) {
         return CreateReservationDTO.builder()
                 .restaurantId(restaurantId)
                 .memberId(memberId)
                 .reservationDayId(1L)
-                .paymentId(1L)
                 .time(req.getVisitDateTime())
                 .numberOfPeople(req.getNumberOfPeople())
                 .memo(req.getMemo())
                 .status(PLANNED)
+                .amountToPay(req.getAmountToPay())
                 .build();
     }
 
@@ -59,7 +59,6 @@ public class CreateReservationDTO {
                 .restaurantId(restaurantId)
                 .memberId(memberId)
                 .reservationDayId(1L)
-                .paymentId(1L)
                 .time(time)
                 .numberOfPeople(numberOfPeople)
                 .memo(memo)

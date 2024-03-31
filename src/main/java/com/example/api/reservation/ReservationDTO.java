@@ -18,6 +18,7 @@ public class ReservationDTO extends BaseDTO {
     private long reservationId;
     private long restaurantId;
     private long memberId;
+    // todo 수정하기
     private long reservationDayId;
     private long paymentId;
     private LocalDateTime time;

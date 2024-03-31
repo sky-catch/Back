@@ -66,4 +66,29 @@ class SavedRestaurantServiceTest {
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining("해당 식당은 이미 저장하였습니다.");
     }
+
+    @Test
+    @DisplayName("식당 저장을 삭제하는 테스트")
+    void test3() {
+        // given
+        long before = savedRestaurantMapper.findAll().size();
+
+        CreateSavedRestaurantDTO createSavedRestaurantDTO = CreateSavedRestaurantDTO.builder()
+                .memberId(1L)
+                .restaurantId(1L)
+                .build();
+        savedRestaurantService.createSavedRestaurant(createSavedRestaurantDTO);
+
+        DeleteSavedRestaurantDTO dto = DeleteSavedRestaurantDTO.builder()
+                .memberId(1L)
+                .restaurantId(1L)
+                .build();
+        
+        // when
+        savedRestaurantService.deleteSavedRestaurant(dto);
+
+        // then
+        long after = savedRestaurantMapper.findAll().size();
+        assertEquals(before, after);
+    }
 }

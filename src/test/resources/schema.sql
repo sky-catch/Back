@@ -151,3 +151,15 @@ CREATE TABLE SAVED_RESTAURANT
     updated_date  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (member_id, restaurant_id)
 );
+
+CREATE TABLE PAYMENT
+(
+    payment_id   bigint       NOT NULL AUTO_INCREMENT,
+    imp_uid      varchar(255) NOT NULL,
+    pay_method   varchar(25)  NOT NULL,
+    price        int          NOT NULL,
+    status       varchar(25)  NOT NULL,
+    created_date timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (payment_id)
+);

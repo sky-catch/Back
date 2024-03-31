@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @NoArgsConstructor
@@ -29,4 +28,7 @@ public class CreateReservationReq {
 
     @Schema(description = "메모", example = "창가 자리 부탁드려요.")
     private String memo;
+
+    @Schema(description = "결제할 금액", example = "10000")
+    private int amountToPay;
 }

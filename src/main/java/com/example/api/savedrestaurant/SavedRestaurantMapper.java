@@ -10,6 +10,8 @@ public interface SavedRestaurantMapper {
 
     void save(SavedRestaurantDTO savedRestaurant);
 
+    void delete(SavedRestaurantDTO savedRestaurant);
+
     List<SavedRestaurantDTO> findAll();
 
     void deleteAll();

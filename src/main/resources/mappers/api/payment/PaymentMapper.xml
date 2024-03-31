@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.payment.PaymentMapper">
+
+    <select id="getPaymentById" resultType="com.example.api.payment.domain.PaymentDTO">
+        SELECT *
+        FROM payment
+        WHERE payment_id = #{paymentId}
+    </select>
+
+    <insert id="save" parameterType="com.example.api.payment.domain.PaymentDTO" useGeneratedKeys="true"
+            keyProperty="paymentId">
+        INSERT INTO payment(imp_uid, pay_method, price, status)
+        VALUES (#{impUid}, #{payMethod}, #{price}, #{status});
+    </insert>
+
+    <select id="deleteById">
+        DELETE
+        FROM payment
+        WHERE payment_id = #{paymentId}
+    </select>
+
+    <update id="update" parameterType="com.example.api.payment.domain.PaymentDTO">
+        UPDATE payment
+        SET imp_uid    = #{impUid},
+            pay_method = #{payMethod},
+            price      = #{price},
+            status     = #{status};
+    </update>
+
+    <select id="deleteAll">
+        DELETE
+        FROM payment;
+    </select>
+</mapper>
