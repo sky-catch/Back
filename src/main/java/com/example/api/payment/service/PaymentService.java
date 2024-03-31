@@ -3,6 +3,7 @@ package com.example.api.payment.service;
 import com.example.api.member.MemberDTO;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
+import com.example.api.payment.domain.PaymentStatus;
 import com.example.api.payment.dto.PaymentCallbackRequest;
 import com.example.api.payment.exception.PaymentExceptionType;
 import com.example.api.reservation.ReservationDTO;
@@ -26,8 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-    private static final String PAID = "paid";
-
     private final PaymentMapper paymentMapper;
     private final ReservationMapper reservationMapper;
     private final IamportClient iamportClient;
@@ -74,7 +73,7 @@ public class PaymentService {
     }
 
     private boolean isPaid(IamportResponse<Payment> iamportResponse) {
-        return iamportResponse.getResponse().getStatus().equals(PAID);
+        return iamportResponse.getResponse().getStatus().equals(PaymentStatus.PAID.getValue());
     }
 
     private void validAmountOfPayment(PaymentDTO payment, IamportResponse<Payment> iamportResponse,
