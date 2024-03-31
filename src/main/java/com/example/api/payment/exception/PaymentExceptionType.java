@@ -1,13 +1,13 @@
 package com.example.api.payment.exception;
 
-import com.example.core.exception.ExceptionType;
+import com.example.core.exception.CommonExceptionType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum PaymentExceptionType implements ExceptionType {
+public enum PaymentExceptionType implements CommonExceptionType {
 
     NOT_FOUND("결제가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     NOT_PAID("결제 미완료", HttpStatus.BAD_GATEWAY),

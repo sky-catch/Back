@@ -19,7 +19,7 @@ public class SystemException extends RuntimeException {
         this.message = message;
     }
 
-    public SystemException(ExceptionType type) {
+    public SystemException(CommonExceptionType type) {
         this.message = type.getMessage();
         this.httpStatus = type.getHttpStatus();
     }
