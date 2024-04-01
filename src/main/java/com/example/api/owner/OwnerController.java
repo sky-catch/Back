@@ -4,10 +4,8 @@ import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.CreateOwnerReq;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
-import com.example.api.restaurant.RestaurantService;
 import com.example.api.restaurant.dto.GetRestaurantRes;
-import com.example.api.review.ReviewMapper;
-import com.example.api.review.dto.GetReviewCommentRes;
+import com.example.api.restaurant.dto.GetRestaurantWithReview;
 import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +24,6 @@ import java.util.List;
 public class OwnerController {
 
     private final OwnerService ownerService;
-    private final ReviewMapper reviewMapper;
 
     @PostMapping
     @Operation(summary = "사장 생성", description = "사장 생성은 로그인 후 할 수 있습니다. 사업장등록번호의 마지막 숫자는 5여야합니다.")
@@ -54,7 +50,7 @@ public class OwnerController {
 
     @GetMapping("/restaurant")
     @Operation(summary = "내 식당 보기")
-    public GetRestaurantRes getMyRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner){
+    public GetRestaurantWithReview getMyRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner) {
         return ownerService.getRestaurantByOwnerId(owner.getOwnerId());
     }
 

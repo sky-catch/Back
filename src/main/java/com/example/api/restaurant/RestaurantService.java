@@ -1,24 +1,22 @@
 package com.example.api.restaurant;
 
-import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
-
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayService;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateService;
-import com.example.api.restaurant.dto.CreateRestaurantReq;
-import com.example.api.restaurant.dto.GetRestaurantRes;
-import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.api.restaurant.dto.*;
+import com.example.api.review.ReviewMapper;
+import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.exception.SystemException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.api.restaurant.exception.RestaurantExceptionType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +26,7 @@ public class RestaurantService {
     private final StoreFacilityMapper storeFacilityMapper;
     private final HolidayService holidayService;
     private final ReservationAvailableDateService reservationAvailableDateService;
+    private final ReviewMapper reviewMapper;
 
     @Transactional
     public long createRestaurant(CreateRestaurantReq req) {
@@ -90,8 +89,10 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public GetRestaurantRes getRestaurantInfoByName(String name) {
-        return restaurantMapper.findRestaurantInfoByName(name)
+    public GetRestaurantWithReview getRestaurantInfoByName(String name) {
+        GetRestaurantRes getRestaurantRes = restaurantMapper.findRestaurantInfoByName(name)
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+        List<GetReviewCommentRes> reviewComments = reviewMapper.getReviewComments(getRestaurantRes.getRestaurantId());
+        return new GetRestaurantWithReview(getRestaurantRes, reviewComments);
     }
 }
