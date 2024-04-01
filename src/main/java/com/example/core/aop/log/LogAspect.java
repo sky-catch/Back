@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +25,8 @@ public class LogAspect {
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         Signature signature = joinPoint.getSignature();
-        log.info( "[REQUEST] {} - {}.{}" ,request.getRequestURI(), signature.getDeclaringType().getSimpleName(), signature.getName());
+        String uri = UriEncoder.decode(request.getRequestURI());
+        log.info( "[REQUEST] {} - {}.{}" , uri, signature.getDeclaringType().getSimpleName(), signature.getName());
         return joinPoint.proceed();
     }
 

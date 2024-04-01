@@ -2,22 +2,17 @@ package com.example.api.restaurant;
 
 import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
-import com.example.api.restaurant.dto.GetRestaurantRes;
+import com.example.api.restaurant.dto.GetRestaurantWithReview;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -46,9 +41,8 @@ public class RestaurantController {
 
     @GetMapping("/{name}")
     @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 식당 사진 정렬 기준: 1. type(REPRESENTATION -> NORMAL 순서), 2. 등록일(오름차순)")
-    public ResponseEntity<GetRestaurantRes> getRestaurant(@PathVariable String name) {
-        GetRestaurantRes restaurantRes = restaurantService.getRestaurantInfoByName(name);
-
+    public ResponseEntity<GetRestaurantWithReview> getRestaurant(@PathVariable String name) {
+        GetRestaurantWithReview restaurantRes = restaurantService.getRestaurantInfoByName(name);
         return ResponseEntity.ok(restaurantRes);
     }
 }
