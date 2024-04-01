@@ -77,9 +77,9 @@
         </collection>
         <collection property="reviews" ofType="com.example.api.review.dto.ReviewDTO">
             <id property="reviewId" column="review_id"/>
-            <result property="memberId" column="rev_member_id"/>
-            <result property="restaurantId" column="rev_restaurant_id"/>
-            <result property="reservationId" column="reservation_id"/>
+            <result property="memberId" column="revi_member_id"/>
+            <result property="restaurantId" column="revi_restaurant_id"/>
+            <result property="reservationId" column="revi_reservation_id"/>
             <result property="rate" column="rate"/>
             <result property="comment" column="comment"/>
             <result property="createdDate" column="REVIEW_CREATED_DATE"/>
