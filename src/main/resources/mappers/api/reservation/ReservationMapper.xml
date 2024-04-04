@@ -95,6 +95,71 @@
         WHERE reservation_id = #{reservationId}
     </select>
 
+    <resultMap id="myDetailReservation" type="com.example.api.reservation.dto.MyDetailReservationDTO">
+        <id property="reservationId" column="RESERVATION_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="paymentId" column="PAYMENT_ID"/>
+        <result property="time" column="TIME"/>
+        <result property="numberOfPeople" column="NUMBER_OF_PEOPLE"/>
+        <result property="memo" column="MEMO"/>
+        <result property="status" column="STATUS"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+        <association property="restaurant" javaType="com.example.api.restaurant.dto.RestaurantDTO">
+            <id property="restaurantId" column="RESTAURANT_ID"/>
+            <result property="ownerId" column="RESTAURANT_OWNER_ID"/>
+            <result property="name" column="RESTAURANT_NAME"/>
+            <result property="category" column="RESTAURANT_CATEGORY"/>
+            <result property="content" column="RESTAURANT_CONTENT"/>
+            <result property="phone" column="RESTAURANT_PHONE"/>
+            <result property="tablePersonMax" column="RESTAURANT_TABLE_PERSON_MAX"/>
+            <result property="tablePersonMin" column="RESTAURANT_TABLE_PERSON_MIN"/>
+            <result property="openTime" column="RESTAURANT_OPEN_TIME"/>
+            <result property="lastOrderTime" column="RESTAURANT_LAST_ORDER_TIME"/>
+            <result property="closeTime" column="RESTAURANT_CLOSE_TIME"/>
+            <result property="address" column="RESTAURANT_ADDRESS"/>
+            <result property="detailAddress" column="RESTAURANT_DETAIL_ADDRESS"/>
+            <result property="lunchPrice" column="RESTAURANT_LUNCH_PRICE"/>
+            <result property="dinnerPrice" column="RESTAURANT_DINNER_PRICE"/>
+            <result property="savedCount" column="RESTAURANT_SAVED_COUNT"/>
+            <result property="reviewCount" column="RESTAURANT_REVIEW_COUNT"/>
+            <result property="reviewAvg" column="RESTAURANT_REVIEW_AVG"/>
+        </association>
+    </resultMap>
+
+    <select id="findMyDetailReservationById" resultMap="myDetailReservation">
+        SELECT rez.RESERVATION_ID,
+               rez.MEMBER_ID,
+               rez.PAYMENT_ID,
+               rez.TIME,
+               rez.NUMBER_OF_PEOPLE,
+               rez.MEMO,
+               rez.STATUS,
+               rez.CREATED_DATE,
+               rez.UPDATED_DATE,
+               rez.RESTAURANT_ID,
+               rt.OWNER_ID         as RESTAURANT_OWNER_ID,
+               rt.NAME             as RESTAURANT_NAME,
+               rt.CATEGORY         as RESTAURANT_CATEGORY,
+               rt.CONTENT          as RESTAURANT_CONTENT,
+               rt.PHONE            as RESTAURANT_PHONE,
+               rt.TABLE_PERSON_MAX as RESTAURANT_TABLE_PERSON_MAX,
+               rt.TABLE_PERSON_MIN as RESTAURANT_TABLE_PERSON_MIN,
+               rt.OPEN_TIME        as RESTAURANT_OPEN_TIME,
+               rt.LAST_ORDER_TIME  as RESTAURANT_LAST_ORDER_TIME,
+               rt.CLOSE_TIME       as RESTAURANT_CLOSE_TIME,
+               rt.ADDRESS          as RESTAURANT_ADDRESS,
+               rt.DETAIL_ADDRESS   as RESTAURANT_DETAIL_ADDRESS,
+               rt.LUNCH_PRICE      as RESTAURANT_LUNCH_PRICE,
+               rt.DINNER_PRICE     as RESTAURANT_DINNER_PRICE,
+               rt.SAVED_COUNT      as RESTAURANT_SAVED_COUNT,
+               rt.REVIEW_COUNT     as RESTAURANT_REVIEW_COUNT,
+               rt.REVIEW_AVG       as RESTAURANT_REVIEW_AVG
+        FROM reservation rez
+                 INNER JOIN restaurant rt ON rt.RESTAURANT_ID = rez.RESTAURANT_ID
+        WHERE rez.RESERVATION_ID = #{reservationId};
+    </select>
+
     <select id="findAll" resultType="com.example.api.reservation.ReservationDTO">
         SELECT *
         FROM reservation;

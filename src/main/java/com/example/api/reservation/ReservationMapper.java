@@ -1,6 +1,7 @@
 package com.example.api.reservation;
 
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.reservation.dto.MyDetailReservationDTO;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.response.GetReservationRes;
@@ -27,4 +28,6 @@ public interface ReservationMapper {
     List<ReservationDTO> findAll();
 
     void deleteAll();
+
+    Optional<MyDetailReservationDTO> findMyDetailReservationById(long reservationId);
 }

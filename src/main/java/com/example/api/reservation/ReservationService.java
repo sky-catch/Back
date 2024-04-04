@@ -7,6 +7,7 @@ import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
+import com.example.api.reservation.dto.MyDetailReservationDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
@@ -16,6 +17,7 @@ import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
+import com.siot.IamportRestClient.IamportClient;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class ReservationService {
     private final ReservationMapper reservationMapper;
     private final RestaurantMapper restaurantMapper;
     private final PaymentMapper paymentMapper;
+    private final IamportClient iamportClient;
 
     @Transactional(readOnly = true)
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
@@ -151,4 +154,42 @@ public class ReservationService {
                 .collect(Collectors.toList());
         return TimeSlots.of(reservationTimeSlots);
     }
+
+    @Transactional(readOnly = true)
+    public MyDetailReservationDTO getMyDetailReservationById(long reservationId, long memberId) {
+        MyDetailReservationDTO reservation = reservationMapper.findMyDetailReservationById(reservationId)
+                .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
+        if (!reservation.isMine(memberId)) {
+            throw new SystemException(ReservationExceptionType.NOT_MINE);
+        }
+
+        return reservation;
+    }
+
+//    @Transactional
+//    public void deleteReservation(DeleteReservationDTO dto) {
+//        ReservationDTO reservation = reservationMapper.findById(dto.getReservationId())
+//                .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
+//
+//        if (reservation.getMemberId() != dto.getMemberId()) {
+//            throw new SystemException(ReservationExceptionType.NOT_MINE);
+//        }
+//
+//        if (!reservation.getStatus().equals(PLANNED)) {
+//            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
+//        }
+//
+//        PaymentDTO paymentDTO = paymentMapper.findById(reservation.getPaymentId())
+//                .orElseThrow(() -> new SystemException(PaymentExceptionType.NOT_FOUND));
+//        try {
+//            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(paymentDTO.getImpUid());
+//            int actualPaymentAmount = iamportResponse.getResponse().getAmount().intValue();
+//            iamportClient.cancelPaymentByImpUid(new CancelData(iamportResponse.getResponse().getImpUid(), true,
+//                    new BigDecimal(actualPaymentAmount)));
+//        } catch (IamportResponseException | IOException e) {
+//            throw new SystemException(e.getMessage(), HttpStatus.BAD_GATEWAY);
+//        }
+//        paymentMapper.deleteById(reservation.getPaymentId());
+//        reservationMapper.deleteById(reservation.getReservationId());
+//    }
 }

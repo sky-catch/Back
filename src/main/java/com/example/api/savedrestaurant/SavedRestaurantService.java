@@ -11,6 +11,7 @@ public class SavedRestaurantService {
 
     private final SavedRestaurantMapper savedRestaurantMapper;
 
+    // todo 식당 savedCount 1 증가시키기
     @Transactional
     public void createSavedRestaurant(CreateSavedRestaurantDTO dto) {
         if (savedRestaurantMapper.isAlreadyExistsByRestaurantIdAndMemberId(dto.getRestaurantId(), dto.getMemberId())) {

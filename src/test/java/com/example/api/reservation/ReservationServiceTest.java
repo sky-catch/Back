@@ -15,6 +15,7 @@ import com.example.api.holiday.HolidayMapper;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
+import com.example.api.reservation.dto.MyDetailReservationDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
@@ -451,6 +452,106 @@ class ReservationServiceTest {
 
         // then
         assertTrue(actual.getTimeSlots().isEmpty());
+    }
+
+    @Test
+    @DisplayName("예약 ID로 나의 예약 상세 내용을 조회할 수 있다.")
+    void getMyDetailReservationByIdTest() {
+        // given
+        for (int i = 1; i <= 15; i++) {
+            ReservationStatus status = CANCEL;
+            if (i <= 10) {
+                status = PLANNED;
+            }
+            if (i <= 5) {
+                status = DONE;
+            }
+            ReservationDTO dto = ReservationDTO.builder()
+                    .restaurantId(testRestaurant.getRestaurantId())
+                    .memberId(1L)
+                    .reservationDayId(1L)
+                    .paymentId(1L)
+                    .time(validVisitTime)
+                    .numberOfPeople(tablePersonMin)
+                    .memo("메모")
+                    .status(status)
+                    .build();
+            reservationMapper.save(dto);
+        }
+
+        // when
+        MyDetailReservationDTO expected = reservationService.getMyDetailReservationById(1L, 1L);
+
+        // then
+        assertAll(() -> {
+            assertEquals(expected.getRestaurant().getName(), testRestaurant.getName());
+            assertEquals(expected.getStatus(), DONE);
+        });
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 예약 ID로 나의 예약 상세 내용을 조회할 경우 예외 발생하는 테스트")
+    void getMyDetailReservationByIdWithNotExistsReservationIdTest() {
+        // given
+        for (int i = 1; i <= 15; i++) {
+            ReservationStatus status = CANCEL;
+            if (i <= 10) {
+                status = PLANNED;
+            }
+            if (i <= 5) {
+                status = DONE;
+            }
+            ReservationDTO dto = ReservationDTO.builder()
+                    .restaurantId(testRestaurant.getRestaurantId())
+                    .memberId(1L)
+                    .reservationDayId(1L)
+                    .paymentId(1L)
+                    .time(validVisitTime)
+                    .numberOfPeople(tablePersonMin)
+                    .memo("메모")
+                    .status(status)
+                    .build();
+            reservationMapper.save(dto);
+        }
+
+        long notExistsReservationId = 100L;
+
+        // expected
+        assertThatThrownBy(() -> reservationService.getMyDetailReservationById(notExistsReservationId, 1L))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("예약 ID로 나의 예약 상세 내용을 조회할 때 나의 예약이 아닌 경우 예외 발생하는 테스트")
+    void getMyDetailReservationByIdWithNotMyReservationTest() {
+        // given
+        for (int i = 1; i <= 15; i++) {
+            ReservationStatus status = CANCEL;
+            if (i <= 10) {
+                status = PLANNED;
+            }
+            if (i <= 5) {
+                status = DONE;
+            }
+            ReservationDTO dto = ReservationDTO.builder()
+                    .restaurantId(testRestaurant.getRestaurantId())
+                    .memberId(1L)
+                    .reservationDayId(1L)
+                    .paymentId(1L)
+                    .time(validVisitTime)
+                    .numberOfPeople(tablePersonMin)
+                    .memo("메모")
+                    .status(status)
+                    .build();
+            reservationMapper.save(dto);
+        }
+        long notMyReservationMemberId = 100L;
+
+        // expected
+        assertThatThrownBy(() -> reservationService.getMyDetailReservationById(1L, notMyReservationMemberId))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_MINE.getMessage());
     }
 
     private List<HolidayDTO> getMondayAndTuesdayHolidays() {

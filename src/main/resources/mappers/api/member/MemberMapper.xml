@@ -91,6 +91,7 @@
         </collection>
     </resultMap>
 
+    <!--    todo limit 생각해보기 -->
     <select id="findMyMainById" resultMap="myMainRes">
         SELECT mem.nickname,
                mem.profile_image_url,
