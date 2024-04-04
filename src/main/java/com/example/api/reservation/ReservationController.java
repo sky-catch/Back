@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,19 +83,17 @@ public class ReservationController {
         return reservationService.getMyDetailReservationById(reservationId, loginMember.getMemberId());
     }
 
-//    @DeleteMapping("/{restaurantId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    @Operation(summary = "예약 취소", description = "방문일과 방문 시간에 식당 예약을 생성하는 API입니다. 예약 생성 요청 시 결제를 생성하고 예약을 생성합니다.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "예약 생성 성공"),
-//            @ApiResponse(responseCode = "400", description = "요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-//            @ApiResponse(responseCode = "404", description = "식당이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-//    })
-//    public void deleteReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
-//                                  @PathVariable long restaurantId,
-//                                  @Valid @RequestBody CreateReservationReq req) {
-//        DeleteReservationDTO dto = DeleteReservationDTO.of(restaurantId, loginMember.getMemberId(), req);
-//
-//        reservationService.deleteReservation(dto);
-//    }
+    @DeleteMapping("/{reservationId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "예약 취소", description = "예약 ID로 예약을 취소하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예약 취소 성공"),
+            @ApiResponse(responseCode = "400", description = "요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "404", description = "식당이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+    })
+    public void deleteReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
+                                  @PathVariable long reservationId) {
+
+        reservationService.deleteReservation(reservationId, loginMember.getMemberId());
+    }
 }

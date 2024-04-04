@@ -554,6 +554,41 @@ class ReservationServiceTest {
                 .hasMessageContaining(ReservationExceptionType.NOT_MINE.getMessage());
     }
 
+    @Test
+    @DisplayName("예약 ID로 나의 예약 상세 내용을 조회할 수 있다.")
+    void getMyDetailReservationByIdTest() {
+        // given
+        for (int i = 1; i <= 15; i++) {
+            ReservationStatus status = CANCEL;
+            if (i <= 10) {
+                status = PLANNED;
+            }
+            if (i <= 5) {
+                status = DONE;
+            }
+            ReservationDTO dto = ReservationDTO.builder()
+                    .restaurantId(testRestaurant.getRestaurantId())
+                    .memberId(1L)
+                    .reservationDayId(1L)
+                    .paymentId(1L)
+                    .time(validVisitTime)
+                    .numberOfPeople(tablePersonMin)
+                    .memo("메모")
+                    .status(status)
+                    .build();
+            reservationMapper.save(dto);
+        }
+
+        // when
+        MyDetailReservationDTO expected = reservationService.getMyDetailReservationById(1L, 1L);
+
+        // then
+        assertAll(() -> {
+            assertEquals(expected.getRestaurant().getName(), testRestaurant.getName());
+            assertEquals(expected.getStatus(), DONE);
+        });
+    }
+
     private List<HolidayDTO> getMondayAndTuesdayHolidays() {
         HolidayDTO monday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.MONDAY).build();
         HolidayDTO tuesday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.TUESDAY)

@@ -166,30 +166,14 @@ public class ReservationService {
         return reservation;
     }
 
-//    @Transactional
-//    public void deleteReservation(DeleteReservationDTO dto) {
-//        ReservationDTO reservation = reservationMapper.findById(dto.getReservationId())
-//                .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
-//
-//        if (reservation.getMemberId() != dto.getMemberId()) {
-//            throw new SystemException(ReservationExceptionType.NOT_MINE);
-//        }
-//
-//        if (!reservation.getStatus().equals(PLANNED)) {
-//            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
-//        }
-//
-//        PaymentDTO paymentDTO = paymentMapper.findById(reservation.getPaymentId())
-//                .orElseThrow(() -> new SystemException(PaymentExceptionType.NOT_FOUND));
-//        try {
-//            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(paymentDTO.getImpUid());
-//            int actualPaymentAmount = iamportResponse.getResponse().getAmount().intValue();
-//            iamportClient.cancelPaymentByImpUid(new CancelData(iamportResponse.getResponse().getImpUid(), true,
-//                    new BigDecimal(actualPaymentAmount)));
-//        } catch (IamportResponseException | IOException e) {
-//            throw new SystemException(e.getMessage(), HttpStatus.BAD_GATEWAY);
-//        }
-//        paymentMapper.deleteById(reservation.getPaymentId());
-//        reservationMapper.deleteById(reservation.getReservationId());
-//    }
+    @Transactional
+    public void deleteReservation(long reservationId, long memberId) {
+        MyDetailReservationDTO reservation = reservationMapper.findMyDetailReservationById(reservationId)
+                .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
+        if (!reservation.isMine(memberId)) {
+            throw new SystemException(ReservationExceptionType.NOT_MINE);
+        }
+        
+        reservationMapper.deleteById(reservationId);
+    }
 }
