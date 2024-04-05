@@ -2,9 +2,9 @@ package com.example.api.reservation;
 
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.reservation.dto.MyDetailReservationDTO;
+import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
-import com.example.api.reservation.dto.response.GetReservationRes;
 import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ReservationMapper {
 
-    List<GetReservationRes> getMyReservationsByStatus(GetMyReservationDTO dto);
+    List<MyReservationDTO> getMyReservationsByStatus(GetMyReservationDTO dto);
 
     void save(ReservationDTO dto);
 

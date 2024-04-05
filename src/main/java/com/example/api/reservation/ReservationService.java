@@ -8,11 +8,11 @@ import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.MyDetailReservationDTO;
+import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
-import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
@@ -37,7 +37,7 @@ public class ReservationService {
     private final CorePaymentService corePaymentService;
 
     @Transactional(readOnly = true)
-    public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
+    public List<MyReservationDTO> getMyReservations(GetMyReservationDTO dto) {
         return reservationMapper.getMyReservationsByStatus(dto);
     }
 

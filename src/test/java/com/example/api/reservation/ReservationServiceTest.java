@@ -19,10 +19,10 @@ import com.example.api.payment.domain.PaymentStatus;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
 import com.example.api.reservation.dto.MyDetailReservationDTO;
+import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
-import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
@@ -156,7 +156,7 @@ class ReservationServiceTest {
                 .build();
 
         // when
-        List<GetReservationRes> expected = reservationService.getMyReservations(dto);
+        List<MyReservationDTO> expected = reservationService.getMyReservations(dto);
 
         // then
         assertAll(() -> {
