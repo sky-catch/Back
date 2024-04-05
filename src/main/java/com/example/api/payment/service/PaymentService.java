@@ -30,7 +30,6 @@ public class PaymentService {
     private final ReservationMapper reservationMapper;
     private final CorePaymentService corePaymentService;
 
-    // todo 테스트 추가하기
     @Transactional
     public IamportResponse<Payment> paymentByCallback(MemberDTO loginMember, PaymentCallbackRequest request) {
         try {
