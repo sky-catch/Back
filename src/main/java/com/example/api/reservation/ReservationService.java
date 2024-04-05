@@ -17,7 +17,7 @@ import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
-import com.siot.IamportRestClient.IamportClient;
+import com.example.core.payment.CorePaymentService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class ReservationService {
     private final ReservationMapper reservationMapper;
     private final RestaurantMapper restaurantMapper;
     private final PaymentMapper paymentMapper;
-    private final IamportClient iamportClient;
+    private final CorePaymentService corePaymentService;
 
     @Transactional(readOnly = true)
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
@@ -159,7 +159,7 @@ public class ReservationService {
     public MyDetailReservationDTO getMyDetailReservationById(long reservationId, long memberId) {
         MyDetailReservationDTO reservation = reservationMapper.findMyDetailReservationById(reservationId)
                 .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
-        if (!reservation.isMine(memberId)) {
+        if (reservation.isNotMine(memberId)) {
             throw new SystemException(ReservationExceptionType.NOT_MINE);
         }
 
@@ -167,13 +167,19 @@ public class ReservationService {
     }
 
     @Transactional
-    public void deleteReservation(long reservationId, long memberId) {
+    public void cancelMyReservationById(long reservationId, long memberId) {
         MyDetailReservationDTO reservation = reservationMapper.findMyDetailReservationById(reservationId)
                 .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
-        if (!reservation.isMine(memberId)) {
+        if (reservation.isNotMine(memberId)) {
             throw new SystemException(ReservationExceptionType.NOT_MINE);
         }
-        
-        reservationMapper.deleteById(reservationId);
+        if (reservation.isNotPlanned()) {
+            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
+        }
+
+        PaymentDTO payment = reservation.getPayment();
+        corePaymentService.cancelPaymentByImpUid(payment.getImpUid(), payment.getPrice());
+
+        reservationMapper.updateStatusById(reservationId, ReservationStatus.CANCEL);
     }
 }

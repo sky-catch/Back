@@ -8,6 +8,7 @@ import com.example.api.reservation.dto.response.GetReservationRes;
 import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface ReservationMapper {
@@ -23,7 +24,7 @@ public interface ReservationMapper {
 
     boolean isAlreadyExistsByRestaurantIdAndMemberIdAndTime(DuplicateReservationSearchCond cond);
 
-    void deleteById(long reservationId);
+    void updateStatusById(@Param("reservationId") long reservationId, @Param("status") ReservationStatus status);
 
     List<ReservationDTO> findAll();
 

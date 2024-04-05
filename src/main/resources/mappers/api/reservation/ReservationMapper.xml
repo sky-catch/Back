@@ -89,16 +89,15 @@
                          AND rez.TIME = #{time});
     </select>
 
-    <select id="deleteById">
-        DELETE
-        FROM reservation
+    <update id="updateStatusById">
+        UPDATE reservation
+        SET STATUS = #{status}
         WHERE reservation_id = #{reservationId}
-    </select>
+    </update>
 
     <resultMap id="myDetailReservation" type="com.example.api.reservation.dto.MyDetailReservationDTO">
         <id property="reservationId" column="RESERVATION_ID"/>
         <result property="memberId" column="MEMBER_ID"/>
-        <result property="paymentId" column="PAYMENT_ID"/>
         <result property="time" column="TIME"/>
         <result property="numberOfPeople" column="NUMBER_OF_PEOPLE"/>
         <result property="memo" column="MEMO"/>
@@ -125,12 +124,18 @@
             <result property="reviewCount" column="RESTAURANT_REVIEW_COUNT"/>
             <result property="reviewAvg" column="RESTAURANT_REVIEW_AVG"/>
         </association>
+        <association property="payment" javaType="com.example.api.payment.domain.PaymentDTO">
+            <id property="paymentId" column="PAYMENT_ID"/>
+            <result property="impUid" column="PAYMENT_IMP_UID"/>
+            <result property="payMethod" column="PAYMENT_PAY_METHOD"/>
+            <result property="price" column="PAYMENT_PRICE"/>
+            <result property="status" column="PAYMENT_STATUS"/>
+        </association>
     </resultMap>
 
     <select id="findMyDetailReservationById" resultMap="myDetailReservation">
         SELECT rez.RESERVATION_ID,
                rez.MEMBER_ID,
-               rez.PAYMENT_ID,
                rez.TIME,
                rez.NUMBER_OF_PEOPLE,
                rez.MEMO,
@@ -138,25 +143,31 @@
                rez.CREATED_DATE,
                rez.UPDATED_DATE,
                rez.RESTAURANT_ID,
-               rt.OWNER_ID         as RESTAURANT_OWNER_ID,
-               rt.NAME             as RESTAURANT_NAME,
-               rt.CATEGORY         as RESTAURANT_CATEGORY,
-               rt.CONTENT          as RESTAURANT_CONTENT,
-               rt.PHONE            as RESTAURANT_PHONE,
-               rt.TABLE_PERSON_MAX as RESTAURANT_TABLE_PERSON_MAX,
-               rt.TABLE_PERSON_MIN as RESTAURANT_TABLE_PERSON_MIN,
-               rt.OPEN_TIME        as RESTAURANT_OPEN_TIME,
-               rt.LAST_ORDER_TIME  as RESTAURANT_LAST_ORDER_TIME,
-               rt.CLOSE_TIME       as RESTAURANT_CLOSE_TIME,
-               rt.ADDRESS          as RESTAURANT_ADDRESS,
-               rt.DETAIL_ADDRESS   as RESTAURANT_DETAIL_ADDRESS,
-               rt.LUNCH_PRICE      as RESTAURANT_LUNCH_PRICE,
-               rt.DINNER_PRICE     as RESTAURANT_DINNER_PRICE,
-               rt.SAVED_COUNT      as RESTAURANT_SAVED_COUNT,
-               rt.REVIEW_COUNT     as RESTAURANT_REVIEW_COUNT,
-               rt.REVIEW_AVG       as RESTAURANT_REVIEW_AVG
+               rt.OWNER_ID         AS RESTAURANT_OWNER_ID,
+               rt.NAME             AS RESTAURANT_NAME,
+               rt.CATEGORY         AS RESTAURANT_CATEGORY,
+               rt.CONTENT          AS RESTAURANT_CONTENT,
+               rt.PHONE            AS RESTAURANT_PHONE,
+               rt.TABLE_PERSON_MAX AS RESTAURANT_TABLE_PERSON_MAX,
+               rt.TABLE_PERSON_MIN AS RESTAURANT_TABLE_PERSON_MIN,
+               rt.OPEN_TIME        AS RESTAURANT_OPEN_TIME,
+               rt.LAST_ORDER_TIME  AS RESTAURANT_LAST_ORDER_TIME,
+               rt.CLOSE_TIME       AS RESTAURANT_CLOSE_TIME,
+               rt.ADDRESS          AS RESTAURANT_ADDRESS,
+               rt.DETAIL_ADDRESS   AS RESTAURANT_DETAIL_ADDRESS,
+               rt.LUNCH_PRICE      AS RESTAURANT_LUNCH_PRICE,
+               rt.DINNER_PRICE     AS RESTAURANT_DINNER_PRICE,
+               rt.SAVED_COUNT      AS RESTAURANT_SAVED_COUNT,
+               rt.REVIEW_COUNT     AS RESTAURANT_REVIEW_COUNT,
+               rt.REVIEW_AVG       AS RESTAURANT_REVIEW_AVG,
+               rez.PAYMENT_ID,
+               p.IMP_UID           AS PAYMENT_IMP_UID,
+               p.PAY_METHOD        AS PAYMENT_PAY_METHOD,
+               p.PRICE             AS PAYMENT_PRICE,
+               p.STATUS            AS PAYMENT_STATUS
         FROM reservation rez
                  INNER JOIN restaurant rt ON rt.RESTAURANT_ID = rez.RESTAURANT_ID
+                 INNER JOIN payment p ON p.PAYMENT_ID = rez.PAYMENT_ID
         WHERE rez.RESERVATION_ID = #{reservationId};
     </select>
 

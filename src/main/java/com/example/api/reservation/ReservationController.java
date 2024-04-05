@@ -85,15 +85,15 @@ public class ReservationController {
 
     @DeleteMapping("/{reservationId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "예약 취소", description = "예약 ID로 예약을 취소하는 API입니다.")
+    @Operation(summary = "예약 취소", description = "예약 ID로 내 예약을 취소하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "예약 취소 성공"),
             @ApiResponse(responseCode = "400", description = "요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "식당이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    public void deleteReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
+    public void cancelReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
                                   @PathVariable long reservationId) {
 
-        reservationService.deleteReservation(reservationId, loginMember.getMemberId());
+        reservationService.cancelMyReservationById(reservationId, loginMember.getMemberId());
     }
 }
