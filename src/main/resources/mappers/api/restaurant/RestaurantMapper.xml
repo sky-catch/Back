@@ -36,20 +36,19 @@
 
     <update id="updateRestaurant" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
         UPDATE restaurant
-        SET
-            name = #{name},
-            category = #{category},
-            content = #{content},
-            phone = #{phone},
+        SET name             = #{name},
+            category         = #{category},
+            content          = #{content},
+            phone            = #{phone},
             table_person_max = #{tablePersonMax},
             table_person_min = #{tablePersonMin},
-            open_time = #{openTime},
-            last_order_time = #{lastOrderTime},
-            close_time = #{closeTime},
-            address = #{address},
-            detail_address = #{detailAddress},
-            lunch_price = #{lunchPrice},
-            dinner_price = #{dinnerPrice}
+            open_time        = #{openTime},
+            last_order_time  = #{lastOrderTime},
+            close_time       = #{closeTime},
+            address          = #{address},
+            detail_address   = #{detailAddress},
+            lunch_price      = #{lunchPrice},
+            dinner_price     = #{dinnerPrice}
         WHERE owner_id = #{ownerId}
     </update>
 
@@ -310,4 +309,19 @@
         WHERE res.owner_id = #{ownerId}
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
+
+    <update id="increaseSavedCount" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
+        UPDATE RESTAURANT
+        SET SAVED_COUNT = SAVED_COUNT + 1
+        WHERE RESTAURANT_ID = #{restaurantId};
+    </update>
+
+    <update id="decreaseSavedCount" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
+        UPDATE RESTAURANT
+        SET SAVED_COUNT =
+                CASE
+                    WHEN SAVED_COUNT >= 1 THEN SAVED_COUNT - 1
+                    ELSE 0 END
+        WHERE RESTAURANT_ID = #{restaurantId};
+    </update>
 </mapper>
