@@ -20,8 +20,6 @@ public class CreateReservationDTO {
 
     private long restaurantId;
     private long memberId;
-    // todo reservationDayId 수정하기
-    private long reservationDayId;
     private LocalDateTime time;
     private int numberOfPeople;
     private String memo;
@@ -29,11 +27,10 @@ public class CreateReservationDTO {
     private int amountToPay;
 
     @Builder
-    private CreateReservationDTO(long restaurantId, long memberId, long reservationDayId, LocalDateTime time,
-                                 int numberOfPeople, String memo, ReservationStatus status, int amountToPay) {
+    private CreateReservationDTO(long restaurantId, long memberId, LocalDateTime time, int numberOfPeople, String memo,
+                                 ReservationStatus status, int amountToPay) {
         this.restaurantId = restaurantId;
         this.memberId = memberId;
-        this.reservationDayId = reservationDayId;
         this.time = time;
         this.numberOfPeople = numberOfPeople;
         this.memo = memo;
@@ -45,7 +42,6 @@ public class CreateReservationDTO {
         return CreateReservationDTO.builder()
                 .restaurantId(restaurantId)
                 .memberId(memberId)
-                .reservationDayId(1L)
                 .time(req.getVisitDateTime())
                 .numberOfPeople(req.getNumberOfPeople())
                 .memo(req.getMemo())
@@ -58,7 +54,6 @@ public class CreateReservationDTO {
         return ReservationDTO.builder()
                 .restaurantId(restaurantId)
                 .memberId(memberId)
-                .reservationDayId(1L)
                 .time(time)
                 .numberOfPeople(numberOfPeople)
                 .memo(memo)

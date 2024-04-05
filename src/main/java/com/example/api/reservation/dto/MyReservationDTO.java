@@ -22,7 +22,6 @@ public class MyReservationDTO extends BaseDTO {
     private String restaurantCategory;
     private String restaurantAddress;
     private long memberId;
-    private long reservationDayId;
     private long paymentId;
     private LocalDateTime time;
     private int numberOfPeople;

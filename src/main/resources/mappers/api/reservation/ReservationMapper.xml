@@ -56,10 +56,8 @@
 
     <insert id="save" parameterType="com.example.api.reservation.ReservationDTO" useGeneratedKeys="true"
             keyProperty="reservationId">
-        INSERT INTO reservation(restaurant_id, member_id, reservation_day_id, payment_id, time, number_of_people, memo,
-                                status)
-        VALUES (#{restaurantId}, #{memberId}, #{reservationDayId}, #{paymentId}, #{time}, #{numberOfPeople}, #{memo},
-                #{status});
+        INSERT INTO reservation(restaurant_id, member_id, payment_id, time, number_of_people, memo, status)
+        VALUES (#{restaurantId}, #{memberId}, #{paymentId}, #{time}, #{numberOfPeople}, #{memo}, #{status});
     </insert>
 
     <select id="getReservation" resultType="com.example.api.reservation.ReservationDTO">

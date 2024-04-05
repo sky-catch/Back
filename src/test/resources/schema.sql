@@ -49,7 +49,6 @@ CREATE TABLE RESERVATION
     reservation_id     bigint      NOT NULL AUTO_INCREMENT,
     restaurant_id      bigint      NOT NULL,
     member_id          bigint      NOT NULL,
-    reservation_day_id bigint      NOT NULL,
     payment_id         bigint      NOT NULL,
     time               timestamp   NOT NULL,
     number_of_people   int         NOT NULL,
