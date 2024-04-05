@@ -20,8 +20,8 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,7 +83,7 @@ public class ReservationController {
         return reservationService.getMyDetailReservationById(reservationId, loginMember.getMemberId());
     }
 
-    @DeleteMapping("/{reservationId}")
+    @PatchMapping("/{reservationId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "예약 취소", description = "예약 ID로 내 예약을 취소하는 API입니다.")
     @ApiResponses({
