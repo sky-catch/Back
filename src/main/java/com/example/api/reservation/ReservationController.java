@@ -88,8 +88,9 @@ public class ReservationController {
     @Operation(summary = "예약 취소", description = "예약 ID로 내 예약을 취소하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "예약 취소 성공"),
-            @ApiResponse(responseCode = "400", description = "요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-            @ApiResponse(responseCode = "404", description = "식당이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "400", description = "로그인한 회원의 예약이 아닌 경우 발생 또는 예약 상태가 PLANNED가 아닌 경우 발생 또는 요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "404", description = "예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "502", description = "아임포트에서 결제를 찾을 수 없거나 삭제할 수 없는 에러 또는 결제 미완료, 결제 금액 위변조 의심 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
     public void cancelReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
                                   @PathVariable long reservationId) {
