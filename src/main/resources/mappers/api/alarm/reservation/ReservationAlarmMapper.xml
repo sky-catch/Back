@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.api.alarm.reservation.ReservationAlarmMapper">
+
+    <resultMap id="reservationAlarmResultMap" type="com.example.api.alarm.reservation.GetReservationAlarm">
+        <id property="reservationAlarmId" column="RESERVATION_ALARM_ID"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="reservationAlarmType" column="RESERVATION_ALARM_TYPE"/>
+        <result property="reservationTime" column="RESERVATION_TIME"/>
+    </resultMap>
+
+    <insert id="createReservationAlarm">
+        insert into reservation_alarm (reservation_id, type, schedule_time)
+        values (#{reservationId}, #{reservationAlarmType}, #{scheduleTime})
+    </insert>
+
+    <select id="getReservationAlarmListForMove" resultMap="reservationAlarmResultMap">
+        select ra.RESERVATION_ALARM_ID,
+               r.restaurant_id,
+               r.member_id,
+               ra.TYPE as RESERVATION_ALARM_TYPE,
+               r.time as RESERVATION_TIME
+        from reservation_alarm ra
+        left join reservation r on r.reservation_id = ra.reservation_id
+        where ra.schedule_time >= now();
+    </select>
+</mapper>

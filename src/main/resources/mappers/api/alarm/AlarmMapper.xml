@@ -4,4 +4,25 @@
 
 <mapper namespace="com.example.api.alarm.AlarmMapper">
 
+    <resultMap id="alarmResultMap" type="com.example.api.alarm.Alarm">
+        <id property="alarmId" column="ALARM_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="alarmType" column="ALARM_TYPE"/>
+        <result property="message" column="MESSAGE"/>
+        <result property="restaurantId" column="RESTAURANT_ID"/>
+        <result property="reviewId" column="REVIEW_ID"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+    </resultMap>
+
+    <select id="getAlarmList" parameterType="long" resultMap="alarmResultMap">
+        select ALARM_ID, MEMBER_ID, TYPE as ALARM_TYPE, MESSAGE, RESTAURANT_ID, REVIEW_ID, CREATED_DATE, UPDATED_DATE
+        from alarm
+        where member_id = #{memberId} and is_new = 1;
+    </select>
+
+    <insert id="creatAlarm" parameterType="com.example.api.alarm.Alarm">
+        insert into alarm (member_id, restaurant_id, type, message, reservation_time, review_id, is_new)
+        values (#{memberId}, #{restaurantId}, #{alarmType}, #{message}, #{reservationTime}, #{reviewId}, 1)
+    </insert>
 </mapper>
