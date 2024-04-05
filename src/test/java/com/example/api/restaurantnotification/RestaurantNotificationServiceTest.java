@@ -7,23 +7,25 @@ import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
+@TestConstructor(autowireMode = AutowireMode.ALL)
+@RequiredArgsConstructor
 @ActiveProfiles("test")
 @Sql("classpath:truncate.sql")
 class RestaurantNotificationServiceTest {
 
-    @Autowired
-    private RestaurantMapper restaurantMapper;
-    @Autowired
-    private RestaurantNotificationService restaurantNotificationService;
+    private final RestaurantMapper restaurantMapper;
+    private final RestaurantNotificationService restaurantNotificationService;
 
     @BeforeEach
     void init() {

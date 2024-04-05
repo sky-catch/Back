@@ -25,28 +25,28 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
+@TestConstructor(autowireMode = AutowireMode.ALL)
+@RequiredArgsConstructor
 @ActiveProfiles("test")
 @Sql("classpath:truncate.sql")
 class RestaurantServiceTest {
 
-    @Autowired
-    private RestaurantService restaurantService;
-    @Autowired
-    private RestaurantMapper restaurantMapper;
-    @Autowired
-    private RestaurantImageMapper restaurantImageMapper;
-    @Autowired
-    private RestaurantNotificationMapper restaurantNotificationMapper;
+    private final RestaurantService restaurantService;
+    private final RestaurantMapper restaurantMapper;
+    private final RestaurantImageMapper restaurantImageMapper;
+    private final RestaurantNotificationMapper restaurantNotificationMapper;
 
     private RestaurantDTO testRestaurant;
 

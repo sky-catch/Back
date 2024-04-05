@@ -37,33 +37,32 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
+@TestConstructor(autowireMode = AutowireMode.ALL)
+@RequiredArgsConstructor
 @ActiveProfiles("test")
 @Sql("classpath:truncate.sql")
 class ReservationServiceTest {
 
     private ReservationService reservationService;
-    @Autowired
-    private ReservationMapper reservationMapper;
-    @Autowired
-    private RestaurantMapper restaurantMapper;
-    @Autowired
-    private HolidayMapper holidayMapper;
-    @Autowired
-    private ReservationAvailableDateMapper reservationAvailableDateMapper;
-    @Autowired
-    private PaymentMapper paymentMapper;
+    private final ReservationMapper reservationMapper;
+    private final RestaurantMapper restaurantMapper;
+    private final HolidayMapper holidayMapper;
+    private final ReservationAvailableDateMapper reservationAvailableDateMapper;
+    private final PaymentMapper paymentMapper;
 
     private RestaurantDTO testRestaurant;
     private final LocalTime openTime = LocalTime.of(10, 0, 0);
