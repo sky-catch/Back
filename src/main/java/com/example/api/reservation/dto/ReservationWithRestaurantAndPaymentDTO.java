@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyDetailReservationDTO extends BaseDTO {
+public class ReservationWithRestaurantAndPaymentDTO extends BaseDTO {
 
     private long reservationId;
     private RestaurantDTO restaurant;

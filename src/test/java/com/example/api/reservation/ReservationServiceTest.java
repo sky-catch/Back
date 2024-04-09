@@ -18,8 +18,8 @@ import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.payment.domain.PaymentStatus;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.MyDetailReservationDTO;
 import com.example.api.reservation.dto.MyReservationDTO;
+import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
@@ -38,7 +38,6 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,8 +93,6 @@ class ReservationServiceTest {
                     }
                 });
 
-        restaurantMapper.deleteAll();
-
         testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
@@ -115,15 +112,6 @@ class ReservationServiceTest {
         holidayMapper.saveAll(getMondayAndTuesdayHolidays());
 
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
-    }
-
-    @AfterEach
-    void cleanup() {
-        restaurantMapper.deleteAll();
-        reservationMapper.deleteAll();
-        holidayMapper.deleteAll();
-        reservationAvailableDateMapper.deleteAll();
-        paymentMapper.deleteAll();
     }
 
     @Test
@@ -502,7 +490,7 @@ class ReservationServiceTest {
         paymentMapper.save(payment);
 
         // when
-        MyDetailReservationDTO expected = reservationService.getMyDetailReservationById(1L, 1L);
+        ReservationWithRestaurantAndPaymentDTO expected = reservationService.getMyDetailReservationById(1L, 1L);
 
         // then
         assertAll(() -> {

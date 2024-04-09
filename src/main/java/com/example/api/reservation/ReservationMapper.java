@@ -1,8 +1,8 @@
 package com.example.api.reservation;
 
 import com.example.api.mydining.GetMyReservationDTO;
-import com.example.api.reservation.dto.MyDetailReservationDTO;
 import com.example.api.reservation.dto.MyReservationDTO;
+import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import java.util.List;
@@ -26,9 +26,13 @@ public interface ReservationMapper {
 
     void updateStatusById(@Param("reservationId") long reservationId, @Param("status") ReservationStatus status);
 
+    Optional<ReservationWithRestaurantAndPaymentDTO> findMyDetailReservationById(long reservationId);
+
+    List<ReservationWithRestaurantAndPaymentDTO> findDetailByIds(@Param("noShowIds") List<Long> noShowIds);
+
+    void bulkUpdateStatusByIds(@Param("noShowIds") List<Long> noShowIds, @Param("status") ReservationStatus status);
+
     List<ReservationDTO> findAll();
 
     void deleteAll();
-
-    Optional<MyDetailReservationDTO> findMyDetailReservationById(long reservationId);
 }

@@ -3,7 +3,7 @@ package com.example.api.reservation;
 import com.example.api.member.MemberDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.MyDetailReservationDTO;
+import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
@@ -76,9 +76,8 @@ public class ReservationController {
             @ApiResponse(responseCode = "400", description = "로그인한 회원의 예약이 아닌 경우 발생 또는 요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    public MyDetailReservationDTO getMyDetailReservationById(
-            @Parameter(hidden = true) @LoginMember MemberDTO loginMember,
-            @PathVariable long reservationId) {
+    public ReservationWithRestaurantAndPaymentDTO getMyDetailReservationById(
+            @Parameter(hidden = true) @LoginMember MemberDTO loginMember, @PathVariable long reservationId) {
 
         return reservationService.getMyDetailReservationById(reservationId, loginMember.getMemberId());
     }
