@@ -23,6 +23,9 @@ public class Alarm extends BaseDTO {
     private LocalDateTime reservationTime;
     private long reviewId;
 
+    /**
+     * 예약 알람 만들기
+     */
     public Alarm(GetReservationAlarm getReservationAlarm) {
         this.memberId = getReservationAlarm.getMemberId();
         this.alarmType = AlarmType.RESERVATION;
@@ -31,18 +34,12 @@ public class Alarm extends BaseDTO {
         this.restaurantId = getReservationAlarm.getRestaurantId();
     }
 
-    public Alarm(long memberId, AlarmType alarmType, String message, long restaurantId) {
-        this.memberId = memberId;
-        this.alarmType = alarmType;
-        this.message = message;
-        this.restaurantId = restaurantId;
-    }
-
-    public Alarm(long memberId, AlarmType alarmType, String message, long restaurantId, long reviewId) {
-        this.memberId = memberId;
-        this.alarmType = alarmType;
-        this.message = message;
-        this.restaurantId = restaurantId;
+    /**
+     * 리뷰 알람 만들기
+     */
+    public Alarm(long reviewId) {
+        this.alarmType = AlarmType.RESERVATION;
+        this.message = "리뷰에 답변이 달렸습니다.";
         this.reviewId = reviewId;
     }
 }

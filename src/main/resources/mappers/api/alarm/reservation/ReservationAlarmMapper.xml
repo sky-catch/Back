@@ -25,6 +25,14 @@
                r.time as RESERVATION_TIME
         from reservation_alarm ra
         left join reservation r on r.reservation_id = ra.reservation_id
-        where ra.schedule_time >= now();
+        where ra.schedule_time &lt; now();
     </select>
+
+    <delete id="deleteReservationAlarm">
+        delete from reservation_alarm
+        where reservation_alarm_id in
+        <foreach collection="reservationAlarmIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

@@ -4,9 +4,9 @@
 
 <mapper namespace="com.example.api.alarm.AlarmMapper">
 
-    <resultMap id="alarmResultMap" type="com.example.api.alarm.Alarm">
+    <resultMap id="alarmResultMap" type="com.example.api.alarm.GetAlarm">
         <id property="alarmId" column="ALARM_ID"/>
-        <result property="memberId" column="MEMBER_ID"/>
+        <result property="restaurantName" column="RESTAURANT_NAME"/>
         <result property="alarmType" column="ALARM_TYPE"/>
         <result property="message" column="MESSAGE"/>
         <result property="restaurantId" column="RESTAURANT_ID"/>
@@ -16,13 +16,22 @@
     </resultMap>
 
     <select id="getAlarmList" parameterType="long" resultMap="alarmResultMap">
-        select ALARM_ID, MEMBER_ID, TYPE as ALARM_TYPE, MESSAGE, RESTAURANT_ID, REVIEW_ID, CREATED_DATE, UPDATED_DATE
-        from alarm
-        where member_id = #{memberId} and is_new = 1;
+        select a.ALARM_ID, r.name, a.TYPE as ALARM_TYPE, a.MESSAGE, a.RESTAURANT_ID, a.REVIEW_ID, a.CREATED_DATE, a.UPDATED_DATE
+        from alarm a
+        left join restaurant r on r.restaurant_id = a.restaurant_id
+        where a.member_id = #{memberId}
+        order by ALARM_ID desc;
     </select>
 
     <insert id="creatAlarm" parameterType="com.example.api.alarm.Alarm">
         insert into alarm (member_id, restaurant_id, type, message, reservation_time, review_id, is_new)
         values (#{memberId}, #{restaurantId}, #{alarmType}, #{message}, #{reservationTime}, #{reviewId}, 1)
+    </insert>
+
+    <insert id="creatReviewAlarm" parameterType="com.example.api.alarm.Alarm">
+        INSERT INTO alarm (member_id, restaurant_id, type, message, review_id, is_new)
+        SELECT r.member_id, r.restaurant_id, #{alarmType}, #{message}, #{reviewId}, 1
+        FROM review r
+        WHERE r.review_id = #{reviewId}
     </insert>
 </mapper>

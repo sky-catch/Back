@@ -2,6 +2,7 @@ package com.example.api.reservation;
 
 import static com.example.api.reservation.ReservationStatus.PLANNED;
 
+import com.example.api.alarm.AlarmService;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
@@ -32,6 +33,7 @@ public class ReservationService {
     private final ReservationMapper reservationMapper;
     private final RestaurantMapper restaurantMapper;
     private final PaymentMapper paymentMapper;
+    private final AlarmService alarmService;
 
     @Transactional(readOnly = true)
     public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
@@ -55,6 +57,8 @@ public class ReservationService {
         ReservationDTO reservation = dto.toReservationDTO();
         reservation.setPaymentId(paymentReady.getPaymentId());
         reservationMapper.save(reservation);
+
+        alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getTime());
     }
 
     private void validateStatus(CreateReservationDTO dto) {
