@@ -8,15 +8,14 @@ import com.example.api.payment.dto.PaymentCallbackRequest;
 import com.example.api.payment.exception.PaymentExceptionType;
 import com.example.api.reservation.ReservationDTO;
 import com.example.api.reservation.ReservationMapper;
+import com.example.api.reservation.ReservationStatus;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.core.exception.SystemException;
-import com.siot.IamportRestClient.IamportClient;
+import com.example.core.payment.CorePaymentService;
 import com.siot.IamportRestClient.exception.IamportResponseException;
-import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import java.io.IOException;
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,14 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
     private final PaymentMapper paymentMapper;
     private final ReservationMapper reservationMapper;
-    private final IamportClient iamportClient;
+    private final CorePaymentService corePaymentService;
 
-    // todo 테스트 추가하기
     @Transactional
     public IamportResponse<Payment> paymentByCallback(MemberDTO loginMember, PaymentCallbackRequest request) {
         try {
-            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.getImpUid());
-            log.info("iamportResponse = {}", iamportResponse.toString());
+            IamportResponse<Payment> iamportResponse = corePaymentService.getPaymentByImpUid(request.getImpUid());
 
             ReservationDTO reservation = reservationMapper.getReservation(request.getReservationId())
                     .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
@@ -65,7 +62,7 @@ public class PaymentService {
     private void validPaymentStatus(IamportResponse<Payment> iamportResponse, ReservationDTO reservation,
                                     PaymentDTO payment) {
         if (!isPaid(iamportResponse)) {
-            reservationMapper.deleteById(reservation.getReservationId());
+            reservationMapper.updateStatusById(reservation.getReservationId(), ReservationStatus.CANCEL);
             paymentMapper.deleteById(payment.getPaymentId());
 
             throw new SystemException(PaymentExceptionType.NOT_PAID);
@@ -83,11 +80,10 @@ public class PaymentService {
         int actualPaymentPrice = iamportResponse.getResponse().getAmount().intValue();
 
         if (expectedPaymentPrice != actualPaymentPrice) {
-            reservationMapper.deleteById(reservation.getReservationId());
+            reservationMapper.updateStatusById(reservation.getReservationId(), ReservationStatus.CANCEL);
             paymentMapper.deleteById(payment.getPaymentId());
 
-            iamportClient.cancelPaymentByImpUid(new CancelData(iamportResponse.getResponse().getImpUid(), true,
-                    new BigDecimal(actualPaymentPrice)));
+            corePaymentService.cancelPaymentByImpUid(iamportResponse.getResponse().getImpUid(), actualPaymentPrice);
 
             throw new SystemException(PaymentExceptionType.NOT_MATCH_PAYMENT_PRICE);
         }

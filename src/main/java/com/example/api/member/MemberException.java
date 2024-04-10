@@ -1,14 +1,15 @@
 package com.example.api.member;
 
+import com.example.core.exception.CommonExceptionType;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
-public enum MemberException {
-    NOT_FOUND("존재하지 않는 사용자입니다.");
+@RequiredArgsConstructor
+public enum MemberException implements CommonExceptionType {
+    NOT_FOUND("존재하지 않는 사용자입니다.", HttpStatus.NOT_FOUND);
 
     private final String message;
-
-    MemberException(String message) {
-        this.message = message;
-    }
+    private final HttpStatus httpStatus;
 }

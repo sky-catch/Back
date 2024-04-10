@@ -49,7 +49,6 @@ CREATE TABLE RESERVATION
     reservation_id     bigint      NOT NULL AUTO_INCREMENT,
     restaurant_id      bigint      NOT NULL,
     member_id          bigint      NOT NULL,
-    reservation_day_id bigint      NOT NULL,
     payment_id         bigint      NOT NULL,
     time               timestamp   NOT NULL,
     number_of_people   int         NOT NULL,
@@ -162,4 +161,30 @@ CREATE TABLE PAYMENT
     created_date timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_date timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (payment_id)
+);
+
+create table RESERVATION_ALARM
+(
+    reservation_alarm_id bigint NOT NULL auto_increment,
+    reservation_id       bigint                              not null,
+    type                 varchar(25)                         not null,
+    schedule_time        timestamp                           not null,
+    created_date         timestamp not null default CURRENT_TIMESTAMP,
+    updated_date         timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (reservation_alarm_id)
+);
+
+create table ALARM
+(
+    alarm_id         bigint NOT NULL auto_increment,
+    member_id        bigint                              not null,
+    restaurant_id    bigint                              not null,
+    type             varchar(25)                         not null,
+    message          varchar(255)                        null,
+    reservation_time timestamp                           null,
+    review_id        bigint                              null,
+    is_new           tinyint                             not null,
+    created_date     timestamp not null default CURRENT_TIMESTAMP,
+    updated_date     timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (alarm_id)
 );

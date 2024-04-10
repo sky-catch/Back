@@ -8,6 +8,7 @@ import com.example.core.web.security.jwt.JWTProvider;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -69,12 +71,25 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     /* Client가 접속 시 호출되는 메서드 */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
+        HttpHeaders headers = session.getHandshakeHeaders();
+        Principal principal = session.getPrincipal();
+        if (principal != null) {
+
+        }
+        log.info("웹소켓 요청 CONNECTED");
+        log.info("요청자 : {}, 요청 헤더 목록 : {}", principal.getName(), headers);
+
+
         String chatRoomHeader = session.getHandshakeHeaders().getFirst("chatRoomId");
         String authorizationHeader = session.getHandshakeHeaders().getFirst("Authorization");
         boolean memberChat = Boolean.parseBoolean(session.getHandshakeHeaders().getFirst("memberChat"));
 
-        if(StringUtils.isEmpty(chatRoomHeader) ||StringUtils.isEmpty(authorizationHeader) || StringUtils.isEmpty(memberChat)){
-            throw new SystemException("헤더를 추가해주세요");
+        if (StringUtils.isEmpty(chatRoomHeader)) {
+            throw new SystemException("채팅방ID 헤더를 추가해주세요");
+        }
+
+        if (StringUtils.isEmpty(authorizationHeader)) {
+            throw new SystemException("토큰을 추가해주세요");
         }
         long chatRoomId = Long.parseLong(chatRoomHeader);
         jwtProvider.validateBearerToken(authorizationHeader);
@@ -95,12 +110,12 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         String header = session.getHandshakeHeaders().getFirst("chatRoomId");
 
-        if(StringUtils.isEmpty(header)){
+        if (StringUtils.isEmpty(header)) {
             return;
         }
         long chatRoomId = Long.parseLong(header);
 
-        if(!enableChatRooms.containsKey(chatRoomId)){
+        if (!enableChatRooms.containsKey(chatRoomId)) {
             return;
         }
         ChatRoomSession chatRoomSession = enableChatRooms.get(chatRoomId);

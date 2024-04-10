@@ -1,8 +1,9 @@
 package com.example.api.restaurant.dto;
 
+import com.example.api.restaurant.exception.RestaurantExceptionType;
 import com.example.core.dto.BaseDTO;
+import com.example.core.exception.SystemException;
 import java.time.LocalTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -74,6 +75,17 @@ public class RestaurantDTO extends BaseDTO {
 
     public boolean isOwner(long ownerId) {
         return this.ownerId == ownerId;
+    }
+
+    public void increaseSavedCount() {
+        this.savedCount++;
+    }
+
+    public void decreaseSavedCount() {
+        if (this.savedCount <= 0) {
+            throw new SystemException(RestaurantExceptionType.NOT_VALID_SAVED_COUNT);
+        }
+        this.savedCount--;
     }
 
     // for mybatis

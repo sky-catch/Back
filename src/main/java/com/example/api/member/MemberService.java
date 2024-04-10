@@ -1,6 +1,8 @@
 package com.example.api.member;
 
+import com.example.api.member.dto.MyMainRes;
 import com.example.api.member.dto.UpdateMemberDTO;
+import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,5 +29,11 @@ public class MemberService {
         }
 
         memberMapper.updateMember(dto);
+    }
+
+    @Transactional(readOnly = true)
+    public MyMainRes getMyMainById(long memberId) {
+        return memberMapper.findMyMainById(memberId)
+                .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND));
     }
 }

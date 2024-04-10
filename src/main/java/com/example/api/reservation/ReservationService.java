@@ -8,15 +8,17 @@ import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
+import com.example.api.reservation.dto.MyReservationDTO;
+import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
-import com.example.api.reservation.dto.response.GetReservationRes;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
+import com.example.core.payment.CorePaymentService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,9 +36,10 @@ public class ReservationService {
     private final RestaurantMapper restaurantMapper;
     private final PaymentMapper paymentMapper;
     private final AlarmService alarmService;
+    private final CorePaymentService corePaymentService;
 
     @Transactional(readOnly = true)
-    public List<GetReservationRes> getMyReservations(GetMyReservationDTO dto) {
+    public List<MyReservationDTO> getMyReservations(GetMyReservationDTO dto) {
         return reservationMapper.getMyReservationsByStatus(dto);
     }
 
@@ -44,12 +47,7 @@ public class ReservationService {
     public void createReservation(CreateReservationDTO dto) {
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
-        validateStatus(dto);
-        validatePerson(dto, restaurantWithHolidayAndAvailableDate);
-        validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
-        validateVisitTime(dto, restaurantWithHolidayAndAvailableDate);
-        validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
-        validateDuplicate(dto);
+        validate(dto, restaurantWithHolidayAndAvailableDate);
 
         PaymentDTO paymentReady = PaymentDTO.ofReadyStatus(dto.getAmountToPay());
         paymentMapper.save(paymentReady);
@@ -59,6 +57,16 @@ public class ReservationService {
         reservationMapper.save(reservation);
 
         alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getTime());
+    }
+
+    private void validate(CreateReservationDTO dto,
+                          RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
+        validateStatus(dto);
+        validatePerson(dto, restaurantWithHolidayAndAvailableDate);
+        validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
+        validateVisitTime(dto, restaurantWithHolidayAndAvailableDate);
+        validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
+        validateDuplicate(dto);
     }
 
     private void validateStatus(CreateReservationDTO dto) {
@@ -154,5 +162,35 @@ public class ReservationService {
                 .map(TimeSlot::of)
                 .collect(Collectors.toList());
         return TimeSlots.of(reservationTimeSlots);
+    }
+
+    @Transactional(readOnly = true)
+    public ReservationWithRestaurantAndPaymentDTO getMyDetailReservationById(long reservationId, long memberId) {
+        ReservationWithRestaurantAndPaymentDTO reservation = reservationMapper.findMyDetailReservationById(
+                        reservationId)
+                .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
+        if (reservation.isNotMine(memberId)) {
+            throw new SystemException(ReservationExceptionType.NOT_MINE);
+        }
+
+        return reservation;
+    }
+
+    @Transactional
+    public void cancelMyReservationById(long reservationId, long memberId) {
+        ReservationWithRestaurantAndPaymentDTO reservation = reservationMapper.findMyDetailReservationById(
+                        reservationId)
+                .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
+        if (reservation.isNotMine(memberId)) {
+            throw new SystemException(ReservationExceptionType.NOT_MINE);
+        }
+        if (reservation.isNotPlanned()) {
+            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
+        }
+
+        PaymentDTO payment = reservation.getPayment();
+        corePaymentService.cancelPaymentByImpUid(payment.getImpUid(), payment.getPrice());
+
+        reservationMapper.updateStatusById(reservationId, ReservationStatus.CANCEL);
     }
 }

@@ -3,6 +3,7 @@ package com.example.api.reservation;
 import com.example.api.member.MemberDTO;
 import com.example.api.reservation.dto.CreateReservationDTO;
 import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
+import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
@@ -19,6 +20,8 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,5 +66,34 @@ public class ReservationController {
         TimeSlots availableTimeSlots = reservationService.getAvailableTimeSlots(dto);
 
         return ResponseEntity.ok(availableTimeSlots);
+    }
+
+    @GetMapping("/detail/{reservationId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "예약 상세 조회", description = "예약의 상세 내용을 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예약 상세 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "로그인한 회원의 예약이 아닌 경우 발생 또는 요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "404", description = "예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+    })
+    public ReservationWithRestaurantAndPaymentDTO getMyDetailReservationById(
+            @Parameter(hidden = true) @LoginMember MemberDTO loginMember, @PathVariable long reservationId) {
+
+        return reservationService.getMyDetailReservationById(reservationId, loginMember.getMemberId());
+    }
+
+    @PatchMapping("/{reservationId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "예약 취소", description = "예약 ID로 내 예약을 취소하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예약 취소 성공"),
+            @ApiResponse(responseCode = "400", description = "로그인한 회원의 예약이 아닌 경우 발생 또는 예약 상태가 PLANNED가 아닌 경우 발생 또는 요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "404", description = "예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "502", description = "아임포트에서 결제를 찾을 수 없거나 삭제할 수 없는 에러 또는 결제 미완료, 결제 금액 위변조 의심 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+    })
+    public void cancelReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
+                                  @PathVariable long reservationId) {
+
+        reservationService.cancelMyReservationById(reservationId, loginMember.getMemberId());
     }
 }

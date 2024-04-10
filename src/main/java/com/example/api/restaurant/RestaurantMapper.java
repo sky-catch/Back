@@ -4,10 +4,9 @@ import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.api.review.dto.ReviewDTO;
-import org.apache.ibatis.annotations.Mapper;
-
 import java.util.List;
 import java.util.Optional;
+import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface RestaurantMapper {
@@ -38,4 +37,8 @@ public interface RestaurantMapper {
     void updateRestaurant(RestaurantDTO dto);
 
     Optional<GetRestaurantRes> findRestaurantInfoByOwnerId(long ownerId);
+
+    void increaseSavedCount(RestaurantDTO restaurant);
+
+    void decreaseSavedCount(RestaurantDTO restaurant);
 }
