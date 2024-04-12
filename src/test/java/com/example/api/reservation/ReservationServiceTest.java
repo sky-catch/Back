@@ -520,7 +520,7 @@ class ReservationServiceTest {
 
     @Test
     @DisplayName("예약 번호들로 예약 상태를 노쇼로 변경할 수 있다.")
-    void changeReservationsToNoShowTest() {
+    void changeReservationsToNoShowByRequestTest() {
         // given
         saveTestReservations();
         saveTestPayment();
@@ -529,7 +529,7 @@ class ReservationServiceTest {
                 Arrays.asList(6L, 7L, 8L, 9L, 10L));
 
         // when
-        reservationService.changeReservationsToNoShow(req);
+        reservationService.changeReservationsToNoShowByRequest(req);
 
         // then
         assertThat(reservationMapper.findAll())
@@ -540,7 +540,7 @@ class ReservationServiceTest {
 
     @Test
     @DisplayName("예약 상태가 잘못된 예약 번호들로 예약 상태를 노쇼로 변경할 경우 예외가 발생한다.")
-    void changeReservationsToNoShowWithNotValidStatusTest() {
+    void changeReservationsToNoShowWithNotValidStatusByRequestTest() {
         // given
         saveTestReservations();
         saveTestPayment();
@@ -549,9 +549,47 @@ class ReservationServiceTest {
                 Arrays.asList(1L, 2L, 3L, 4L, 5L));
 
         // expected
-        assertThatThrownBy(() -> reservationService.changeReservationsToNoShow(req))
+        assertThatThrownBy(() -> reservationService.changeReservationsToNoShowByRequest(req))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
+    }
+
+    @Test
+    @DisplayName("날짜를 기준으로 방문하지 않은 예약 상태를 노쇼로 변경할 수 있다.")
+    void changeReservationsToNoShowByDateTest() {
+        // given
+        saveTestReservations();
+        saveTestPayment();
+
+        LocalDate date = notHoliday.plusDays(1);
+
+        // when
+        reservationService.changeReservationsToNoShowByDate(date);
+
+        // then
+        assertThat(reservationMapper.findAll())
+                .extracting("status")
+                .containsExactly(DONE, DONE, DONE, DONE, DONE, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL,
+                        CANCEL, CANCEL, CANCEL);
+    }
+
+    @Test
+    @DisplayName("날짜를 기준으로 미래 예약 상태를 노쇼로 변경할 수 없다.")
+    void changeReservationsToNoShowByDate2Test() {
+        // given
+        saveTestReservations();
+        saveTestPayment();
+
+        LocalDate date = notHoliday.minusDays(1);
+
+        // when
+        reservationService.changeReservationsToNoShowByDate(date);
+
+        // then
+        assertThat(reservationMapper.findAll())
+                .extracting("status")
+                .containsExactly(DONE, DONE, DONE, DONE, DONE, PLANNED, PLANNED, PLANNED, PLANNED, PLANNED, CANCEL,
+                        CANCEL, CANCEL, CANCEL, CANCEL);
     }
 
     private void saveTestRestaurant() {

@@ -32,6 +32,8 @@ public interface ReservationMapper {
 
     void bulkUpdateStatusByIds(@Param("noShowIds") List<Long> noShowIds, @Param("status") ReservationStatus status);
 
+    List<ReservationDTO> findByCond(ReservationSearchCond cond);
+
     List<ReservationDTO> findAll();
 
     void deleteAll();

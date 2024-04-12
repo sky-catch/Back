@@ -221,6 +221,15 @@
         );
     </update>
 
+    <select id="findByCond" resultType="com.example.api.reservation.ReservationDTO">
+        <if test="searchDate != null and status != null">
+            SELECT *
+            FROM reservation rez
+            WHERE #{searchDate} >= cast(rez.TIME as DATE)
+            AND rez.STATUS = #{status};
+        </if>
+    </select>
+
     <select id="findAll" resultType="com.example.api.reservation.ReservationDTO">
         SELECT *
         FROM reservation;

@@ -1,7 +1,5 @@
 package com.example.api.reservation;
 
-import static com.example.api.reservation.ReservationStatus.PLANNED;
-
 import com.example.api.alarm.AlarmService;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
@@ -20,15 +18,18 @@ import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -71,7 +72,7 @@ public class ReservationService {
     }
 
     private void validateStatus(CreateReservationDTO dto) {
-        if (dto.getStatus() != PLANNED) {
+        if (dto.getStatus() != ReservationStatus.PLANNED) {
             throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
         }
     }
@@ -152,7 +153,7 @@ public class ReservationService {
                 .restaurantId(dto.getRestaurantId())
                 .searchDate(dto.getSearchDate())
                 .visitTime(dto.getVisitTime())
-                .status(PLANNED)
+                .status(ReservationStatus.PLANNED)
                 .build();
         List<ReservationDTO> findReservations = reservationMapper.findByRestaurantIdAndStatusAndSearchDateAndGreaterThanOrEqualToVisitTime(
                 cond);
@@ -196,17 +197,32 @@ public class ReservationService {
     }
 
     @Transactional
-    public void changeReservationsToNoShow(ChangeReservationsStatusToNoShowReq req) {
+    public void changeReservationsToNoShowByRequest(ChangeReservationsStatusToNoShowReq req) {
         List<ReservationWithRestaurantAndPaymentDTO> reservations = reservationMapper.findDetailByIds(
                 req.getNoShowIds());
 
         boolean notValidStatus = reservations.stream()
                 .map(ReservationWithRestaurantAndPaymentDTO::getStatus)
-                .anyMatch(reservationStatus -> reservationStatus != PLANNED);
+                .anyMatch(reservationStatus -> reservationStatus != ReservationStatus.PLANNED);
         if (notValidStatus) {
             throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
         }
 
         reservationMapper.bulkUpdateStatusByIds(req.getNoShowIds(), ReservationStatus.CANCEL);
+    }
+
+    @Transactional
+    public List<Long> changeReservationsToNoShowByDate(LocalDate date) {
+        ReservationSearchCond cond = ReservationSearchCond.builder()
+                .searchDate(date)
+                .status(ReservationStatus.PLANNED)
+                .build();
+        List<Long> noShowIds = reservationMapper.findByCond(cond).stream()
+                .map(ReservationDTO::getReservationId)
+                .collect(Collectors.toList());
+
+        reservationMapper.bulkUpdateStatusByIds(noShowIds, ReservationStatus.CANCEL);
+
+        return noShowIds;
     }
 }

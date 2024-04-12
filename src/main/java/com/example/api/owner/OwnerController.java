@@ -82,6 +82,6 @@ public class OwnerController {
     public void changeReservationStatusToNoShow(@LoginOwner Owner owner,
                                                 @Valid @RequestBody ChangeReservationsStatusToNoShowReq req) {
 
-        reservationService.changeReservationsToNoShow(req);
+        reservationService.changeReservationsToNoShowByRequest(req);
     }
 }
