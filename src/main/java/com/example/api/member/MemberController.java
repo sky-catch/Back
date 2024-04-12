@@ -35,9 +35,8 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원 정보, 회원이 저장한 식당, 회원이 작성한 리뷰 조회 성공.", content = @Content(schema = @Schema(implementation = MyMainRes.class))),
             @ApiResponse(responseCode = "404", description = "회원이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-    }
-    )
-    public ResponseEntity<MyMainRes> getMyMain(@Parameter(hidden = true) @LoginMember MemberDTO loginMember) {
+    })
+    public ResponseEntity<MyMainRes> getMyMain(@LoginMember MemberDTO loginMember) {
         MyMainRes myMainRes = memberService.getMyMainById(loginMember.getMemberId());
         return ResponseEntity.ok(myMainRes);
     }
@@ -45,9 +44,12 @@ public class MemberController {
     @PatchMapping(value = "/profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "프로필 수정 ", description = "프로필 수정하는 API입니다.")
-    public void updateProfile(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
-                              @Parameter(description = "프로필 수정 요청값") @RequestPart UpdateMemberReq updateMemberReq,
-                              @Parameter(description = "프로필 이미지 파일") @RequestPart(required = false) MultipartFile file) {
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원 프로필 수정 성공"),
+    })
+    public void updateProfile(@LoginMember MemberDTO loginMember,
+                              @RequestPart UpdateMemberReq updateMemberReq,
+                              @Parameter(description = "프로필 이미지 파일 - 첨부하지 않은 경우 이미지는 변경되지 않습니다.") @RequestPart(required = false) MultipartFile file) {
 
         UpdateMemberDTO dto = UpdateMemberDTO.builder()
                 .memberId(loginMember.getMemberId())
