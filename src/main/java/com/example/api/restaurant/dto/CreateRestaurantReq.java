@@ -45,13 +45,13 @@ public class CreateRestaurantReq {
     @Schema(description = "예약 최소 인원 수", example = "4")
     private int tablePersonMin;
     @NotNull
-    @Schema(description = "오픈시간", example = "11:00:00")
+    @Schema(name = "openTime", description = "오픈시간", example = "11:00:00", type = "string")
     private LocalTime openTime;
     @NotNull
-    @Schema(description = "주문마감시간", example = "20:20:00")
+    @Schema(name = "lastOrderTime", description = "주문마감시간", example = "20:20:00", type = "string")
     private LocalTime lastOrderTime;
     @NotNull
-    @Schema(description = "마감시간", example = "22:00:00")
+    @Schema(description = "마감시간", example = "22:00:00", type = "string")
     private LocalTime closeTime;
     @NotBlank
     @Schema(description = "주소", example = "압구정로데오")
@@ -66,7 +66,7 @@ public class CreateRestaurantReq {
     @Schema(description = "휴무일", example = "{\"days\": [\"MONDAY\", \"TUESDAY\"]}")
     private Days days;
     @NotNull
-    @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01")
+    @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate reservationBeginDate;
     @NotNull

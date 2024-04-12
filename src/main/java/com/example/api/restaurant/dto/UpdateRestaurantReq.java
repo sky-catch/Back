@@ -5,20 +5,19 @@ import com.example.api.holiday.Days;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
-@Schema(description = "식당 생성 요청값")
+@Schema(description = "식당 수정 요청값")
 @Data
 @Builder
 @NoArgsConstructor
@@ -49,13 +48,13 @@ public class UpdateRestaurantReq {
     @Schema(description = "예약 최소 인원 수", example = "4")
     private int tablePersonMin;
     @NotNull
-    @Schema(description = "오픈시간", example = "11:00:00")
+    @Schema(description = "오픈시간", example = "11:00:00", type = "string")
     private LocalTime openTime;
     @NotNull
-    @Schema(description = "주문마감시간", example = "20:20:00")
+    @Schema(description = "주문마감시간", example = "20:20:00", type = "string")
     private LocalTime lastOrderTime;
     @NotNull
-    @Schema(description = "마감시간", example = "22:00:00")
+    @Schema(description = "마감시간", example = "22:00:00", type = "string")
     private LocalTime closeTime;
     @NotBlank
     @Schema(description = "주소", example = "압구정로데오")
@@ -70,11 +69,11 @@ public class UpdateRestaurantReq {
     @Schema(description = "휴무일", example = "{\"days\": [\"MONDAY\", \"TUESDAY\"]}")
     private Days days;
     @NotNull
-    @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01")
+    @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate reservationBeginDate;
     @NotNull
-    @Schema(description = "예약 가능 종료 날짜", example = "2024-04-01")
+    @Schema(description = "예약 가능 종료 날짜", example = "2024-04-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate reservationEndDate;
     @Schema(description = "[(PARKING, 주차 가능), (VALET_PARKING, 발렛 가능), (CORKAGE, 콜키지 가능), (CORKAGE_FREE, 콜키지 프리)," +
