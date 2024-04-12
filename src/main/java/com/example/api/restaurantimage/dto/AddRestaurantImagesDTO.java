@@ -34,13 +34,13 @@ public class AddRestaurantImagesDTO {
 
     private void validateListSize(List<?> list) {
         if (list.isEmpty() || list.size() > 10) {
-            throw new SystemException(NOT_SATISFIED_IMAGE_SIZE.getMessage());
+            throw new SystemException(NOT_SATISFIED_IMAGE_SIZE);
         }
     }
 
     private void validateImageWithType(List<MultipartFile> files, List<RestaurantImageType> restaurantImageTypes) {
         if (files.size() != restaurantImageTypes.size()) {
-            throw new SystemException(NOT_MATCH_IMAGE_SIZE_WITH_IMAGE_TYPE_SIZE.getMessage());
+            throw new SystemException(NOT_MATCH_IMAGE_SIZE_WITH_IMAGE_TYPE_SIZE);
         }
     }
 
@@ -49,7 +49,7 @@ public class AddRestaurantImagesDTO {
                 .filter(restaurantImageType -> restaurantImageType == RestaurantImageType.REPRESENTATIVE)
                 .count();
         if (count != 1) {
-            throw new SystemException(NOT_SATISFIED_IMAGE_TYPE_REQUIREMENT.getMessage());
+            throw new SystemException(NOT_SATISFIED_IMAGE_TYPE_REQUIREMENT);
         }
     }
 }
