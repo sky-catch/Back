@@ -34,6 +34,6 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MyMainRes getMyMainById(long memberId) {
         return memberMapper.findMyMainById(memberId)
-                .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND));
+                .orElseThrow(() -> new SystemException(MemberExceptionType.NOT_FOUND));
     }
 }

@@ -1,7 +1,7 @@
 package com.example.core.oauth.service;
 
 import com.example.api.member.MemberDTO;
-import com.example.api.member.MemberException;
+import com.example.api.member.MemberExceptionType;
 import com.example.api.member.MemberMapper;
 import com.example.api.owner.OwnerMapper;
 import com.example.core.exception.SystemException;
@@ -38,7 +38,7 @@ public class OauthService {
                     log.info("새로운 member = {}", member);
                     memberMapper.save(member);
                     return memberMapper.findByOauthId(member.oauthId())
-                            .orElseThrow(() -> new SystemException(MemberException.NOT_FOUND.getMessage()));
+                            .orElseThrow(() -> new SystemException(MemberExceptionType.NOT_FOUND.getMessage()));
                 });
 
         UsersDTO usersDTO = getUsersDTO(saved);

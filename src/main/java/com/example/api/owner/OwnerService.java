@@ -4,7 +4,7 @@ import static com.example.api.reservation.ReservationStatus.PLANNED;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 
 import com.example.api.member.MemberDTO;
-import com.example.api.member.MemberException;
+import com.example.api.member.MemberExceptionType;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.reservation.ReservationMapper;
@@ -67,7 +67,7 @@ public class OwnerService {
 
     private void checkOwnerExists(Owner owner) {
         if (owner == null) {
-            throw new SystemException(MemberException.NOT_FOUND.getMessage());
+            throw new SystemException(MemberExceptionType.NOT_FOUND.getMessage());
         }
     }
 
