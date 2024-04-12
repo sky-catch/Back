@@ -35,8 +35,7 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "식당 생성 성공, 식당 편의시설도 생성됩니다."),
             @ApiResponse(responseCode = "400", description = "기존에 식당을 생성한 경우, 서버에 중복된 식당 이름이 존재할 경우 발생"),
     })
-    public void createRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
-                                 @Valid @RequestBody CreateRestaurantReq dto) {
+    public void createRestaurant(@LoginOwner Owner owner, @Valid @RequestBody CreateRestaurantReq dto) {
         dto.setOwnerId(owner.getOwnerId());
         restaurantService.createRestaurant(dto);
     }
@@ -47,8 +46,7 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "식당 수정 성공, 식당 편의시설 및 휴일도 수정 할 수 있습니다."),
             @ApiResponse(responseCode = "400", description = "서버에 중복된 식당 이름이 존재할 경우 발생"),
     })
-    public void updateRestaurant(@Parameter(hidden = true) @LoginOwner Owner owner,
-                                 @Valid @RequestBody UpdateRestaurantReq dto) {
+    public void updateRestaurant(@LoginOwner Owner owner, @Valid @RequestBody UpdateRestaurantReq dto) {
         dto.setOwnerId(owner.getOwnerId());
         restaurantService.updateRestaurant(dto);
     }

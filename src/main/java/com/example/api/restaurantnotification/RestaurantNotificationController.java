@@ -5,7 +5,6 @@ import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import com.example.api.restaurantnotification.dto.CreateRestaurantNotificationDTO;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,8 +30,7 @@ public class RestaurantNotificationController {
     @ApiResponses(
             @ApiResponse(responseCode = "201", description = "식당 공지사항 생성 성공")
     )
-    public ResponseEntity<Void> createRestaurantNotification(@Parameter(hidden = true) @LoginOwner Owner owner,
-                                                             @PathVariable long restaurantId,
+    public ResponseEntity<Void> createRestaurantNotification(@LoginOwner Owner owner, @PathVariable long restaurantId,
                                                              @RequestBody CreateRestaurantNotificationDTO dto) {
 
         RestaurantNotificationDTO restaurantNotificationDTO = RestaurantNotificationDTO.builder()

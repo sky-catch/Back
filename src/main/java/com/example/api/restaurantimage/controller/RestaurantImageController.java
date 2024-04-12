@@ -48,7 +48,7 @@ public class RestaurantImageController {
                     + "4. 사장의 요청이 아닌 경우 발생합니다."),
     })
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> addRestaurantImages(@Parameter(hidden = true) @LoginOwner Owner owner,
+    public ResponseEntity<Void> addRestaurantImages(@LoginOwner Owner owner,
                                                     @Parameter(description = "식당 이미지들을 추가할 식당 ID", example = "1") @PathVariable long restaurantId,
                                                     @RequestPart AddRestaurantImagesReq addRestaurantImagesReq,
                                                     @Parameter(description = "식당 이미지 파일들", example = "확장자는 .jpg, .png처럼 이미지 확장자를 허용합니다.") @RequestPart List<MultipartFile> files)

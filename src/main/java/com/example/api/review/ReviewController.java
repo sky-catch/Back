@@ -8,11 +8,16 @@ import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +32,7 @@ public class ReviewController {
     public void createReview(@RequestPart CreateReviewReq createReviewReq,
                              @Parameter(description = "이미지 형식의 파일만 가능, 최대 5개")
                              @RequestPart(required = false) List<MultipartFile> files,
-                             @Parameter(hidden = true) @LoginMember MemberDTO memberDTO) {
+                             @LoginMember MemberDTO memberDTO) {
         createReviewReq.setMemberId(memberDTO.getMemberId());
         if (files.size() > 5) {
             throw new SystemException("이미지 개수는 5개를 넘을 수 없습니다.");
@@ -41,7 +46,7 @@ public class ReviewController {
                              @Parameter(description = "파일 전송하지 않을 시 - 기존 리뷰의 모든 이미지 삭제 <br>" +
                                      "일부만 삭제하고 싶은 경우 - 원하는 이미지 파일만 보내기 <br>일부는 삭제하고 또다른 이미지 추가가 있을 경우 - 삭제를 제외한 나머지 파일 + 추가 파일")
                              @RequestPart(required = false) List<MultipartFile> files,
-                             @Parameter(hidden = true) @LoginMember MemberDTO memberDTO) {
+                             @LoginMember MemberDTO memberDTO) {
         if (files.size() > 5) {
             throw new SystemException("이미지 개수는 5개를 넘을 수 없습니다.");
         }
@@ -50,8 +55,7 @@ public class ReviewController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "리뷰 삭제", description = "사장 답글이 달려 있을시 삭제 불가")
-    public void deleteReview(@PathVariable(name = "id") long reviewId,
-                             @Parameter(hidden = true) @LoginMember MemberDTO memberDTO) {
+    public void deleteReview(@PathVariable(name = "id") long reviewId, @LoginMember MemberDTO memberDTO) {
         reviewService.deleteReview(reviewId);
     }
 

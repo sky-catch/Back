@@ -67,7 +67,7 @@ public class JWTTestController {
     @GetMapping("/authorization/jwt/member/test")
     @Operation(summary = "회원 테스트용 JWT 검증", description = "발급 받은 JWT로 회원의 이메일을 조회")
     public String authorizationTestMemberJwt(@Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
-                                             @Parameter(hidden = true) @LoginMember MemberDTO memberDTO) {
+                                             @LoginMember MemberDTO memberDTO) {
         System.out.println("memberDTO = " + memberDTO);
         return userDetails.getUsername() + " authenticated";
     }
@@ -76,7 +76,7 @@ public class JWTTestController {
     @GetMapping("/authorization/jwt/owner/test")
     @Operation(summary = "사장 테스트용 JWT 검증", description = "발급 받은 JWT로 회원의 이메일을 조회")
     public String authorizationTestOwnerJwt(@Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
-                                            @Parameter(hidden = true) @LoginOwner Owner owner) {
+                                            @LoginOwner Owner owner) {
         System.out.println("owner = " + owner);
         return userDetails.getUsername() + " authenticated";
     }

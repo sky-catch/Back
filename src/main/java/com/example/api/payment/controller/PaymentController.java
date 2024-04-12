@@ -8,7 +8,6 @@ import com.example.core.web.security.login.LoginMember;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,9 +40,8 @@ public class PaymentController {
             @ApiResponse(responseCode = "502", description = "아임포트에서 결제를 찾을 수 없거나 삭제할 수 없는 에러 또는 결제 미완료, 결제 금액 위변조 의심 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     }
     )
-    public ResponseEntity<IamportResponse<Payment>> validationPayment(
-            @Parameter(hidden = true) @LoginMember MemberDTO loginMember,
-            @Valid @RequestBody PaymentCallbackRequest request) {
+    public ResponseEntity<IamportResponse<Payment>> validationPayment(@LoginMember MemberDTO loginMember,
+                                                                      @Valid @RequestBody PaymentCallbackRequest request) {
         IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(loginMember, request);
 
         log.info("결제 응답 = {}", iamportResponse.getResponse().toString());

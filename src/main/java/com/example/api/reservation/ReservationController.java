@@ -10,7 +10,6 @@ import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
 import com.example.core.exception.ExceptionResponse;
 import com.example.core.web.security.login.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,7 +44,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "400", description = "요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "식당이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    public void createReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
+    public void createReservation(@LoginMember MemberDTO loginMember,
                                   @PathVariable long restaurantId,
                                   @Valid @RequestBody CreateReservationReq req) {
         CreateReservationDTO dto = CreateReservationDTO.of(restaurantId, loginMember.getMemberId(), req);
@@ -76,8 +75,8 @@ public class ReservationController {
             @ApiResponse(responseCode = "400", description = "로그인한 회원의 예약이 아닌 경우 발생 또는 요청값이 잘못된 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    public ReservationWithRestaurantAndPaymentDTO getMyDetailReservationById(
-            @Parameter(hidden = true) @LoginMember MemberDTO loginMember, @PathVariable long reservationId) {
+    public ReservationWithRestaurantAndPaymentDTO getMyDetailReservationById(@LoginMember MemberDTO loginMember,
+                                                                             @PathVariable long reservationId) {
 
         return reservationService.getMyDetailReservationById(reservationId, loginMember.getMemberId());
     }
@@ -91,8 +90,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "502", description = "아임포트에서 결제를 찾을 수 없거나 삭제할 수 없는 에러 또는 결제 미완료, 결제 금액 위변조 의심 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    public void cancelReservation(@Parameter(hidden = true) @LoginMember MemberDTO loginMember,
-                                  @PathVariable long reservationId) {
+    public void cancelReservation(@LoginMember MemberDTO loginMember, @PathVariable long reservationId) {
 
         reservationService.cancelMyReservationById(reservationId, loginMember.getMemberId());
     }
