@@ -22,11 +22,7 @@
           AND sr.restaurant_id = #{restaurantId}
     </delete>
 
-    <delete id="deleteAll">
-        DELETE
-        FROM saved_restaurant;
-    </delete>
-
+    <!--    for test -->
     <select id="findAll" resultType="com.example.api.savedrestaurant.SavedRestaurantDTO">
         SELECT *
         FROM saved_restaurant;

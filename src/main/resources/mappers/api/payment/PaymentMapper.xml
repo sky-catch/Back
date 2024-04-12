@@ -29,9 +29,4 @@
             price      = #{price},
             status     = #{status};
     </update>
-
-    <select id="deleteAll">
-        DELETE
-        FROM payment;
-    </select>
 </mapper>

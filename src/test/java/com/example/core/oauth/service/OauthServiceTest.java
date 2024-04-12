@@ -17,29 +17,29 @@ import com.example.core.oauth.dto.LoginResponse;
 import com.example.core.web.security.jwt.JWTProvider;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
+@TestConstructor(autowireMode = AutowireMode.ALL)
+@RequiredArgsConstructor
 @ActiveProfiles("test")
 @Sql("classpath:truncate.sql")
 class OauthServiceTest {
 
     private OauthService oauthService;
 
-    @Autowired
-    private AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite;
-    @Autowired
-    private MemberMapper memberMapper;
-    @Autowired
-    private OwnerMapper ownerMapper;
-    @Autowired
-    private JWTProvider jwtProvider;
+    private final AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite;
+    private final MemberMapper memberMapper;
+    private final OwnerMapper ownerMapper;
+    private final JWTProvider jwtProvider;
 
     @BeforeEach
     void init() {

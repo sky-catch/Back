@@ -12,7 +12,6 @@ public interface SavedRestaurantMapper {
 
     void delete(SavedRestaurantDTO savedRestaurant);
 
+    // for test
     List<SavedRestaurantDTO> findAll();
-
-    void deleteAll();
 }

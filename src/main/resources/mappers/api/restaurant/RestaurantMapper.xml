@@ -52,16 +52,6 @@
         WHERE owner_id = #{ownerId}
     </update>
 
-    <delete id="deleteAll">
-        DELETE
-        FROM restaurant;
-    </delete>
-
-    <select id="findAll" resultType="com.example.api.restaurant.dto.RestaurantDTO">
-        SELECT *
-        FROM restaurant;
-    </select>
-
     <select id="findById" resultType="com.example.api.restaurant.dto.RestaurantDTO">
         SELECT *
         FROM restaurant
@@ -324,4 +314,10 @@
                     ELSE 0 END
         WHERE RESTAURANT_ID = #{restaurantId};
     </update>
+
+    <!--    for test -->
+    <select id="findAll" resultType="com.example.api.restaurant.dto.RestaurantDTO">
+        SELECT *
+        FROM restaurant;
+    </select>
 </mapper>

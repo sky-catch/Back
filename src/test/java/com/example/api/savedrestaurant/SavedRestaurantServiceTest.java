@@ -10,7 +10,6 @@ import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,6 @@ class SavedRestaurantServiceTest {
 
     @BeforeEach
     void init() {
-        savedRestaurantMapper.deleteAll();
-
         testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
@@ -52,12 +49,6 @@ class SavedRestaurantServiceTest {
                 .detailAddress("detailAddress")
                 .build();
         restaurantMapper.save(testRestaurant);
-    }
-
-    @AfterEach
-    void cleanup() {
-        savedRestaurantMapper.deleteAll();
-        restaurantMapper.deleteAll();
     }
 
     @Test

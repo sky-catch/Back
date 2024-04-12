@@ -10,32 +10,31 @@ import com.example.core.exception.SystemException;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
+@TestConstructor(autowireMode = AutowireMode.ALL)
+@RequiredArgsConstructor
 @ActiveProfiles("test")
 @Sql("classpath:truncate.sql")
 class HolidayServiceTest {
-    @Autowired
-    private HolidayService holidayService;
-    @Autowired
-    private HolidayMapper holidayMapper;
-    @Autowired
-    private RestaurantMapper restaurantMapper;
+
+    private final HolidayService holidayService;
+    private final HolidayMapper holidayMapper;
+    private final RestaurantMapper restaurantMapper;
 
     private RestaurantDTO testRestaurant;
 
     @BeforeEach
     void init() {
-        restaurantMapper.deleteAll();
-
         testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
@@ -51,12 +50,6 @@ class HolidayServiceTest {
                 .detailAddress("detailAddress")
                 .build();
         restaurantMapper.save(testRestaurant);
-    }
-
-    @AfterEach
-    void cleanup() {
-        restaurantMapper.deleteAll();
-        holidayMapper.deleteAll();
     }
 
     @Test

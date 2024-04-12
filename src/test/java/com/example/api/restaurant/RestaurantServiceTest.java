@@ -26,7 +26,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,8 +53,6 @@ class RestaurantServiceTest {
 
     @BeforeEach
     void init() {
-        restaurantMapper.deleteAll();
-
         testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
@@ -88,11 +85,6 @@ class RestaurantServiceTest {
                 .detailAddress("detailAddress")
                 .days(Days.of(new ArrayList<>()))
                 .build();
-    }
-
-    @AfterEach
-    void cleanup() {
-        restaurantMapper.deleteAll();
     }
 
     @Test

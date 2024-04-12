@@ -14,6 +14,4 @@ public interface PaymentMapper {
     void update(PaymentDTO payment);
 
     void save(PaymentDTO payment);
-
-    void deleteAll();
 }

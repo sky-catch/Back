@@ -8,7 +8,6 @@ import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,11 +25,6 @@ class RestaurantNotificationServiceTest {
 
     private final RestaurantMapper restaurantMapper;
     private final RestaurantNotificationService restaurantNotificationService;
-
-    @BeforeEach
-    void init() {
-        restaurantMapper.deleteAll();
-    }
 
     @Test
     @DisplayName("가게 공지사항을 생성하는 테스트")

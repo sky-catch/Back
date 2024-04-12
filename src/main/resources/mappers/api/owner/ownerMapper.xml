@@ -64,9 +64,4 @@
         SELECT *
         FROM owner;
     </select>
-
-    <delete id="deleteAll">
-        DELETE
-        FROM owner;
-    </delete>
 </mapper>

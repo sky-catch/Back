@@ -34,7 +34,6 @@ public interface ReservationMapper {
 
     List<ReservationDTO> findByCond(ReservationSearchCond cond);
 
+    // for test
     List<ReservationDTO> findAll();
-
-    void deleteAll();
 }

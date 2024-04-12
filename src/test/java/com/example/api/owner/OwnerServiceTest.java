@@ -5,15 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.api.member.MemberDTO;
-import com.example.api.payment.PaymentMapper;
-import com.example.api.reservation.ReservationMapper;
-import com.example.api.restaurant.RestaurantMapper;
 import com.example.core.dto.HumanStatus;
 import com.example.core.exception.SystemException;
 import com.example.core.oauth.domain.OauthId;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,17 +26,6 @@ class OwnerServiceTest {
 
     private final OwnerService ownerService;
     private final OwnerMapper ownerMapper;
-
-    private final RestaurantMapper restaurantMapper;
-    private final ReservationMapper reservationMapper;
-    private final PaymentMapper paymentMapper;
-
-    private final LocalTime openTime = LocalTime.of(10, 0, 0);
-    private final LocalTime lastOrderTime = LocalTime.of(20, 0, 0);
-    private final int tablePersonMax = 4;
-    private final int tablePersonMin = 2;
-    private final LocalDate notHoliday = LocalDate.of(2024, 3, 15); // FRIDAY
-    private final LocalDateTime validVisitTime = LocalDateTime.of(notHoliday, openTime);
 
     @Test
     @DisplayName("새로운 사장을 생성하는 테스트")

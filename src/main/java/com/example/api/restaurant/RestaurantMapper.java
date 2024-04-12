@@ -16,10 +16,6 @@ public interface RestaurantMapper {
 
     void save(RestaurantDTO dto);
 
-    void deleteAll();
-
-    List<RestaurantDTO> findAll();
-
     Optional<RestaurantDTO> findById(long restaurantId);
 
     Optional<GetRestaurantRes> findRestaurantInfoById(long restaurantId);
@@ -41,4 +37,7 @@ public interface RestaurantMapper {
     void increaseSavedCount(RestaurantDTO restaurant);
 
     void decreaseSavedCount(RestaurantDTO restaurant);
+
+    // for test
+    List<RestaurantDTO> findAll();
 }

@@ -10,6 +10,4 @@ public interface ReservationAvailableDateMapper {
     void update(ReservationAvailableDateDTO dto);
 
     List<ReservationAvailableDateDTO> findAll();
-
-    void deleteAll();
 }

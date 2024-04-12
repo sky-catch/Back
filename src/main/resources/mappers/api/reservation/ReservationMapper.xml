@@ -234,9 +234,4 @@
         SELECT *
         FROM reservation;
     </select>
-
-    <delete id="deleteAll">
-        DELETE
-        FROM reservation;
-    </delete>
 </mapper>

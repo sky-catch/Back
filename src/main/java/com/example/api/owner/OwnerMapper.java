@@ -21,7 +21,6 @@ public interface OwnerMapper extends UsersMapper<Owner> {
 
     boolean isExistByEmail(String email);
 
+    // for test
     List<Owner> findAll();
-
-    void deleteAll();
 }
