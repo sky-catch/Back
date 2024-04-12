@@ -10,6 +10,7 @@ import com.example.core.exception.ExceptionResponse;
 import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,6 +39,10 @@ public class OwnerController {
     @PostMapping
     @Operation(summary = "사장 생성", description = "사장 생성은 로그인 후 할 수 있습니다. 사업장등록번호의 마지막 숫자는 5여야합니다.")
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "사장 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "기존에 사장을 생성한 경우 발생"),
+    })
     public void createOwner(@LoginMember MemberDTO memberDTO, @Valid @RequestBody CreateOwnerReq req) {
         ownerService.createOwner(memberDTO, req.getBusinessRegistrationNumber());
     }
@@ -53,7 +58,8 @@ public class OwnerController {
      */
     @PatchMapping("/{id}")
     @Operation(summary = "사장 삭제")
-    public void deleteOwner(@LoginOwner Owner owner, @PathVariable(name = "id") long ownerId) {
+    public void deleteOwner(@LoginOwner Owner owner,
+                            @Parameter(description = "사장 ID", example = "1") @PathVariable(name = "id") long ownerId) {
         ownerService.deleteOwner(ownerId);
     }
 
@@ -72,7 +78,7 @@ public class OwnerController {
             @ApiResponse(responseCode = "404", description = "사장이 DB에 없는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
     public void changeReservationStatusToNoShow(@LoginOwner Owner owner,
-                                                @RequestBody ChangeReservationsStatusToNoShowReq req) {
+                                                @Valid @RequestBody ChangeReservationsStatusToNoShowReq req) {
 
         ownerService.changeReservationsToNoShow(req);
     }
