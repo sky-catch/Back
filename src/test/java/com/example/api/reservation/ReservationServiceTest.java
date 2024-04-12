@@ -23,6 +23,7 @@ import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
 import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
@@ -95,24 +96,8 @@ class ReservationServiceTest {
                     }
                 });
 
-        testRestaurant = RestaurantDTO.builder()
-                .ownerId(1L)
-                .name("name")
-                .category("category")
-                .content("content")
-                .phone("phone")
-                .tablePersonMax(tablePersonMax)
-                .tablePersonMin(tablePersonMin)
-                .openTime(openTime)
-                .lastOrderTime(lastOrderTime)
-                .closeTime(LocalTime.of(22, 0, 0))
-                .address("address")
-                .detailAddress("detailAddress")
-                .build();
-        restaurantMapper.save(testRestaurant);
-
+        saveTestRestaurant();
         holidayMapper.saveAll(getMondayAndTuesdayHolidays());
-
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
     }
 
@@ -120,25 +105,7 @@ class ReservationServiceTest {
     @DisplayName("방문 상태로 나의 예약을 조회할 수 있다.")
     void get_my_reservations_test() {
         // given
-        for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = CANCEL;
-            if (i <= 10) {
-                status = PLANNED;
-            }
-            if (i <= 5) {
-                status = DONE;
-            }
-            ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(testRestaurant.getRestaurantId())
-                    .memberId(1L)
-                    .paymentId(1L)
-                    .time(validVisitTime)
-                    .numberOfPeople(tablePersonMin)
-                    .memo("메모")
-                    .status(status)
-                    .build();
-            reservationMapper.save(dto);
-        }
+        saveTestReservations();
 
         GetMyReservationDTO dto = GetMyReservationDTO.builder()
                 .memberId(1L)
@@ -462,34 +429,8 @@ class ReservationServiceTest {
     @DisplayName("예약 ID로 나의 예약 상세 내용을 조회할 수 있다.")
     void getMyDetailReservationByIdTest() {
         // given
-        for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = CANCEL;
-            if (i <= 10) {
-                status = PLANNED;
-            }
-            if (i <= 5) {
-                status = DONE;
-            }
-            ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(testRestaurant.getRestaurantId())
-                    .memberId(1L)
-                    .paymentId(1L)
-                    .time(validVisitTime)
-                    .numberOfPeople(tablePersonMin)
-                    .memo("메모")
-                    .status(status)
-                    .build();
-            reservationMapper.save(dto);
-        }
-
-        PaymentDTO payment = PaymentDTO.builder()
-                .impUid("testImpUid")
-                .payMethod("card")
-                .price(1000)
-                .status(PaymentStatus.PAID.getValue())
-                .build();
-
-        paymentMapper.save(payment);
+        saveTestReservations();
+        PaymentDTO payment = saveTestPayment();
 
         // when
         ReservationWithRestaurantAndPaymentDTO expected = reservationService.getMyDetailReservationById(1L, 1L);
@@ -506,34 +447,8 @@ class ReservationServiceTest {
     @DisplayName("존재하지 않는 예약 ID로 나의 예약 상세 내용을 조회할 경우 예외 발생하는 테스트")
     void getMyDetailReservationByIdWithNotExistsReservationIdTest() {
         // given
-        for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = CANCEL;
-            if (i <= 10) {
-                status = PLANNED;
-            }
-            if (i <= 5) {
-                status = DONE;
-            }
-            ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(testRestaurant.getRestaurantId())
-                    .memberId(1L)
-                    .paymentId(1L)
-                    .time(validVisitTime)
-                    .numberOfPeople(tablePersonMin)
-                    .memo("메모")
-                    .status(status)
-                    .build();
-            reservationMapper.save(dto);
-        }
-
-        PaymentDTO payment = PaymentDTO.builder()
-                .impUid("testImpUid")
-                .payMethod("card")
-                .price(1000)
-                .status(PaymentStatus.PAID.getValue())
-                .build();
-
-        paymentMapper.save(payment);
+        saveTestReservations();
+        saveTestPayment();
 
         long notExistsReservationId = 100L;
 
@@ -547,34 +462,8 @@ class ReservationServiceTest {
     @DisplayName("예약 ID로 나의 예약 상세 내용을 조회할 때 나의 예약이 아닌 경우 예외 발생하는 테스트")
     void getMyDetailReservationByIdWithNotMyReservationTest() {
         // given
-        for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = CANCEL;
-            if (i <= 10) {
-                status = PLANNED;
-            }
-            if (i <= 5) {
-                status = DONE;
-            }
-            ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(testRestaurant.getRestaurantId())
-                    .memberId(1L)
-                    .paymentId(1L)
-                    .time(validVisitTime)
-                    .numberOfPeople(tablePersonMin)
-                    .memo("메모")
-                    .status(status)
-                    .build();
-            reservationMapper.save(dto);
-        }
-
-        PaymentDTO payment = PaymentDTO.builder()
-                .impUid("testImpUid")
-                .payMethod("card")
-                .price(1000)
-                .status(PaymentStatus.PAID.getValue())
-                .build();
-
-        paymentMapper.save(payment);
+        saveTestReservations();
+        saveTestPayment();
 
         long notMyReservationMemberId = 100L;
 
@@ -588,34 +477,8 @@ class ReservationServiceTest {
     @DisplayName("예약 ID로 나의 예약을 취소할 수 있다.")
     void cancelMyReservationByIdTest() {
         // given
-        for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = CANCEL;
-            if (i <= 10) {
-                status = PLANNED;
-            }
-            if (i <= 5) {
-                status = DONE;
-            }
-            ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(testRestaurant.getRestaurantId())
-                    .memberId(1L)
-                    .paymentId(1L)
-                    .time(validVisitTime)
-                    .numberOfPeople(tablePersonMin)
-                    .memo("메모")
-                    .status(status)
-                    .build();
-            reservationMapper.save(dto);
-        }
-
-        PaymentDTO payment = PaymentDTO.builder()
-                .impUid("testImpUid")
-                .payMethod("card")
-                .price(1000)
-                .status(PaymentStatus.PAID.getValue())
-                .build();
-
-        paymentMapper.save(payment);
+        saveTestReservations();
+        saveTestPayment();
 
         // when
         reservationService.cancelMyReservationById(6L, 1L);
@@ -629,34 +492,8 @@ class ReservationServiceTest {
     @DisplayName("존재하지 않는 예약 ID로 예약 취소할 경우 예외 발생하는 테스트")
     void cancelMyReservationByIdWithNotExistsReservationIdTest() {
         // given
-        for (int i = 1; i <= 15; i++) {
-            ReservationStatus status = CANCEL;
-            if (i <= 10) {
-                status = PLANNED;
-            }
-            if (i <= 5) {
-                status = DONE;
-            }
-            ReservationDTO dto = ReservationDTO.builder()
-                    .restaurantId(testRestaurant.getRestaurantId())
-                    .memberId(1L)
-                    .paymentId(1L)
-                    .time(validVisitTime)
-                    .numberOfPeople(tablePersonMin)
-                    .memo("메모")
-                    .status(status)
-                    .build();
-            reservationMapper.save(dto);
-        }
-
-        PaymentDTO payment = PaymentDTO.builder()
-                .impUid("testImpUid")
-                .payMethod("card")
-                .price(1000)
-                .status(PaymentStatus.PAID.getValue())
-                .build();
-
-        paymentMapper.save(payment);
+        saveTestReservations();
+        saveTestPayment();
 
         long notExistsReservationId = 100L;
 
@@ -670,6 +507,72 @@ class ReservationServiceTest {
     @DisplayName("잘못된 예약 상태로 예약 취소할 경우 예외 발생하는 테스트")
     void cancelMyReservationByIdWithNotValidReservationStatusTest() {
         // given
+        saveTestReservations();
+        saveTestPayment();
+
+        long notValidStatusReservationId = 15L;
+
+        // expected
+        assertThatThrownBy(() -> reservationService.cancelMyReservationById(notValidStatusReservationId, 1L))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
+    }
+
+    @Test
+    @DisplayName("예약 번호들로 예약 상태를 노쇼로 변경할 수 있다.")
+    void changeReservationsToNoShowTest() {
+        // given
+        saveTestReservations();
+        saveTestPayment();
+
+        ChangeReservationsStatusToNoShowReq req = new ChangeReservationsStatusToNoShowReq(
+                Arrays.asList(6L, 7L, 8L, 9L, 10L));
+
+        // when
+        reservationService.changeReservationsToNoShow(req);
+
+        // then
+        assertThat(reservationMapper.findAll())
+                .extracting("status")
+                .containsExactly(DONE, DONE, DONE, DONE, DONE, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL,
+                        CANCEL, CANCEL, CANCEL);
+    }
+
+    @Test
+    @DisplayName("예약 상태가 잘못된 예약 번호들로 예약 상태를 노쇼로 변경할 경우 예외가 발생한다.")
+    void changeReservationsToNoShowWithNotValidStatusTest() {
+        // given
+        saveTestReservations();
+        saveTestPayment();
+
+        ChangeReservationsStatusToNoShowReq req = new ChangeReservationsStatusToNoShowReq(
+                Arrays.asList(1L, 2L, 3L, 4L, 5L));
+
+        // expected
+        assertThatThrownBy(() -> reservationService.changeReservationsToNoShow(req))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
+    }
+
+    private void saveTestRestaurant() {
+        testRestaurant = RestaurantDTO.builder()
+                .ownerId(1L)
+                .name("name")
+                .category("category")
+                .content("content")
+                .phone("phone")
+                .tablePersonMax(tablePersonMax)
+                .tablePersonMin(tablePersonMin)
+                .openTime(openTime)
+                .lastOrderTime(lastOrderTime)
+                .closeTime(LocalTime.of(22, 0, 0))
+                .address("address")
+                .detailAddress("detailAddress")
+                .build();
+        restaurantMapper.save(testRestaurant);
+    }
+
+    private void saveTestReservations() {
         for (int i = 1; i <= 15; i++) {
             ReservationStatus status = CANCEL;
             if (i <= 10) {
@@ -689,22 +592,17 @@ class ReservationServiceTest {
                     .build();
             reservationMapper.save(dto);
         }
+    }
 
+    private PaymentDTO saveTestPayment() {
         PaymentDTO payment = PaymentDTO.builder()
                 .impUid("testImpUid")
                 .payMethod("card")
                 .price(1000)
                 .status(PaymentStatus.PAID.getValue())
                 .build();
-
         paymentMapper.save(payment);
-
-        long notValidStatusReservationId = 15L;
-
-        // expected
-        assertThatThrownBy(() -> reservationService.cancelMyReservationById(notValidStatusReservationId, 1L))
-                .isInstanceOf(SystemException.class)
-                .hasMessageContaining(ReservationExceptionType.NOT_VALID_STATUS.getMessage());
+        return payment;
     }
 
     private List<HolidayDTO> getMondayAndTuesdayHolidays() {

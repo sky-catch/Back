@@ -14,6 +14,7 @@ import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
+import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
@@ -192,5 +193,20 @@ public class ReservationService {
         corePaymentService.cancelPaymentByImpUid(payment.getImpUid(), payment.getPrice());
 
         reservationMapper.updateStatusById(reservationId, ReservationStatus.CANCEL);
+    }
+
+    @Transactional
+    public void changeReservationsToNoShow(ChangeReservationsStatusToNoShowReq req) {
+        List<ReservationWithRestaurantAndPaymentDTO> reservations = reservationMapper.findDetailByIds(
+                req.getNoShowIds());
+
+        boolean notValidStatus = reservations.stream()
+                .map(ReservationWithRestaurantAndPaymentDTO::getStatus)
+                .anyMatch(reservationStatus -> reservationStatus != PLANNED);
+        if (notValidStatus) {
+            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
+        }
+
+        reservationMapper.bulkUpdateStatusByIds(req.getNoShowIds(), ReservationStatus.CANCEL);
     }
 }

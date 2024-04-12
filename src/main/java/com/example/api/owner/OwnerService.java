@@ -1,6 +1,5 @@
 package com.example.api.owner;
 
-import static com.example.api.reservation.ReservationStatus.PLANNED;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 
 import com.example.api.member.MemberDTO;
@@ -8,11 +7,6 @@ import com.example.api.member.MemberExceptionType;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.owner.exception.OwnerExceptionType;
-import com.example.api.reservation.ReservationMapper;
-import com.example.api.reservation.ReservationStatus;
-import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
-import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
-import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.GetRestaurantRes;
 import com.example.api.restaurant.dto.GetRestaurantWithReview;
@@ -32,7 +26,6 @@ public class OwnerService {
     private final OwnerMapper ownerMapper;
     private final RestaurantMapper restaurantMapper;
     private final ReviewMapper reviewMapper;
-    private final ReservationMapper reservationMapper;
 
     // 사장이라면 Member, Owner 테이블에 정보 저장
     // 회원이라면 Member 테이블에 정보 저장
@@ -70,20 +63,5 @@ public class OwnerService {
         if (owner == null) {
             throw new SystemException(MemberExceptionType.NOT_FOUND.getMessage());
         }
-    }
-
-    @Transactional
-    public void changeReservationsToNoShow(ChangeReservationsStatusToNoShowReq req) {
-        List<ReservationWithRestaurantAndPaymentDTO> reservations = reservationMapper.findDetailByIds(
-                req.getNoShowIds());
-
-        boolean notValidStatus = reservations.stream()
-                .map(ReservationWithRestaurantAndPaymentDTO::getStatus)
-                .anyMatch(reservationStatus -> reservationStatus != PLANNED);
-        if (notValidStatus) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
-        }
-
-        reservationMapper.bulkUpdateStatusByIds(req.getNoShowIds(), ReservationStatus.CANCEL);
     }
 }

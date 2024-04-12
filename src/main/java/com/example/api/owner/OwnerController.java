@@ -4,6 +4,7 @@ import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.CreateOwnerReq;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
+import com.example.api.reservation.ReservationService;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
 import com.example.api.restaurant.dto.GetRestaurantWithReview;
 import com.example.core.exception.ExceptionResponse;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OwnerController {
 
     private final OwnerService ownerService;
+    private final ReservationService reservationService;
 
     @PostMapping
     @Operation(summary = "사장 생성", description = "사장 생성은 로그인 후 할 수 있습니다. 사업장등록번호의 마지막 숫자는 5여야합니다.")
@@ -80,6 +82,6 @@ public class OwnerController {
     public void changeReservationStatusToNoShow(@LoginOwner Owner owner,
                                                 @Valid @RequestBody ChangeReservationsStatusToNoShowReq req) {
 
-        ownerService.changeReservationsToNoShow(req);
+        reservationService.changeReservationsToNoShow(req);
     }
 }
