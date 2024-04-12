@@ -7,6 +7,7 @@ import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberExceptionType;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
+import com.example.api.owner.exception.OwnerExceptionType;
 import com.example.api.reservation.ReservationMapper;
 import com.example.api.reservation.ReservationStatus;
 import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
@@ -38,7 +39,7 @@ public class OwnerService {
     @Transactional
     public void createOwner(MemberDTO memberDTO, String businessRegistrationNumber) {
         if (ownerMapper.isExistByEmail(memberDTO.getEmail())) {
-            throw new SystemException("사장의 중복 생성은 불가능합니다.");
+            throw new SystemException(OwnerExceptionType.ALREADY_EXISTS);
         }
 
         ownerMapper.createOwner(new Owner(memberDTO, businessRegistrationNumber));
