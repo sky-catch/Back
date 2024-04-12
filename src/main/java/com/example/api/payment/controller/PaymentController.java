@@ -37,7 +37,9 @@ public class PaymentController {
             @ApiResponse(responseCode = "200", description = "해당 결제는 유효한 결제입니다.", content = @Content(schema = @Schema(implementation = IamportResponse.class))),
             @ApiResponse(responseCode = "400", description = "결제 금액이 양수가 아닌 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "결제 또는 예약이 DB에 존재하지 않는 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
-            @ApiResponse(responseCode = "502", description = "아임포트에서 결제를 찾을 수 없거나 삭제할 수 없는 에러 또는 결제 미완료, 결제 금액 위변조 의심 에러", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "502", description = "1.아임포트에서 결제를 찾을 수 없거나 삭제할 수 없는 에러,\n"
+                    + "2.결제 미완료,\n"
+                    + "3.결제 금액 위변조 의심", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     }
     )
     public ResponseEntity<IamportResponse<Payment>> validationPayment(@LoginMember MemberDTO loginMember,
