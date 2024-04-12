@@ -31,7 +31,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String[] NO_CHECK_URIS = {"/oauth"};
+    private static final String[] NO_CHECK_URIS = {"/oauth",
+            /* swagger v3 */
+            "/v3/api-docs",
+            "/swagger-ui"};
 
     private final JWTProvider jwtProvider;
     private final MemberMapper memberMapper;
@@ -47,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("JwtAuthenticationFilter.doFilterInternal");
+        log.info("JwtAuthenticationFilter.doFilterInternal -> requestURI: {}", request.getRequestURI());
         String accessToken = getAccessToken(request);
         if (isValidToken(accessToken)) {
             setAuthentication(accessToken);
