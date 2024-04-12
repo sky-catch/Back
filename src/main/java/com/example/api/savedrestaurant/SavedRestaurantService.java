@@ -18,7 +18,7 @@ public class SavedRestaurantService {
     @Transactional
     public void createSavedRestaurant(CreateSavedRestaurantDTO dto) {
         if (savedRestaurantMapper.isAlreadyExistsByRestaurantIdAndMemberId(dto.getRestaurantId(), dto.getMemberId())) {
-            throw new SystemException("해당 식당은 이미 저장하였습니다.");
+            throw new SystemException(SavedRestaurantExceptionType.ALREADY_EXISTS);
         }
         RestaurantDTO restaurant = restaurantMapper.findById(dto.getRestaurantId())
                 .orElseThrow(() -> new SystemException(RestaurantExceptionType.NOT_FOUND));
