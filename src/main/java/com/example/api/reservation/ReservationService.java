@@ -47,6 +47,8 @@ public class ReservationService {
 
     @Transactional
     public void createReservation(CreateReservationDTO dto) {
+        log.info("주문 생성");
+
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
         validate(dto, restaurantWithHolidayAndAvailableDate);
@@ -58,7 +60,7 @@ public class ReservationService {
         reservation.setPaymentId(paymentReady.getPaymentId());
         reservationMapper.save(reservation);
 
-        alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getTime());
+        alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getReservationDateTime());
     }
 
     private void validate(CreateReservationDTO dto,
@@ -159,7 +161,7 @@ public class ReservationService {
                 cond);
 
         List<TimeSlot> reservationTimeSlots = findReservations.stream()
-                .map(ReservationDTO::getTime)
+                .map(ReservationDTO::getReservationDateTime)
                 .map(LocalDateTime::toLocalTime)
                 .map(TimeSlot::of)
                 .collect(Collectors.toList());
@@ -180,6 +182,8 @@ public class ReservationService {
 
     @Transactional
     public void cancelMyReservationById(long reservationId, long memberId) {
+        log.info("내 주문 취소");
+
         ReservationWithRestaurantAndPaymentDTO reservation = reservationMapper.findMyDetailReservationById(
                         reservationId)
                 .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));

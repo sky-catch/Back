@@ -23,4 +23,13 @@ public class ReservationDTO extends BaseDTO {
     private int numberOfPeople;
     private String memo;
     private ReservationStatus status;
+
+    public LocalDateTime getReservationDateTime() {
+        return time;
+    }
+
+    // for mybatis
+    public String getTime() {
+        return time.toString();
+    }
 }
