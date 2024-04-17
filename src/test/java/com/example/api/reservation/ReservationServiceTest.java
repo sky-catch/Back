@@ -265,6 +265,21 @@ class ReservationServiceTest {
     }
 
     @Test
+    @DisplayName("방문 시간의 분 단위가 정각 또는 30분이 아닌 경우 예외 발생하는 테스트")
+    void createReservation_with_not_valid_minutes() {
+        // given
+        LocalTime notOpenTime = openTime.plusMinutes(1);
+        LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L, req);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_MINUTES.getMessage());
+    }
+
+    @Test
     @DisplayName("방문일의 방문 시간에 예약이 이미 존재하는 경우 예외 발생하는 테스트")
     void createReservation_with_duplicate() {
         // given

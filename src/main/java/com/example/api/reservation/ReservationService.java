@@ -70,6 +70,7 @@ public class ReservationService {
         validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
         validateVisitTime(dto, restaurantWithHolidayAndAvailableDate);
         validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
+        validateMinutes(dto);
         validateDuplicate(dto);
     }
 
@@ -104,6 +105,13 @@ public class ReservationService {
                                        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
             throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE);
+        }
+    }
+
+    private void validateMinutes(CreateReservationDTO dto) {
+        int minute = dto.getTime().getMinute();
+        if (!(minute == 0 || minute == 30)) {
+            throw new SystemException(ReservationExceptionType.NOT_VALID_MINUTES);
         }
     }
 
