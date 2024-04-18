@@ -1,5 +1,6 @@
 package com.example.core.web.security.login;
 
+import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberExceptionType;
 import com.example.api.member.MemberMapper;
 import com.example.core.exception.SystemException;
@@ -33,13 +34,21 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
             throws Exception {
 
         LoginMember loginMemberAnnotation = methodParameter.getParameterAnnotation(LoginMember.class);
-        if (!loginMemberAnnotation.required()) {
-            return null;
+        if (isNotLoginRequired(loginMemberAnnotation) && isNotLogined()) {
+            return MemberDTO.empty();
         }
 
         String email = getAuthenticatedUserEmail();
         return memberMapper.findByEmail(email)
                 .orElseThrow(() -> new SystemException(MemberExceptionType.NOT_FOUND.getMessage()));
+    }
+
+    private boolean isNotLoginRequired(LoginMember loginMemberAnnotation) {
+        return !loginMemberAnnotation.required();
+    }
+
+    private boolean isNotLogined() {
+        return !(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails);
     }
 
     private String getAuthenticatedUserEmail() {

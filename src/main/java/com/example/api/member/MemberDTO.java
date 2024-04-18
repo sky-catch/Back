@@ -18,8 +18,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class MemberDTO extends BaseDTO {
 
-    // todo phone 추가하기
-    private long memberId;
+    private Long memberId;
     private String nickname;
     private String profileImageUrl;
     private String email;
@@ -38,6 +37,10 @@ public class MemberDTO extends BaseDTO {
         this.status = status;
         this.oauthServerId = oauthId.oauthServerId();
         this.oauthServer = oauthId.oauthServer();
+    }
+
+    public static MemberDTO empty() {
+        return new MemberDTO();
     }
 
     public OauthId oauthId() {
