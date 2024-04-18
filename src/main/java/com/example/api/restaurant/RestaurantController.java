@@ -1,9 +1,11 @@
 package com.example.api.restaurant;
 
+import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
-import com.example.api.restaurant.dto.GetRestaurantWithReview;
+import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -52,14 +54,15 @@ public class RestaurantController {
     }
 
     @GetMapping("/{name}")
-    @Operation(summary = "식당 조회", description = "식당을 조회하는 기능, 식당 사진 정렬 기준: 1. type(REPRESENTATION -> NORMAL 순서), 2. 등록일(오름차순)")
+    @Operation(summary = "이름으로 식당 상세 조회", description = "이름으로 식당 상세 정보를 조회하는 기능, 식당 사진 정렬 기준: 1. type(REPRESENTATION -> NORMAL 순서), 2. 등록일(오름차순)")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "식당 조회 성공, 식당 이미지, 공지사항, 편의시설, 리뷰가 함께 조회됩니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "200", description = "식당 상세 조회 성공, 식당 이미지/공지사항/편의시설/리뷰/로그인한 경우 로그인한 회원의 식당 저장 여부가 함께 조회됩니다.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = " 식당 이름으로 식당을 찾지 못할 경우 발생"),
     })
-    public ResponseEntity<GetRestaurantWithReview> getRestaurant(
+    public ResponseEntity<GetRestaurantInfo> getRestaurantInfoByName(
+            @LoginMember(required = false) MemberDTO loginMember,
             @Parameter(description = "조회하고 싶은 식당 이름", example = "스시미루") @PathVariable String name) {
-        GetRestaurantWithReview restaurantRes = restaurantService.getRestaurantInfoByName(name);
-        return ResponseEntity.ok(restaurantRes);
+        GetRestaurantInfo restaurantInfo = restaurantService.getRestaurantInfoByName(name, loginMember.getMemberId());
+        return ResponseEntity.ok(restaurantInfo);
     }
 }

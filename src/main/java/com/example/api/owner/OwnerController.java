@@ -6,7 +6,7 @@ import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.reservation.ReservationService;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
-import com.example.api.restaurant.dto.GetRestaurantWithReview;
+import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.core.exception.ExceptionResponse;
 import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
@@ -67,8 +67,8 @@ public class OwnerController {
 
     @GetMapping("/restaurant")
     @Operation(summary = "내 식당 보기")
-    public GetRestaurantWithReview getMyRestaurant(@LoginOwner Owner owner) {
-        return ownerService.getRestaurantByOwnerId(owner.getOwnerId());
+    public GetRestaurantInfo getMyRestaurantInfo(@LoginOwner Owner owner) {
+        return ownerService.getRestaurantInfoByOwnerId(owner.getOwnerId());
     }
 
     @PatchMapping("/reservations")

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.example.api.holiday.Days;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantImageRes;
-import com.example.api.restaurant.dto.GetRestaurantRes;
+import com.example.api.restaurant.dto.GetRestaurantInfoRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import com.example.api.restaurantimage.RestaurantImageMapper;
@@ -161,7 +161,7 @@ class RestaurantServiceTest {
         long createdRestaurantId = restaurantService.createRestaurant(createRestaurantReq);
 
         // when
-        GetRestaurantRes actual = restaurantService.getRestaurantInfoById(createdRestaurantId);
+        GetRestaurantInfoRes actual = restaurantService.getRestaurantInfoById(createdRestaurantId);
         System.out.println("actual = " + actual);
 
         // then
@@ -194,7 +194,7 @@ class RestaurantServiceTest {
         int expectedImageSize = getCreatedTestImageSize(createdRestaurantId);
 
         // when
-        GetRestaurantRes restaurantInfoById = restaurantService.getRestaurantInfoById(createdRestaurantId);
+        GetRestaurantInfoRes restaurantInfoById = restaurantService.getRestaurantInfoById(createdRestaurantId);
         List<GetRestaurantImageRes> actual = restaurantInfoById.getImages();
 
         // then
@@ -219,7 +219,7 @@ class RestaurantServiceTest {
         int expectedNotificationSize = getCreatedTestNotificationSize(createdRestaurantId);
 
         // when
-        GetRestaurantRes restaurantInfoById = restaurantService.getRestaurantInfoById(createdRestaurantId);
+        GetRestaurantInfoRes restaurantInfoById = restaurantService.getRestaurantInfoById(createdRestaurantId);
         List<GetRestaurantNotificationRes> actual = restaurantInfoById.getNotifications();
 
         // then
