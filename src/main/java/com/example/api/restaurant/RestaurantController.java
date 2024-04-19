@@ -5,10 +5,13 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.core.exception.ExceptionResponse;
 import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,7 +60,7 @@ public class RestaurantController {
     @Operation(summary = "이름으로 식당 상세 조회", description = "이름으로 식당 상세 정보를 조회하는 기능, 식당 사진 정렬 기준: 1. type(REPRESENTATION -> NORMAL 순서), 2. 등록일(오름차순)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "식당 상세 조회 성공, 식당 이미지/공지사항/편의시설/리뷰/로그인한 경우 로그인한 회원의 식당 저장 여부가 함께 조회됩니다.", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "404", description = " 식당 이름으로 식당을 찾지 못할 경우 발생"),
+            @ApiResponse(responseCode = "404", description = " 식당 이름으로 식당을 찾지 못할 경우 발생", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
     public ResponseEntity<GetRestaurantInfo> getRestaurantInfoByName(
             @LoginMember(required = false) MemberDTO loginMember,

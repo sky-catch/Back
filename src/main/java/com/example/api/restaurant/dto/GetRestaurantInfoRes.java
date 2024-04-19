@@ -3,6 +3,7 @@ package com.example.api.restaurant.dto;
 import com.example.api.facility.dto.GetFacilityRes;
 import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.core.dto.BaseDTO;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,8 @@ public class GetRestaurantInfoRes extends BaseDTO {
     private String closeTime;
     private String address;
     private String detailAddress;
+    private BigDecimal lat;
+    private BigDecimal lng;
     private int lunchPrice;
     private int dinnerPrice;
     private long savedCount;

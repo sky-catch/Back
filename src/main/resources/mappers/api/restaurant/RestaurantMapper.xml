@@ -27,11 +27,11 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
-                               last_order_time, close_time, address, detail_address, lunch_price, dinner_price,
-                               saved_count, review_count, review_avg)
+                               last_order_time, close_time, address, detail_address, lat, lng, lunch_price,
+                               dinner_price, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
-                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice},
-                #{dinnerPrice}, 0, 0, 0)
+                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lat}, #{lng},
+                #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
     </insert>
 
     <update id="updateRestaurant" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
@@ -47,9 +47,11 @@
             close_time       = #{closeTime},
             address          = #{address},
             detail_address   = #{detailAddress},
+            lat              = #{lat},
+            lng              = #{lng},
             lunch_price      = #{lunchPrice},
             dinner_price     = #{dinnerPrice}
-        WHERE owner_id = #{ownerId}
+        WHERE owner_id = #{ownerId};
     </update>
 
     <select id="findById" resultType="com.example.api.restaurant.dto.RestaurantDTO">
@@ -72,6 +74,8 @@
         <id property="closeTime" column="close_time"/>
         <id property="address" column="address"/>
         <id property="detailAddress" column="detail_address"/>
+        <id property="lat" column="lat" javaType="java.math.BigDecimal"/>
+        <id property="lng" column="lng" javaType="java.math.BigDecimal"/>
         <id property="lunchPrice" column="lunch_price"/>
         <id property="dinnerPrice" column="dinner_price"/>
         <id property="savedCount" column="saved_count"/>
@@ -113,6 +117,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,
@@ -165,6 +171,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,
@@ -209,6 +217,8 @@
         <id property="closeTime" column="close_time"/>
         <id property="address" column="address"/>
         <id property="detailAddress" column="detail_address"/>
+        <id property="lat" column="lat" javaType="java.math.BigDecimal"/>
+        <id property="lng" column="lng" javaType="java.math.BigDecimal"/>
         <id property="lunchPrice" column="lunch_price"/>
         <id property="dinnerPrice" column="dinner_price"/>
         <id property="savedCount" column="saved_count"/>
@@ -244,6 +254,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,
@@ -278,6 +290,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,

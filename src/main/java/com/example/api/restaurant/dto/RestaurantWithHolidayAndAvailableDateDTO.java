@@ -4,6 +4,7 @@ import com.example.api.holiday.Day;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.core.dto.BaseDTO;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
@@ -35,6 +36,8 @@ public class RestaurantWithHolidayAndAvailableDateDTO extends BaseDTO {
     private LocalTime closeTime;
     private String address;
     private String detailAddress;
+    private BigDecimal lat;
+    private BigDecimal lng;
     private int lunchPrice;
     private int dinnerPrice;
     private long savedCount;

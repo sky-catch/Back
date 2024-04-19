@@ -5,6 +5,7 @@ import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.dto.BaseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,6 +47,10 @@ public class GetRestaurantInfo extends BaseDTO {
     private String address;
     @Schema(description = "상세주소", example = "서울특별시 강남구 언주로170길 26-6 2층")
     private String detailAddress;
+    @Schema(description = "위도", example = "33.450701")
+    private BigDecimal lat;
+    @Schema(description = "경도", example = "126.570667")
+    private BigDecimal lng;
     @Schema(description = "점심가격", example = "70000")
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
@@ -83,6 +88,8 @@ public class GetRestaurantInfo extends BaseDTO {
         this.closeTime = getRestaurantInfoRes.getCloseTime();
         this.address = getRestaurantInfoRes.getAddress();
         this.detailAddress = getRestaurantInfoRes.getDetailAddress();
+        this.lat = getRestaurantInfoRes.getLat();
+        this.lng = getRestaurantInfoRes.getLng();
         this.lunchPrice = getRestaurantInfoRes.getLunchPrice();
         this.dinnerPrice = getRestaurantInfoRes.getDinnerPrice();
         this.savedCount = getRestaurantInfoRes.getSavedCount();

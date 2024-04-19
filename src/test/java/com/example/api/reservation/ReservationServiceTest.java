@@ -34,6 +34,7 @@ import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -159,6 +160,8 @@ class ReservationServiceTest {
                 .closeTime(LocalTime.of(22, 0, 0))
                 .address("address2")
                 .detailAddress("detailAddress2")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(testRestaurant2);
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant2.getRestaurantId()));
@@ -621,6 +624,8 @@ class ReservationServiceTest {
                 .closeTime(LocalTime.of(22, 0, 0))
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(testRestaurant);
     }

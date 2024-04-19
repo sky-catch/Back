@@ -21,6 +21,7 @@ import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.api.restaurantnotification.RestaurantNotificationMapper;
 import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.core.exception.SystemException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -66,6 +67,8 @@ class RestaurantServiceTest {
                 .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
 
         createRestaurantReq = CreateRestaurantReq.builder()
@@ -83,6 +86,8 @@ class RestaurantServiceTest {
                 .reservationEndDate(LocalDate.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .days(Days.of(new ArrayList<>()))
                 .build();
     }
@@ -104,6 +109,8 @@ class RestaurantServiceTest {
                 .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(dto);
         long before = restaurantMapper.findAll().size();
@@ -145,6 +152,8 @@ class RestaurantServiceTest {
                 .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(dto);
 
