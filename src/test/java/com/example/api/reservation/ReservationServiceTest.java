@@ -34,6 +34,7 @@ import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -159,6 +160,8 @@ class ReservationServiceTest {
                 .closeTime(LocalTime.of(22, 0, 0))
                 .address("address2")
                 .detailAddress("detailAddress2")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(testRestaurant2);
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant2.getRestaurantId()));
@@ -262,6 +265,21 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(ReservationExceptionType.NOT_AVAILABLE_DATE.getMessage());
+    }
+
+    @Test
+    @DisplayName("방문 시간의 분 단위가 정각 또는 30분이 아닌 경우 예외 발생하는 테스트")
+    void createReservation_with_not_valid_minutes() {
+        // given
+        LocalTime notOpenTime = openTime.plusMinutes(1);
+        LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L, req);
+
+        // expected
+        assertThatThrownBy(() -> reservationService.createReservation(dto))
+                .isInstanceOf(SystemException.class)
+                .hasMessageContaining(ReservationExceptionType.NOT_VALID_MINUTES.getMessage());
     }
 
     @Test
@@ -606,6 +624,8 @@ class ReservationServiceTest {
                 .closeTime(LocalTime.of(22, 0, 0))
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(testRestaurant);
     }

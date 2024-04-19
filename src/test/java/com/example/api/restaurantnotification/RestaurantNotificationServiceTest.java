@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,8 @@ class RestaurantNotificationServiceTest {
                 .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(dto);
         return dto.getRestaurantId();

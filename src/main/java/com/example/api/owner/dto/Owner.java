@@ -42,6 +42,7 @@ public class Owner extends BaseDTO {
 
     public GetOwnerRes toDto() {
         return GetOwnerRes.builder().ownerId(ownerId).name(name).imagePath(imagePath).email(email).status(status)
+                .businessRegistrationNumber(businessRegistrationNumber)
                 .createdDate(getCreatedDate()).updatedDate(getUpdatedDate()).build();
     }
 

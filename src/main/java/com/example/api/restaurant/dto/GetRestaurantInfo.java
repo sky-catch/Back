@@ -5,6 +5,7 @@ import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.dto.BaseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetRestaurantWithReview extends BaseDTO {
+public class GetRestaurantInfo extends BaseDTO {
 
     @Schema(description = "식당 ID", example = "1")
     private long restaurantId;
@@ -46,6 +47,10 @@ public class GetRestaurantWithReview extends BaseDTO {
     private String address;
     @Schema(description = "상세주소", example = "서울특별시 강남구 언주로170길 26-6 2층")
     private String detailAddress;
+    @Schema(description = "위도", example = "33.450701")
+    private BigDecimal lat;
+    @Schema(description = "경도", example = "126.570667")
+    private BigDecimal lng;
     @Schema(description = "점심가격", example = "70000")
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
@@ -56,6 +61,8 @@ public class GetRestaurantWithReview extends BaseDTO {
     private long reviewCount;
     @Schema(description = "식당 리뷰 평균", example = "5")
     private float reviewAvg;
+    @Schema(description = "로그인 회원 식당 저장 여부", example = "true")
+    private boolean isSaved;
     @Schema(description = "식당 이미지들")
     private List<GetRestaurantImageRes> images;
     @Schema(description = "식당 공지사항들")
@@ -66,29 +73,32 @@ public class GetRestaurantWithReview extends BaseDTO {
     private List<GetReviewCommentRes> reviewComments;
 
 
-    public GetRestaurantWithReview(GetRestaurantRes getRestaurantRes, List<GetReviewCommentRes> reviewComments) {
-        super(getRestaurantRes.getCreatedDate(), getRestaurantRes.getUpdatedDate());
-        this.restaurantId = getRestaurantRes.getRestaurantId();
-        this.ownerId = getRestaurantRes.getOwnerId();
-        this.name = getRestaurantRes.getName();
-        this.category = getRestaurantRes.getCategory();
-        this.content = getRestaurantRes.getContent();
-        this.phone = getRestaurantRes.getPhone();
-        this.tablePersonMax = getRestaurantRes.getTablePersonMax();
-        this.tablePersonMin = getRestaurantRes.getTablePersonMin();
-        this.openTime = getRestaurantRes.getOpenTime();
-        this.lastOrderTime = getRestaurantRes.getLastOrderTime();
-        this.closeTime = getRestaurantRes.getCloseTime();
-        this.address = getRestaurantRes.getAddress();
-        this.detailAddress = getRestaurantRes.getDetailAddress();
-        this.lunchPrice = getRestaurantRes.getLunchPrice();
-        this.dinnerPrice = getRestaurantRes.getDinnerPrice();
-        this.savedCount = getRestaurantRes.getSavedCount();
-        this.reviewCount = getRestaurantRes.getReviewCount();
-        this.reviewAvg = getRestaurantRes.getReviewAvg();
-        this.images = getRestaurantRes.getImages();
-        this.notifications = getRestaurantRes.getNotifications();
-        this.facilities = getRestaurantRes.getFacilities();
+    public GetRestaurantInfo(GetRestaurantInfoRes getRestaurantInfoRes, List<GetReviewCommentRes> reviewComments) {
+        super(getRestaurantInfoRes.getCreatedDate(), getRestaurantInfoRes.getUpdatedDate());
+        this.restaurantId = getRestaurantInfoRes.getRestaurantId();
+        this.ownerId = getRestaurantInfoRes.getOwnerId();
+        this.name = getRestaurantInfoRes.getName();
+        this.category = getRestaurantInfoRes.getCategory();
+        this.content = getRestaurantInfoRes.getContent();
+        this.phone = getRestaurantInfoRes.getPhone();
+        this.tablePersonMax = getRestaurantInfoRes.getTablePersonMax();
+        this.tablePersonMin = getRestaurantInfoRes.getTablePersonMin();
+        this.openTime = getRestaurantInfoRes.getOpenTime();
+        this.lastOrderTime = getRestaurantInfoRes.getLastOrderTime();
+        this.closeTime = getRestaurantInfoRes.getCloseTime();
+        this.address = getRestaurantInfoRes.getAddress();
+        this.detailAddress = getRestaurantInfoRes.getDetailAddress();
+        this.lat = getRestaurantInfoRes.getLat();
+        this.lng = getRestaurantInfoRes.getLng();
+        this.lunchPrice = getRestaurantInfoRes.getLunchPrice();
+        this.dinnerPrice = getRestaurantInfoRes.getDinnerPrice();
+        this.savedCount = getRestaurantInfoRes.getSavedCount();
+        this.reviewCount = getRestaurantInfoRes.getReviewCount();
+        this.reviewAvg = getRestaurantInfoRes.getReviewAvg();
+        this.images = getRestaurantInfoRes.getImages();
+        this.notifications = getRestaurantInfoRes.getNotifications();
+        this.facilities = getRestaurantInfoRes.getFacilities();
         this.reviewComments = reviewComments;
+        this.isSaved = getRestaurantInfoRes.isSaved();
     }
 }

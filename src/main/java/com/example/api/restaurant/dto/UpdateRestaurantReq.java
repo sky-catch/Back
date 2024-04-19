@@ -5,6 +5,7 @@ import com.example.api.holiday.Days;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -62,6 +63,12 @@ public class UpdateRestaurantReq {
     @NotBlank
     @Schema(description = "상세주소", example = "서울특별시 강남구 언주로170길 26-6 2층")
     private String detailAddress;
+    @NotNull
+    @Schema(description = "위도", example = "33.450701")
+    private BigDecimal lat;
+    @NotNull
+    @Schema(description = "경도", example = "126.570667")
+    private BigDecimal lng;
     @Schema(description = "점심가격", example = "70000")
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")

@@ -8,6 +8,7 @@ import com.example.api.review.dto.ReviewDTO;
 import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface RestaurantMapper {
@@ -19,7 +20,7 @@ public interface RestaurantMapper {
 
     Optional<RestaurantDTO> findById(long restaurantId);
 
-    Optional<GetRestaurantRes> findRestaurantInfoById(long restaurantId);
+    Optional<GetRestaurantInfoRes> findRestaurantInfoById(long restaurantId);
 
     boolean isAlreadyCreated(long ownerId);
 
@@ -27,13 +28,14 @@ public interface RestaurantMapper {
 
     boolean isAlreadyExistsNameExcludeSelf(String name, long restaurantId);
 
-    Optional<GetRestaurantRes> findRestaurantInfoByName(String name);
+    Optional<GetRestaurantInfoRes> findRestaurantInfoByName(@Param("name") String name,
+                                                            @Param("memberId") Long memberId);
 
     Optional<RestaurantWithHolidayAndAvailableDateDTO> findRestaurantWithHolidayAndAvailableDateById(long restaurantId);
 
     void updateRestaurant(RestaurantDTO dto);
 
-    Optional<GetRestaurantRes> findRestaurantInfoByOwnerId(long ownerId);
+    Optional<GetRestaurantInfoRes> findRestaurantInfoByOwnerId(long ownerId);
 
     void increaseSavedCount(RestaurantDTO restaurant);
 

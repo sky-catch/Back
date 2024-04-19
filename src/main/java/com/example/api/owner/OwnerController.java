@@ -6,7 +6,7 @@ import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.reservation.ReservationService;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
-import com.example.api.restaurant.dto.GetRestaurantWithReview;
+import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.core.exception.ExceptionResponse;
 import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
@@ -67,13 +67,13 @@ public class OwnerController {
 
     @GetMapping("/restaurant")
     @Operation(summary = "내 식당 보기")
-    public GetRestaurantWithReview getMyRestaurant(@LoginOwner Owner owner) {
-        return ownerService.getRestaurantByOwnerId(owner.getOwnerId());
+    public GetRestaurantInfo getMyRestaurantInfo(@LoginOwner Owner owner) {
+        return ownerService.getRestaurantInfoByOwnerId(owner.getOwnerId());
     }
 
     @PatchMapping("/reservations")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "노쇼로 바꾸고 싶은 예약들", description = "예약을 노쇼한 경우 사장이 직접 예약 상태를 방문 예정에서 노쇼로 바꾸는 API입니다.")
+    @Operation(summary = "예약들 노쇼로 바꾸는 기능", description = "예약을 노쇼한 경우 사장이 직접 예약 상태를 방문 예정에서 노쇼로 바꾸는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상태 변경 성공"),
             @ApiResponse(responseCode = "400", description = "요청한 예약 번호들 중 예약 상태가 방문 예정이 아닌 경우 발생하는 에러입니다.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),

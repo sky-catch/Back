@@ -27,11 +27,11 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
-                               last_order_time, close_time, address, detail_address, lunch_price, dinner_price,
-                               saved_count, review_count, review_avg)
+                               last_order_time, close_time, address, detail_address, lat, lng, lunch_price,
+                               dinner_price, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
-                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lunchPrice},
-                #{dinnerPrice}, 0, 0, 0)
+                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lat}, #{lng},
+                #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
     </insert>
 
     <update id="updateRestaurant" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
@@ -47,9 +47,11 @@
             close_time       = #{closeTime},
             address          = #{address},
             detail_address   = #{detailAddress},
+            lat              = #{lat},
+            lng              = #{lng},
             lunch_price      = #{lunchPrice},
             dinner_price     = #{dinnerPrice}
-        WHERE owner_id = #{ownerId}
+        WHERE owner_id = #{ownerId};
     </update>
 
     <select id="findById" resultType="com.example.api.restaurant.dto.RestaurantDTO">
@@ -58,7 +60,7 @@
         where restaurant_id = #{restaurantId};
     </select>
 
-    <resultMap id="restaurant" type="com.example.api.restaurant.dto.GetRestaurantRes">
+    <resultMap id="restaurantInfo" type="com.example.api.restaurant.dto.GetRestaurantInfoRes">
         <id property="restaurantId" column="restaurant_id"/>
         <id property="ownerId" column="owner_id"/>
         <id property="name" column="name"/>
@@ -72,11 +74,14 @@
         <id property="closeTime" column="close_time"/>
         <id property="address" column="address"/>
         <id property="detailAddress" column="detail_address"/>
+        <id property="lat" column="lat" javaType="java.math.BigDecimal"/>
+        <id property="lng" column="lng" javaType="java.math.BigDecimal"/>
         <id property="lunchPrice" column="lunch_price"/>
         <id property="dinnerPrice" column="dinner_price"/>
         <id property="savedCount" column="saved_count"/>
         <id property="reviewCount" column="review_count"/>
         <id property="reviewAvg" column="review_avg"/>
+        <id property="isSaved" column="is_saved"/>
         <id property="createdDate" column="created_date"/>
         <id property="updatedDate" column="updated_date"/>
         <collection property="images" ofType="com.example.api.restaurant.dto.GetRestaurantImageRes">
@@ -98,7 +103,7 @@
         </collection>
     </resultMap>
 
-    <select id="findRestaurantInfoById" resultMap="restaurant">
+    <select id="findRestaurantInfoById" resultMap="restaurantInfo">
         SELECT res.restaurant_id,
                res.owner_id,
                res.name,
@@ -112,6 +117,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,
@@ -150,7 +157,7 @@
         SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name} and res.restaurant_id != #{restaurantId});
     </select>
 
-    <select id="findRestaurantInfoByName" resultMap="restaurant">
+    <select id="findRestaurantInfoByName" resultMap="restaurantInfo">
         SELECT res.restaurant_id,
                res.owner_id,
                res.name,
@@ -164,6 +171,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,
@@ -176,16 +185,19 @@
                resi.type,
                resn.notification_id,
                resn.title,
-               resn.content as notification_content,
+               resn.content                                                                                as notification_content,
                resn.start_date,
                resn.end_date,
-               fc.name      as facility_name,
-               fc.path      as facility_path
+               fc.name                                                                                     as facility_name,
+               fc.path                                                                                     as facility_path,
+               EXISTS (SELECT * WHERE sr.member_id = #{memberId} and sr.restaurant_id = res.restaurant_id) as is_saved
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN store_facility sfc on sfc.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN facility fc on fc.facility_id = sfc.facility_id
+                 LEFT OUTER JOIN saved_restaurant sr
+                                 on sr.restaurant_id = res.restaurant_id and sr.member_id = #{memberId}
         WHERE res.name = #{name}
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
@@ -205,6 +217,8 @@
         <id property="closeTime" column="close_time"/>
         <id property="address" column="address"/>
         <id property="detailAddress" column="detail_address"/>
+        <id property="lat" column="lat" javaType="java.math.BigDecimal"/>
+        <id property="lng" column="lng" javaType="java.math.BigDecimal"/>
         <id property="lunchPrice" column="lunch_price"/>
         <id property="dinnerPrice" column="dinner_price"/>
         <id property="savedCount" column="saved_count"/>
@@ -240,6 +254,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,
@@ -260,7 +276,7 @@
         WHERE res.restaurant_id = #{restaurantId};
     </select>
 
-    <select id="findRestaurantInfoByOwnerId" resultMap="restaurant">
+    <select id="findRestaurantInfoByOwnerId" resultMap="restaurantInfo">
         SELECT res.restaurant_id,
                res.owner_id,
                res.name,
@@ -274,6 +290,8 @@
                res.close_time,
                res.address,
                res.detail_address,
+               res.lat,
+               res.lng,
                res.lunch_price,
                res.dinner_price,
                res.saved_count,

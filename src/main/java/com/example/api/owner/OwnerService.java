@@ -8,8 +8,8 @@ import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.owner.exception.OwnerExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
-import com.example.api.restaurant.dto.GetRestaurantRes;
-import com.example.api.restaurant.dto.GetRestaurantWithReview;
+import com.example.api.restaurant.dto.GetRestaurantInfo;
+import com.example.api.restaurant.dto.GetRestaurantInfoRes;
 import com.example.api.review.ReviewMapper;
 import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.dto.HumanStatus;
@@ -52,11 +52,12 @@ public class OwnerService {
     }
 
     @Transactional(readOnly = true)
-    public GetRestaurantWithReview getRestaurantByOwnerId(long ownerId) {
-        GetRestaurantRes getRestaurantRes = restaurantMapper.findRestaurantInfoByOwnerId(ownerId)
+    public GetRestaurantInfo getRestaurantInfoByOwnerId(long ownerId) {
+        GetRestaurantInfoRes getRestaurantInfoRes = restaurantMapper.findRestaurantInfoByOwnerId(ownerId)
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
-        List<GetReviewCommentRes> reviewComments = reviewMapper.getReviewComments(getRestaurantRes.getRestaurantId());
-        return new GetRestaurantWithReview(getRestaurantRes, reviewComments);
+        List<GetReviewCommentRes> reviewComments = reviewMapper.getReviewComments(
+                getRestaurantInfoRes.getRestaurantId());
+        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments);
     }
 
     private void checkOwnerExists(Owner owner) {

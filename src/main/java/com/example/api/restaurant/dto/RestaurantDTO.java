@@ -3,6 +3,7 @@ package com.example.api.restaurant.dto;
 import com.example.api.restaurant.exception.RestaurantExceptionType;
 import com.example.core.dto.BaseDTO;
 import com.example.core.exception.SystemException;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,8 @@ public class RestaurantDTO extends BaseDTO {
     private LocalTime closeTime;
     private String address;
     private String detailAddress;
+    private BigDecimal lat;
+    private BigDecimal lng;
     private int lunchPrice;
     private int dinnerPrice;
     private long savedCount;
@@ -53,6 +56,8 @@ public class RestaurantDTO extends BaseDTO {
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
+        this.lat = req.getLat();
+        this.lng = req.getLng();
     }
 
     public RestaurantDTO(UpdateRestaurantReq req) {
@@ -71,6 +76,8 @@ public class RestaurantDTO extends BaseDTO {
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
+        this.lat = req.getLat();
+        this.lng = req.getLng();
     }
 
     public boolean isOwner(long ownerId) {

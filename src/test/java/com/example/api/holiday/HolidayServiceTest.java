@@ -7,6 +7,7 @@ import com.example.api.holiday.exception.HolidayExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.core.exception.SystemException;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +49,8 @@ class HolidayServiceTest {
                 .closeTime(LocalTime.now())
                 .address("address")
                 .detailAddress("detailAddress")
+                .lat(BigDecimal.valueOf(33.450701))
+                .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(testRestaurant);
     }
