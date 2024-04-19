@@ -1,9 +1,14 @@
 package com.example.api.restaurant;
 
+import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.Owner;
-import com.example.api.restaurant.dto.CreateRestaurantReq;
-import com.example.api.restaurant.dto.GetRestaurantWithReview;
-import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.api.restaurant.dto.*;
+import com.example.api.restaurant.dto.enums.OrderType;
+import com.example.api.restaurant.dto.search.SearchFilter;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchRes;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchSummaryRes;
+import com.example.core.exception.SystemException;
+import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,5 +67,21 @@ public class RestaurantController {
             @Parameter(description = "조회하고 싶은 식당 이름", example = "스시미루") @PathVariable String name) {
         GetRestaurantWithReview restaurantRes = restaurantService.getRestaurantInfoByName(name);
         return ResponseEntity.ok(restaurantRes);
+    }
+
+    @GetMapping("/search/{keyword}")
+    public GetRestaurantSearchSummaryRes getRestaurantSearchSummary(@Parameter(description = "keyword는 두 글자 이상으로 해주세요.") @PathVariable String keyword){
+        if(keyword.length() < 2){
+            throw new SystemException("keyword는 두 글자 이상으로 해주세요.");
+        }
+        return restaurantService.getSearchSummaryList(keyword);
+    }
+
+    @GetMapping("/search")
+    public GetRestaurantSearchRes getRestaurantSearchList(@RequestBody SearchFilter searchFilter,
+                                                          @LoginMember(required = false) MemberDTO memberDTO){
+        //error
+        //return restaurantService.getSearchList(searchFilter, memberDTO.getMemberId());
+        return null;
     }
 }

@@ -1,8 +1,9 @@
 package com.example.api.restaurant;
 
-import com.example.api.restaurant.dto.GetRestaurantRes;
-import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
+import com.example.api.restaurant.dto.*;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchListRes;
+import com.example.api.restaurant.dto.search.RestaurantSummaryDTO;
+import com.example.api.restaurant.dto.search.SearchFilter;
 import com.example.api.review.dto.ReviewDTO;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,14 @@ public interface RestaurantMapper {
     void increaseSavedCount(RestaurantDTO restaurant);
 
     void decreaseSavedCount(RestaurantDTO restaurant);
+
+    int getCountByAddress(String koreanCity);
+
+    int getCountByCategory(String category);
+
+    List<RestaurantSummaryDTO> searchNameByKeyword(String keyword);
+
+    List<GetRestaurantSearchListRes> searchByFilter(SearchFilter filter, long memberId);
 
     // for test
     List<RestaurantDTO> findAll();
