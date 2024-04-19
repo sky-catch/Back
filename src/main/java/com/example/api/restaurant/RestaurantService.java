@@ -130,9 +130,11 @@ public class RestaurantService {
         return new GetRestaurantSearchSummaryRes(koreanCity, koreanCityCount, category, categoryCount, restaurantSummaryDTOs);
     }
 
-    public GetRestaurantSearchRes getSearchList(SearchFilter filter, long memberId) {
-        //order by, 저장했는지
-        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter, memberId);
+    public GetRestaurantSearchRes getSearchList(SearchFilter filter, Long memberId) {
+        long memberPk = (memberId == null) ? 0 :memberId;
+
+        filter.setMemberId(memberPk);
+        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter);
         getRestaurantSearchListRes.forEach(i -> {
             List<String> possibleReservationTimes =
                     calculatePossibleReservationTimes(filter.getDate(), filter.getTime(), i.getPossibleReservationTime(), i.getLastOrderTime());

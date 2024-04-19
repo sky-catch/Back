@@ -47,7 +47,7 @@ public interface RestaurantMapper {
 
     List<RestaurantSummaryDTO> searchNameByKeyword(String keyword);
 
-    List<GetRestaurantSearchListRes> searchByFilter(SearchFilter filter, long memberId);
+    List<GetRestaurantSearchListRes> searchByFilter(SearchFilter filter);
 
     // for test
     List<RestaurantDTO> findAll();

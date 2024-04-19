@@ -2,6 +2,7 @@ package com.example.api.restaurant.dto.search;
 
 import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.example.api.restaurant.dto.enums.OrderType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SearchFilter {
 
+    @JsonIgnore
+    private long memberId;
     @Schema(description = "날짜", example = "2024-01-01")
     private String date;
     @Schema(description = "30분 단위",example = "17:30")

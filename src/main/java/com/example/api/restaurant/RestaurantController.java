@@ -85,8 +85,6 @@ public class RestaurantController {
     @GetMapping("/search")
     public GetRestaurantSearchRes getRestaurantSearchList(@RequestBody SearchFilter searchFilter,
                                                           @LoginMember(required = false) MemberDTO memberDTO){
-        //error
-        //return restaurantService.getSearchList(searchFilter, memberDTO.getMemberId());
-        return null;
+        return restaurantService.getSearchList(searchFilter, memberDTO.getMemberId());
     }
 }
