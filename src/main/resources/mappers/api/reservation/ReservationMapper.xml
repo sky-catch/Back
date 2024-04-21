@@ -30,6 +30,7 @@
         <result property="numberOfPeople" column="NUMBER_OF_PEOPLE"/>
         <result property="memo" column="MEMO"/>
         <result property="status" column="STATUS"/>
+        <result property="isReview" column="is_review"/>
         <result property="createdDate" column="CREATED_DATE"/>
         <result property="updatedDate" column="UPDATED_DATE"/>
     </resultMap>
@@ -38,15 +39,20 @@
         SELECT rez.RESERVATION_ID,
                rez.MEMBER_ID,
                rez.RESTAURANT_ID,
-               rt.NAME     as RESTAURANT_NAME,
-               rt.CATEGORY as RESTAURANT_CATEGORY,
-               rt.ADDRESS  as RESTAURANT_ADDRESS,
-               ri.PATH     as RESTAURANT_IMAGE,
+               rt.NAME                                                as RESTAURANT_NAME,
+               rt.CATEGORY                                            as RESTAURANT_CATEGORY,
+               rt.ADDRESS                                             as RESTAURANT_ADDRESS,
+               ri.PATH                                                as RESTAURANT_IMAGE,
                rez.PAYMENT_ID,
                rez.TIME,
                rez.NUMBER_OF_PEOPLE,
                rez.MEMO,
                rez.STATUS,
+               EXISTS (SELECT *
+                       FROM review
+                       WHERE review.RESERVATION_ID = rez.RESERVATION_ID
+                         AND review.MEMBER_ID = #{memberId}
+                         AND review.RESTAURANT_ID = rt.RESTAURANT_ID) AS is_review,
                rez.CREATED_DATE,
                rez.UPDATED_DATE
         FROM reservation rez
