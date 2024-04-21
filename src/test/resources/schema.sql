@@ -117,6 +117,19 @@ CREATE TABLE store_facility
 );
 
 
+CREATE TABLE review
+(
+    review_id      bigint auto_increment
+        primary key,
+    member_id      bigint                              not null,
+    restaurant_id  bigint                              not null,
+    reservation_id bigint                              not null,
+    rate           tinyint                             not null,
+    comment        text null,
+    created_date   timestamp default CURRENT_TIMESTAMP not null,
+    updated_date   timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+);
+
 
 CREATE TABLE HOLIDAY
 (
