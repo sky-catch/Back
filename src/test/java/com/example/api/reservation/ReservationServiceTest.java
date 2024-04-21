@@ -30,6 +30,9 @@ import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.RestaurantImageType;
+import com.example.api.restaurantimage.RestaurantImageMapper;
+import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -38,6 +41,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +70,7 @@ class ReservationServiceTest {
     private final HolidayMapper holidayMapper;
     private final ReservationAvailableDateMapper reservationAvailableDateMapper;
     private final PaymentMapper paymentMapper;
+    private final RestaurantImageMapper restaurantImageMapper;
 
     private RestaurantDTO testRestaurant;
     private final LocalTime openTime = LocalTime.of(10, 0, 0);
@@ -98,6 +103,7 @@ class ReservationServiceTest {
                 });
 
         saveTestRestaurant();
+        saveTestRestaurantImage();
         holidayMapper.saveAll(getMondayAndTuesdayHolidays());
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
     }
@@ -628,6 +634,16 @@ class ReservationServiceTest {
                 .lng(BigDecimal.valueOf(126.570667))
                 .build();
         restaurantMapper.save(testRestaurant);
+    }
+
+    private void saveTestRestaurantImage() {
+        List<AddRestaurantImageWithTypeDTO> list = new ArrayList<>();
+        list.add(AddRestaurantImageWithTypeDTO.builder()
+                .path("test image path")
+                .restaurantImageType(RestaurantImageType.REPRESENTATIVE)
+                .build());
+        
+        restaurantImageMapper.addRestaurantImages(testRestaurant.getRestaurantId(), list);
     }
 
     private void saveTestReservations() {
