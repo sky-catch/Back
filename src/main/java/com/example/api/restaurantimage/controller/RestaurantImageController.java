@@ -39,7 +39,7 @@ public class RestaurantImageController {
 
     private final RestaurantImageService restaurantImageService;
 
-    @Operation(summary = "식당 이미지들 추가", description = "사장이 식당의 이미지들을 추가하는 기능입니다.")
+    @Operation(summary = "식당 이미지들 추가", description = "사장이 식당의 이미지들을 추가하는 기능입니다. ImageTypes의 개수와 이미지 파일의 개수는 일치해야 합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "식당 이미지들 생성 성공"),
             @ApiResponse(responseCode = "400", description = "1. 식당 이미지 개수가 1 ~ 10개 사이가 아닌 경우,\n"
@@ -73,7 +73,7 @@ public class RestaurantImageController {
     public static class AddRestaurantImagesReq {
 
         @NotNull
-        @Schema(description = "식당 이미지 타입", example = "REPRESENTATIVE")
+        @Schema(description = "식당 이미지 타입", example = "[REPRESENTATIVE, NORMAL]")
         private List<RestaurantImageType> restaurantImageTypes;
     }
 }
