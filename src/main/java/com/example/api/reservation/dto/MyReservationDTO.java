@@ -27,6 +27,8 @@ public class MyReservationDTO extends BaseDTO {
     private String restaurantCategory;
     @Schema(description = "주소", example = "압구정로데오")
     private String restaurantAddress;
+    @Schema(description = "식당 대표 이미지 url", example = "https://skyware-toy-project-imgae-bucket.s3.ap-northeast-2.amazonaws.com/image/8453543d-290d-40ae-a047-225de9131f32.png")
+    private String restaurantImage;
     @Schema(description = "회원 ID", example = "1")
     private long memberId;
     @Schema(description = "결제 ID", example = "1")
@@ -39,4 +41,6 @@ public class MyReservationDTO extends BaseDTO {
     private String memo;
     @Schema(description = "예약 상태", example = "PLANNED")
     private ReservationStatus status;
+    @Schema(description = "나의 리뷰 작성 여부", example = "false")
+    private boolean isReview;
 }
