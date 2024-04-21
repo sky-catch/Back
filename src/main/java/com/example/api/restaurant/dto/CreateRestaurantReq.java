@@ -39,11 +39,11 @@ public class CreateRestaurantReq {
     private String phone;
     @NotNull
     @Min(1)
-    @Schema(description = "예약 최대 인원 수", example = "2")
+    @Schema(description = "예약 최대 인원 수", example = "10")
     private int tablePersonMax;
     @NotNull
     @Min(1)
-    @Schema(description = "예약 최소 인원 수", example = "4")
+    @Schema(description = "예약 최소 인원 수", example = "2")
     private int tablePersonMin;
     @NotNull
     @Schema(name = "openTime", description = "오픈시간", example = "11:00:00", type = "string")
