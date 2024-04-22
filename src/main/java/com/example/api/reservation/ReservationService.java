@@ -46,7 +46,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public void createReservation(CreateReservationDTO dto) {
+    public synchronized void createReservation(CreateReservationDTO dto) {
         log.info("주문 생성");
 
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(

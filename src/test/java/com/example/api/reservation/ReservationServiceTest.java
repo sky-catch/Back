@@ -44,6 +44,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -301,6 +305,47 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(ReservationExceptionType.ALREADY_EXISTS_AT_TIME.getMessage());
+    }
+
+    @Test
+    @DisplayName("새로운 예약 생성 동시성 테스트")
+    void create_reservation_with_concurrency() throws InterruptedException {
+        // given
+        CreateReservationDTO dto = CreateReservationDTO.builder()
+                .restaurantId(testRestaurant.getRestaurantId())
+                .memberId(1L)
+                .time(validVisitTime)
+                .numberOfPeople(tablePersonMin)
+                .memo("메모")
+                .status(PLANNED)
+                .build();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(2);
+
+        // when
+        executorService.execute(() -> {
+            reservationService.createReservation(dto);
+            latch.countDown();
+        });
+        AtomicReference<SystemException> error = new AtomicReference<>();
+        executorService.execute(() -> {
+            try {
+                reservationService.createReservation(dto);
+            } catch (SystemException e) {
+                error.set(e);
+            }
+            latch.countDown();
+        });
+        latch.await();
+
+        // then
+        int actual = reservationMapper.findAll().size();
+        assertEquals(1, actual);
+
+        assertEquals(error.get().getMessage(), ReservationExceptionType.ALREADY_EXISTS_AT_TIME.getMessage());
+
+        executorService.shutdown();
     }
 
     @Test
@@ -642,7 +687,7 @@ class ReservationServiceTest {
                 .path("test image path")
                 .restaurantImageType(RestaurantImageType.REPRESENTATIVE)
                 .build());
-        
+
         restaurantImageMapper.addRestaurantImages(testRestaurant.getRestaurantId(), list);
     }
 
