@@ -1,8 +1,12 @@
 package com.example.api.restaurant.dto.enums;
 
+import com.example.core.exception.SystemException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Getter
 public enum Category {
@@ -24,6 +28,18 @@ public enum Category {
 
     Category(String koreanName) {
         this.koreanName = koreanName;
+    }
+
+    @JsonCreator
+    public static Category parsing(String inputValue){
+        Optional<Category> result = Stream.of(Category.values())
+                .filter(category -> category.koreanName.equals(inputValue))
+                .findFirst();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new SystemException("유효하지 않은 category입니다.");
+        }
     }
 
     public static Category searchCategory(String keyword) {

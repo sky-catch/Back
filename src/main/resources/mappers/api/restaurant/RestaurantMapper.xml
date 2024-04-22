@@ -379,24 +379,25 @@
     <select id="searchByFilter" resultMap="getRestaurantSearchList"
             parameterType="com.example.api.restaurant.dto.search.SearchFilter">
         select r.restaurant_id, ri.path, r.name, r.content, r.review_avg, r.review_count,
-        r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
-        if(sr.member_id > 0, true, false) as saved_restaurant, rs.time as possible_reservation_time
+            r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
+            if(sr.member_id > 0, true, false) as saved_restaurant, rs.time as possible_reservation_time
         from restaurant r
         left join restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'
         left join reservation_available_date rad on rad.restaurant_id = r.restaurant_id
         left join holiday h on h.restaurant_id = r.restaurant_id and h.day = DATE_FORMAT(#{date}, '%W')
-        left join (SELECT rsv.restaurant_id,
-        rsv.time
-        FROM (SELECT *,
-        ROW_NUMBER() OVER (PARTITION BY restaurant_id ORDER BY time) AS row_num
-        FROM reservation where time >= CONCAT(#{date}, ' ',#{time})) rsv
+        left join (SELECT rsv.restaurant_id, rsv.time
+                    FROM (SELECT *,
+                        ROW_NUMBER() OVER (PARTITION BY restaurant_id ORDER BY time) AS row_num
+                        FROM reservation where time >= CONCAT(#{date}, ' ',#{time})) rsv
         WHERE rsv.row_num &lt;= 3) rs ON rs.restaurant_id = r.restaurant_id
         left join saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{memberId}
-        where
-        rad.begin_date &lt;= #{date} and rad.end_date >= #{date}
+        where rad.begin_date &lt;= #{date} and rad.end_date >= #{date}
         and r.open_time &lt;= #{time} and r.last_order_time >= #{time}
         and h.day is null
 
+        <if test="category != null">
+            and r.category = #{category.koreanName}
+        </if>
         <if test="koreanCity != null">
             and r.address = #{koreanCity.koreanName}
         </if>

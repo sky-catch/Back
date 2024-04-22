@@ -113,6 +113,7 @@ public class RestaurantService {
         return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments);
     }
 
+    @Transactional(readOnly = true)
     public GetRestaurantSearchSummaryRes getSearchSummaryList(String keyword) {
         KoreanCity koreanCity = KoreanCity.searchKoreanCity(keyword);
         int koreanCityCount = 0;
@@ -130,6 +131,7 @@ public class RestaurantService {
         return new GetRestaurantSearchSummaryRes(koreanCity, koreanCityCount, category, categoryCount, restaurantSummaryDTOs);
     }
 
+    @Transactional(readOnly = true)
     public GetRestaurantSearchRes getSearchList(SearchFilter filter, Long memberId) {
         long memberPk = (memberId == null) ? 0 :memberId;
 
@@ -144,6 +146,12 @@ public class RestaurantService {
         return new GetRestaurantSearchRes(filter, getRestaurantSearchListRes.size(), getRestaurantSearchListRes);
     }
 
+    /**
+     * @param dbTime db에서 선택한 시간 기준부터 시간 오름차순으로 예약 건 최대 3개를 가지고 옴.
+     * @return 예약 가능한 시간 3개
+     * ex) 선택한 시간이 5시 30분이고 예약 건을 6시, 6시 30분 2개를 가지고 왔을 경우
+     *     5시 30분, 7시, 7시 30분 리턴. (6시와 6시 30분은 예약이 되어 있으므로).
+     */
     private List<String> calculatePossibleReservationTimes(String date, String time, List<String> dbTime, LocalTime lastOrderTime){
         LocalDateTime dateTime = parseToLDT(date + " " + time);
         List<LocalDateTime> result = new ArrayList<>();
