@@ -116,6 +116,11 @@ public class RestaurantService {
         if (koreanCity != null) {
             koreanCityCount = restaurantMapper.getCountByAddress(koreanCity.getKoreanName());
         }
+        HotPlace hotPlace = HotPlace.searchHotPlace(keyword);
+        int hotPlaceCount = 0;
+        if (hotPlace != null) {
+            hotPlaceCount = restaurantMapper.getCountByHotPlace(hotPlace.getKoreanName());
+        }
 
         Category category = Category.searchCategory(keyword);
         int categoryCount = 0;
@@ -124,11 +129,17 @@ public class RestaurantService {
         }
 
         List<RestaurantSummaryDTO> restaurantSummaryDTOs = restaurantMapper.searchNameByKeyword(keyword);
-        return new GetRestaurantSearchSummaryRes(koreanCity, koreanCityCount, category, categoryCount, restaurantSummaryDTOs);
+
+        String koreanCityName = (koreanCity == null) ? null : koreanCity.getKoreanName();
+        String hotPlaceName = (hotPlace == null) ? null : hotPlace.getKoreanName();
+        String categoryName = (category == null) ? null : category.getKoreanName();
+
+        return new GetRestaurantSearchSummaryRes(koreanCityName, koreanCityCount,
+                hotPlaceName, hotPlaceCount, categoryName, categoryCount, restaurantSummaryDTOs);
     }
 
     @Transactional(readOnly = true)
-    public GetRestaurantSearchRes getSearchList(SearchFilter filter, Long memberId) {
+    public GetRestaurantSearchRes searchByFilter(SearchFilter filter, Long memberId) {
         long memberPk = (memberId == null) ? 0 :memberId;
 
         filter.setMemberId(memberPk);

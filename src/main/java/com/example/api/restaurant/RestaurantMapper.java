@@ -45,6 +45,8 @@ public interface RestaurantMapper {
 
     int getCountByCategory(String category);
 
+    int getCountByHotPlace(String hotPlace);
+
     List<RestaurantSummaryDTO> searchNameByKeyword(String keyword);
 
     List<GetRestaurantSearchListRes> searchByFilter(SearchFilter filter);

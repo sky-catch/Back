@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -79,9 +80,9 @@ public class RestaurantController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "식당 검색", description = "지역, 가격 필터링 가능")
-    public GetRestaurantSearchRes getRestaurantSearchList(@RequestBody SearchFilter searchFilter,
-                                                          @LoginMember(required = false) MemberDTO memberDTO){
-        return restaurantService.getSearchList(searchFilter, memberDTO.getMemberId());
+    @Operation(summary = "식당 필터 검색", description = "지역, 가격 필터링 가능")
+    public GetRestaurantSearchRes searchByFilter(@Parameter(description = "아래 Schemas에서 SearchFilter확인 부탁드립니다.") @RequestBody SearchFilter dto,
+                                                 @LoginMember(required = false) MemberDTO memberDTO){
+        return restaurantService.searchByFilter(dto, memberDTO.getMemberId());
     }
 }

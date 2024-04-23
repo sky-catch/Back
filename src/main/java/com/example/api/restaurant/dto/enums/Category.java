@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_VALID_CATEGORY;
+
 @Getter
 public enum Category {
     SUSHI_OMAKASE("스시오마카세"),
@@ -38,7 +40,7 @@ public enum Category {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new SystemException("유효하지 않은 category입니다.");
+            throw new SystemException(NOT_VALID_CATEGORY);
         }
     }
 

@@ -1,9 +1,16 @@
 package com.example.api.restaurant.dto.enums;
 
+import com.example.api.restaurant.RestaurantController;
+import com.example.api.restaurant.exception.RestaurantExceptionType;
+import com.example.core.exception.SystemException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_VALID_HOT_PLACE;
 
 @Getter
 public enum HotPlace {
@@ -17,7 +24,7 @@ public enum HotPlace {
     SAMSEONG_DAECHI("삼성/대치"),
     SANGSU_HAPJEONG_MANGWON("상수/합정/망원"),
     SEOUL_STATION_HOEHYEON("서울역/회현"),
-    SEOCHO_BANBAE("서초/반배"),
+    SEOCHO_BANGBAE("서초/방배"),
     SEOCHON("서촌"),
     SEONGSU_SEOULLIB("성수/서울숲"),
     SINSA_NONHYEON("신사/논현"),
@@ -40,12 +47,31 @@ public enum HotPlace {
         this.koreanName = koreanName;
     }
 
+    @JsonCreator
+    public static HotPlace parsing(String inputValue){
+        if(inputValue.length() < RestaurantController.MIN_KEYWORD_LENGTH){
+            throw new SystemException(NOT_VALID_HOT_PLACE);
+        }
+        HotPlace result = searchHotPlace(inputValue);
+        if (result != null) {
+            return result;
+        } else {
+            throw new SystemException(NOT_VALID_HOT_PLACE);
+        }
+    }
+
     public static String getHotPlaceValue(String hotPlace) {
         return Arrays.stream(HotPlace.values())
                 .map(HotPlace::getKoreanName)
                 .filter(name -> Arrays.stream(name.split("/")).anyMatch(hotPlace::contains))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static HotPlace searchHotPlace(String keyword) {
+        return Arrays.stream(HotPlace.values())
+                .filter(place -> place.koreanName.contains(keyword))
+                .findFirst().orElse(null);
     }
 
 }

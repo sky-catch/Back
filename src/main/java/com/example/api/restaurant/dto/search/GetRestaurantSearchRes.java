@@ -12,8 +12,16 @@ import java.util.List;
 @AllArgsConstructor
 public class GetRestaurantSearchRes {
 
-    private SearchFilter searchFilter;
+    private GetSearchFilter searchFilter;
     @Schema(description = "레스토랑 수",example = "2453")
     private int restaurantCount;
+    @Schema(description = "레스토랑 결과 리스트")
     private List<GetRestaurantSearchListRes> getRestaurantSearchListRes;
+
+    public GetRestaurantSearchRes(SearchFilter searchFilter, int restaurantCount, List<GetRestaurantSearchListRes> getRestaurantSearchListRes) {
+        this.searchFilter = new GetSearchFilter(searchFilter);
+        this.restaurantCount = restaurantCount;
+        this.getRestaurantSearchListRes = getRestaurantSearchListRes;
+    }
+
 }

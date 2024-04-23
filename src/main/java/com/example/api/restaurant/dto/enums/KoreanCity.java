@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_VALID_KOREAN_CITY;
+
 public enum KoreanCity {
     SEOUL("서울"),
     GYEONGGI("경기"),
@@ -40,7 +42,7 @@ public enum KoreanCity {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new SystemException("유효하지 않은 koreanCity입니다.");
+            throw new SystemException(NOT_VALID_KOREAN_CITY);
         }
     }
 
@@ -50,7 +52,7 @@ public enum KoreanCity {
 
     public static KoreanCity searchKoreanCity(String keyword) {
         return Arrays.stream(KoreanCity.values())
-                .filter(koreanCity -> koreanCity.koreanName.equals(keyword))
+                .filter(koreanCity -> koreanCity.koreanName.contains(keyword))
                 .findFirst().orElse(null);
     }
 
