@@ -1,5 +1,6 @@
 package com.example.api.restaurant.dto;
 
+import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.exception.RestaurantExceptionType;
 import com.example.core.dto.BaseDTO;
 import com.example.core.exception.SystemException;
@@ -31,6 +32,7 @@ public class RestaurantDTO extends BaseDTO {
     private LocalTime closeTime;
     private String address;
     private String detailAddress;
+    private String hotPlace;
     private BigDecimal lat;
     private BigDecimal lng;
     private int lunchPrice;
@@ -44,7 +46,7 @@ public class RestaurantDTO extends BaseDTO {
     public RestaurantDTO(CreateRestaurantReq req) {
         this.ownerId = req.getOwnerId();
         this.name = req.getName();
-        this.category = req.getCategory();
+        this.category = req.getCategory().getKoreanName();
         this.content = req.getContent();
         this.phone = req.getPhone();
         this.tablePersonMax = req.getTablePersonMax();
@@ -52,7 +54,7 @@ public class RestaurantDTO extends BaseDTO {
         this.openTime = req.getOpenTime();
         this.lastOrderTime = req.getLastOrderTime();
         this.closeTime = req.getCloseTime();
-        this.address = req.getAddress();
+        this.address = req.getAddress().getKoreanName();
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
@@ -64,7 +66,7 @@ public class RestaurantDTO extends BaseDTO {
         this.restaurantId = req.getRestaurantId();
         this.ownerId = req.getOwnerId();
         this.name = req.getName();
-        this.category = req.getCategory();
+        this.category = req.getCategory().getKoreanName();
         this.content = req.getContent();
         this.phone = req.getPhone();
         this.tablePersonMax = req.getTablePersonMax();
@@ -72,7 +74,7 @@ public class RestaurantDTO extends BaseDTO {
         this.openTime = req.getOpenTime();
         this.lastOrderTime = req.getLastOrderTime();
         this.closeTime = req.getCloseTime();
-        this.address = req.getAddress();
+        this.address = req.getAddress().getKoreanName();
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();

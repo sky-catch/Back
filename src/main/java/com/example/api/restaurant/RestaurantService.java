@@ -1,24 +1,18 @@
 package com.example.api.restaurant;
 
-import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
-
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayService;
-import com.example.api.member.MemberDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.*;
 import com.example.api.restaurant.dto.enums.Category;
+import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.example.api.restaurant.dto.search.*;
 import com.example.api.review.ReviewMapper;
 import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.exception.SystemException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +50,7 @@ public class RestaurantService {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
+        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.save(dto);
 
         holidayService.createHolidays(dto.getRestaurantId(), req.getDays());
@@ -74,10 +69,11 @@ public class RestaurantService {
     public void updateRestaurant(UpdateRestaurantReq req) {
         RestaurantDTO dto = new RestaurantDTO(req);
 
-        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), dto.getRestaurantId())) {
+        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), req.getOwnerId())) {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
+        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.updateRestaurant(dto);
 
         List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()

@@ -2,6 +2,8 @@ package com.example.api.restaurant.dto;
 
 import com.example.api.facility.dto.Facility;
 import com.example.api.holiday.Days;
+import com.example.api.restaurant.dto.enums.Category;
+import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,9 +33,9 @@ public class UpdateRestaurantReq {
     @NotBlank
     @Schema(description = "이름", example = "스시미루")
     private String name;
-    @NotBlank
+    @NotNull
     @Schema(description = "카테고리", example = "스시오마카세")
-    private String category;
+    private Category category;
     @Schema(description = "설명", example = "아름다운 맛과 다채로운 구성, 술 곁들이기 아늑한 분위기의 스시오마카세")
     private String content;
     @NotBlank
@@ -57,9 +59,9 @@ public class UpdateRestaurantReq {
     @NotNull
     @Schema(description = "마감시간", example = "22:00:00", type = "string")
     private LocalTime closeTime;
-    @NotBlank
+    @NotNull
     @Schema(description = "주소", example = "압구정로데오")
-    private String address;
+    private KoreanCity address;
     @NotBlank
     @Schema(description = "상세주소", example = "서울특별시 강남구 언주로170길 26-6 2층")
     private String detailAddress;

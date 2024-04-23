@@ -26,7 +26,7 @@ public interface RestaurantMapper {
 
     boolean isAlreadyExistsName(String name);
 
-    boolean isAlreadyExistsNameExcludeSelf(String name, long restaurantId);
+    boolean isAlreadyExistsNameExcludeSelf(String name, long ownerId);
 
     Optional<GetRestaurantInfoRes> findRestaurantInfoByName(@Param("name") String name,
                                                             @Param("memberId") Long memberId);

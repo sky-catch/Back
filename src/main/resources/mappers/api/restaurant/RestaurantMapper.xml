@@ -27,10 +27,10 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
-                               last_order_time, close_time, address, detail_address, lat, lng, lunch_price,
+                               last_order_time, close_time, address, detail_address, hot_place, lat, lng, lunch_price,
                                dinner_price, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
-                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lat}, #{lng},
+                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{hotPlace},#{lat}, #{lng},
                 #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
     </insert>
 
@@ -46,6 +46,7 @@
             last_order_time  = #{lastOrderTime},
             close_time       = #{closeTime},
             address          = #{address},
+            hot_place        = #{hotPlace},
             detail_address   = #{detailAddress},
             lat              = #{lat},
             lng              = #{lng},
@@ -154,7 +155,7 @@
     </select>
 
     <select id="isAlreadyExistsNameExcludeSelf" resultType="boolean">
-        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name} and res.restaurant_id != #{restaurantId});
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name} and res.owner_id != #{ownerId});
     </select>
 
     <select id="findRestaurantInfoByName" resultMap="restaurantInfo">

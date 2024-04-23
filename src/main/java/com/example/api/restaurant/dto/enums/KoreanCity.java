@@ -1,6 +1,5 @@
 package com.example.api.restaurant.dto.enums;
 
-import com.example.api.facility.dto.Facility;
 import com.example.core.exception.SystemException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 

@@ -43,7 +43,7 @@ public class GetRestaurantInfo extends BaseDTO {
     private String lastOrderTime;
     @Schema(description = "마감시간", example = "22:00:00", type = "string")
     private String closeTime;
-    @Schema(description = "주소", example = "압구정로데오")
+    @Schema(description = "주소", example = "서울")
     private String address;
     @Schema(description = "상세주소", example = "서울특별시 강남구 언주로170길 26-6 2층")
     private String detailAddress;
