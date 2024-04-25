@@ -10,6 +10,8 @@ target/
 *.iml
 *.ipr
 application.yml
+application-local.yml
+application-prod.yml
 
 ### Eclipse ###
 .apt_generated
