@@ -1,6 +1,11 @@
 package com.example.api.reservation.dto;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 
 @Getter
@@ -16,8 +21,26 @@ public class TimeSlots {
         return new TimeSlots(timeSlots);
     }
 
+    public static TimeSlots canReservation(TimeSlot reservationTime, LocalTime lastOrderTime){
+        List<TimeSlot> availableTimeSlots = new ArrayList<>();
+        while (reservationTime.isBeforeOrEqual(lastOrderTime)) {
+            availableTimeSlots.add(reservationTime);
+            reservationTime = reservationTime.getNextTimeSlot();
+        }
+        return new TimeSlots(availableTimeSlots);
+    }
+
     public TimeSlots subtract(TimeSlots other) {
         timeSlots.removeAll(other.getTimeSlots());
         return new TimeSlots(timeSlots);
     }
+
+    public TimeSlots limit3() {
+        return TimeSlots.of(timeSlots.stream().limit(3).collect(Collectors.toList()));
+    }
+
+    public List<String> toTimeString(){
+        return timeSlots.stream().map(TimeSlot::toTimeString).collect(Collectors.toList());
+    }
+
 }

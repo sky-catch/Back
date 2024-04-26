@@ -3,6 +3,8 @@ package com.example.api.restaurant;
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayService;
+import com.example.api.reservation.dto.TimeSlot;
+import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.*;
@@ -17,10 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -144,45 +143,18 @@ public class RestaurantService {
 
         filter.setMemberId(memberPk);
         List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter);
-        getRestaurantSearchListRes.forEach(i -> {
-            List<String> possibleReservationTimes =
-                    calculatePossibleReservationTimes(filter.getDate(), filter.getTime(), i.getPossibleReservationTime(), i.getLastOrderTime());
-            i.setPossibleReservationTime(possibleReservationTimes);
-        });
+        getRestaurantSearchListRes.forEach(i ->
+                i.setPossibleReservationTime(calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(), i.getLastOrderTime())));
 
         return new GetRestaurantSearchRes(filter, getRestaurantSearchListRes.size(), getRestaurantSearchListRes);
     }
 
-    /**
-     * @param dbTime db에서 선택한 시간 기준부터 시간 오름차순으로 예약 건 최대 3개를 가지고 옴.
-     * @return 예약 가능한 시간 3개
-     * ex) 선택한 시간이 5시 30분이고 예약 건을 6시, 6시 30분 2개를 가지고 왔을 경우
-     *     5시 30분, 7시, 7시 30분 리턴. (6시와 6시 30분은 예약이 되어 있으므로).
-     */
-    private List<String> calculatePossibleReservationTimes(String date, String time, List<String> dbTime, LocalTime lastOrderTime){
-        LocalDateTime dateTime = parseToLDT(date + " " + time);
-        List<LocalDateTime> result = new ArrayList<>();
-        List<LocalDateTime> collect = dbTime.stream().map(this::parseToLDT).collect(Collectors.toList());
-        int point = 0;
-        while(result.size() < MAX_SHOW_RESERVATION
-                && (dateTime.toLocalTime().isBefore(lastOrderTime) || dateTime.toLocalTime().equals(lastOrderTime))){
-            if(collect.size() > point && collect.get(point).isEqual(dateTime)){
-                dateTime = dateTime.plusMinutes(RESERVATION_TIME_INTERVAL);
-                point++;
-            }
-            result.add(dateTime);
-            dateTime = dateTime.plusMinutes(RESERVATION_TIME_INTERVAL);
-        }
-        return result.stream().map(this::parseToTime).collect(Collectors.toList());
+    private List<String> calculatePossibleReservationTimes(String startTime, List<String> dbTime, LocalTime lastOrderTime){
+        TimeSlot reservationTime = new TimeSlot(LocalTime.parse(startTime));
+
+        TimeSlots canReservation = TimeSlots.canReservation(reservationTime, lastOrderTime);
+        TimeSlots alreadyReservation = TimeSlots.of(dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
+        return canReservation.subtract(alreadyReservation).limit3().toTimeString();
     }
 
-    private LocalDateTime parseToLDT(String stringTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(stringTime, formatter);
-    }
-
-    private String parseToTime(LocalDateTime localDateTime){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return localDateTime.format(formatter);
-    }
 }
