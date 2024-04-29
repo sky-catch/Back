@@ -48,7 +48,7 @@ public class ReservationService {
 
     @Transactional
     public void createReservation(CreateReservationDTO dto) {
-        log.info("주문 생성");
+        log.info("예약 생성");
 
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));

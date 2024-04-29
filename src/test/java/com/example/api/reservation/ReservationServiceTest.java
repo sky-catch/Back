@@ -328,11 +328,11 @@ class ReservationServiceTest {
             reservationService.createReservation(dto);
             latch.countDown();
         });
-        AtomicReference<Exception> error = new AtomicReference<>();
+        AtomicReference<SystemException> error = new AtomicReference<>();
         executorService.execute(() -> {
             try {
                 reservationService.createReservation(dto);
-            } catch (Exception e) {
+            } catch (SystemException e) {
                 error.set(e);
             } finally {
                 latch.countDown();
