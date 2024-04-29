@@ -16,6 +16,8 @@ import com.example.api.restaurant.dto.GetRestaurantImageRes;
 import com.example.api.restaurant.dto.GetRestaurantInfoRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantNotificationDTO;
+import com.example.api.restaurant.dto.enums.Category;
+import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.example.api.restaurantimage.RestaurantImageMapper;
 import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
 import com.example.api.restaurantnotification.RestaurantNotificationMapper;
@@ -57,7 +59,7 @@ class RestaurantServiceTest {
         testRestaurant = RestaurantDTO.builder()
                 .ownerId(1L)
                 .name("name")
-                .category("category")
+                .category("한식")
                 .content("content")
                 .phone("phone")
                 .tablePersonMax(4)
@@ -65,7 +67,7 @@ class RestaurantServiceTest {
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
-                .address("address")
+                .address("서울")
                 .detailAddress("detailAddress")
                 .lat(BigDecimal.valueOf(33.450701))
                 .lng(BigDecimal.valueOf(126.570667))
@@ -74,7 +76,7 @@ class RestaurantServiceTest {
         createRestaurantReq = CreateRestaurantReq.builder()
                 .ownerId(1L)
                 .name("name")
-                .category("category")
+                .category(Category.KOREAN)
                 .content("content")
                 .phone("phone")
                 .tablePersonMax(4)
@@ -84,7 +86,7 @@ class RestaurantServiceTest {
                 .closeTime(LocalTime.now())
                 .reservationBeginDate(LocalDate.now())
                 .reservationEndDate(LocalDate.now())
-                .address("address")
+                .address(KoreanCity.SEOUL)
                 .detailAddress("detailAddress")
                 .lat(BigDecimal.valueOf(33.450701))
                 .lng(BigDecimal.valueOf(126.570667))
@@ -99,7 +101,7 @@ class RestaurantServiceTest {
         RestaurantDTO dto = RestaurantDTO.builder()
                 .ownerId(2L)
                 .name("name2")
-                .category("category")
+                .category("한식")
                 .content("content")
                 .phone("phone")
                 .tablePersonMax(4)
@@ -107,7 +109,7 @@ class RestaurantServiceTest {
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
-                .address("address")
+                .address("서울")
                 .detailAddress("detailAddress")
                 .lat(BigDecimal.valueOf(33.450701))
                 .lng(BigDecimal.valueOf(126.570667))
@@ -142,7 +144,7 @@ class RestaurantServiceTest {
         RestaurantDTO dto = RestaurantDTO.builder()
                 .ownerId(2L)
                 .name("name")
-                .category("category")
+                .category("한식")
                 .content("content")
                 .phone("phone")
                 .tablePersonMax(4)
@@ -150,7 +152,7 @@ class RestaurantServiceTest {
                 .openTime(LocalTime.now())
                 .lastOrderTime(LocalTime.now())
                 .closeTime(LocalTime.now())
-                .address("address")
+                .address("서울")
                 .detailAddress("detailAddress")
                 .lat(BigDecimal.valueOf(33.450701))
                 .lng(BigDecimal.valueOf(126.570667))

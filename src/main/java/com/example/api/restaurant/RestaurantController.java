@@ -2,14 +2,14 @@ package com.example.api.restaurant;
 
 import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.Owner;
-import com.example.api.restaurant.dto.search.SearchFilter;
-import com.example.api.restaurant.dto.search.GetRestaurantSearchRes;
-import com.example.api.restaurant.dto.search.GetRestaurantSearchSummaryRes;
-import com.example.core.exception.SystemException;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchRes;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchSummaryRes;
+import com.example.api.restaurant.dto.search.SearchFilter;
 import com.example.core.exception.ExceptionResponse;
+import com.example.core.exception.SystemException;
 import com.example.core.web.security.login.LoginMember;
 import com.example.core.web.security.login.LoginOwner;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,17 +19,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -37,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "식당", description = "식당 관련 API입니다.")
 public class RestaurantController {
 
+    public static final int MIN_KEYWORD_LENGTH = 2;
     private final RestaurantService restaurantService;
 
     @PostMapping
@@ -75,16 +71,18 @@ public class RestaurantController {
     }
 
     @GetMapping("/search/{keyword}")
+    @Operation(summary = "식당 요약 검색", description = "검색시 지역, 카테고리, 식당명 중에서 해당되는 것에 결과가 나옵니다.")
     public GetRestaurantSearchSummaryRes getRestaurantSearchSummary(@Parameter(description = "keyword는 두 글자 이상으로 해주세요.") @PathVariable String keyword){
-        if(keyword.length() < 2){
+        if(keyword.length() < MIN_KEYWORD_LENGTH){
             throw new SystemException("keyword는 두 글자 이상으로 해주세요.");
         }
         return restaurantService.getSearchSummaryList(keyword);
     }
 
     @GetMapping("/search")
-    public GetRestaurantSearchRes getRestaurantSearchList(@RequestBody SearchFilter searchFilter,
-                                                          @LoginMember(required = false) MemberDTO memberDTO){
-        return restaurantService.getSearchList(searchFilter, memberDTO.getMemberId());
+    @Operation(summary = "식당 필터 검색", description = "지역, 가격 필터링 가능")
+    public GetRestaurantSearchRes searchByFilter(@Parameter(description = "아래 Schemas에서 SearchFilter확인 부탁드립니다.") @RequestBody SearchFilter dto,
+                                                 @LoginMember(required = false) MemberDTO memberDTO){
+        return restaurantService.searchByFilter(dto, memberDTO.getMemberId());
     }
 }

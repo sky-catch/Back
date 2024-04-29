@@ -7,11 +7,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.yaml.snakeyaml.util.UriEncoder;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Component
@@ -23,10 +18,8 @@ public class LogAspect {
 
     @Around("controllerLog()")
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         Signature signature = joinPoint.getSignature();
-        String uri = UriEncoder.decode(request.getRequestURI());
-        log.info( "[REQUEST] {} - {}.{}" , uri, signature.getDeclaringType().getSimpleName(), signature.getName());
+        log.info("[CONTENT] {}.{}", signature.getDeclaringType().getSimpleName(), signature.getName());
         return joinPoint.proceed();
     }
 

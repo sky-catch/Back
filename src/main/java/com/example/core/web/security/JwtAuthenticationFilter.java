@@ -1,18 +1,9 @@
 package com.example.core.web.security;
 
-import static com.example.core.web.security.jwt.JWTUtils.AUTHORIZATION_HEADER;
-import static com.example.core.web.security.jwt.JWTUtils.TOKEN_PREFIX;
-
 import com.example.api.member.MemberMapper;
+import com.example.core.exception.SystemException;
 import com.example.core.web.security.dto.Authority;
 import com.example.core.web.security.jwt.JWTProvider;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.UUID;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +16,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.UUID;
+
+import static com.example.core.web.security.jwt.JWTUtils.AUTHORIZATION_HEADER;
+import static com.example.core.web.security.jwt.JWTUtils.TOKEN_PREFIX;
 
 @Slf4j
 @Component
@@ -39,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JWTProvider jwtProvider;
     private final MemberMapper memberMapper;
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+    private String email;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -50,10 +53,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("JwtAuthenticationFilter.doFilterInternal -> requestURI: {}", request.getRequestURI());
-        String accessToken = getAccessToken(request);
-        if (isValidToken(accessToken)) {
-            setAuthentication(accessToken);
+        try {
+            String accessToken = getAccessToken(request);
+            if (isValidToken(accessToken)) {
+                email = jwtProvider.getMemberEmail(accessToken);
+                log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}", request.getMethod(), request.getRequestURI(), this.email);
+                setAuthentication(accessToken);
+            }
+        }catch (Exception e){
+            log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}", request.getMethod(), request.getRequestURI(), this.email);
+            log.error(e.getMessage());
         }
 
         filterChain.doFilter(request, response);
@@ -68,16 +77,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isValidToken(String accessToken) {
-        return accessToken != null && jwtProvider.validateToken(accessToken);
+        if(StringUtils.isEmpty(accessToken)){
+            throw new SystemException("토큰이 없습니다.");
+        }
+
+        return jwtProvider.validateToken(accessToken);
     }
 
     private void setAuthentication(String accessToken) {
-        String email = jwtProvider.getMemberEmail(accessToken);
         boolean isOwner = jwtProvider.isOwner(accessToken);
-        memberMapper.findByEmail(email).ifPresent(memberDTO -> saveAuthentication(email, isOwner));
+        memberMapper.findByEmail(email).ifPresent(memberDTO -> saveAuthentication(isOwner));
     }
 
-    private void saveAuthentication(String email, boolean isOwner) {
+    private void saveAuthentication(boolean isOwner) {
         UserDetails userDetailsUser = User.builder()
                 .username(email)
                 .password(UUID.randomUUID().toString())

@@ -1,32 +1,25 @@
 package com.example.api.restaurant;
 
-import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
-import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
-
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayService;
-import com.example.api.member.MemberDTO;
+import com.example.api.reservation.dto.TimeSlot;
+import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.reservationavailabledate.ReservationAvailableDateService;
 import com.example.api.restaurant.dto.*;
 import com.example.api.restaurant.dto.enums.Category;
+import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.example.api.restaurant.dto.search.*;
 import com.example.api.review.ReviewMapper;
 import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.exception.SystemException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +49,7 @@ public class RestaurantService {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
+        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.save(dto);
 
         holidayService.createHolidays(dto.getRestaurantId(), req.getDays());
@@ -74,10 +68,11 @@ public class RestaurantService {
     public void updateRestaurant(UpdateRestaurantReq req) {
         RestaurantDTO dto = new RestaurantDTO(req);
 
-        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), dto.getRestaurantId())) {
+        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), req.getOwnerId())) {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
+        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.updateRestaurant(dto);
 
         List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()
@@ -113,11 +108,17 @@ public class RestaurantService {
         return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments);
     }
 
+    @Transactional(readOnly = true)
     public GetRestaurantSearchSummaryRes getSearchSummaryList(String keyword) {
         KoreanCity koreanCity = KoreanCity.searchKoreanCity(keyword);
         int koreanCityCount = 0;
         if (koreanCity != null) {
             koreanCityCount = restaurantMapper.getCountByAddress(koreanCity.getKoreanName());
+        }
+        HotPlace hotPlace = HotPlace.searchHotPlace(keyword);
+        int hotPlaceCount = 0;
+        if (hotPlace != null) {
+            hotPlaceCount = restaurantMapper.getCountByHotPlace(hotPlace.getKoreanName());
         }
 
         Category category = Category.searchCategory(keyword);
@@ -127,47 +128,33 @@ public class RestaurantService {
         }
 
         List<RestaurantSummaryDTO> restaurantSummaryDTOs = restaurantMapper.searchNameByKeyword(keyword);
-        return new GetRestaurantSearchSummaryRes(koreanCity, koreanCityCount, category, categoryCount, restaurantSummaryDTOs);
+
+        String koreanCityName = (koreanCity == null) ? null : koreanCity.getKoreanName();
+        String hotPlaceName = (hotPlace == null) ? null : hotPlace.getKoreanName();
+        String categoryName = (category == null) ? null : category.getKoreanName();
+
+        return new GetRestaurantSearchSummaryRes(koreanCityName, koreanCityCount,
+                hotPlaceName, hotPlaceCount, categoryName, categoryCount, restaurantSummaryDTOs);
     }
 
-    public GetRestaurantSearchRes getSearchList(SearchFilter filter, Long memberId) {
+    @Transactional(readOnly = true)
+    public GetRestaurantSearchRes searchByFilter(SearchFilter filter, Long memberId) {
         long memberPk = (memberId == null) ? 0 :memberId;
 
         filter.setMemberId(memberPk);
         List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter);
-        getRestaurantSearchListRes.forEach(i -> {
-            List<String> possibleReservationTimes =
-                    calculatePossibleReservationTimes(filter.getDate(), filter.getTime(), i.getPossibleReservationTime(), i.getLastOrderTime());
-            i.setPossibleReservationTime(possibleReservationTimes);
-        });
+        getRestaurantSearchListRes.forEach(i ->
+                i.setPossibleReservationTime(calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(), i.getLastOrderTime())));
 
         return new GetRestaurantSearchRes(filter, getRestaurantSearchListRes.size(), getRestaurantSearchListRes);
     }
 
-    private List<String> calculatePossibleReservationTimes(String date, String time, List<String> dbTime, LocalTime lastOrderTime){
-        LocalDateTime dateTime = parseToLDT(date + " " + time);
-        List<LocalDateTime> result = new ArrayList<>();
-        List<LocalDateTime> collect = dbTime.stream().map(this::parseToLDT).collect(Collectors.toList());
-        int point = 0;
-        while(result.size() < MAX_SHOW_RESERVATION
-                && (dateTime.toLocalTime().isBefore(lastOrderTime) || dateTime.toLocalTime().equals(lastOrderTime))){
-            if(collect.size() > point && collect.get(point).isEqual(dateTime)){
-                dateTime = dateTime.plusMinutes(RESERVATION_TIME_INTERVAL);
-                point++;
-            }
-            result.add(dateTime);
-            dateTime = dateTime.plusMinutes(RESERVATION_TIME_INTERVAL);
-        }
-        return result.stream().map(this::parseToTime).collect(Collectors.toList());
+    private List<String> calculatePossibleReservationTimes(String startTime, List<String> dbTime, LocalTime lastOrderTime){
+        TimeSlot reservationTime = new TimeSlot(LocalTime.parse(startTime));
+
+        TimeSlots canReservation = TimeSlots.canReservation(reservationTime, lastOrderTime);
+        TimeSlots alreadyReservation = TimeSlots.of(dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
+        return canReservation.subtract(alreadyReservation).limit3().toTimeString();
     }
 
-    private LocalDateTime parseToLDT(String stringTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(stringTime, formatter);
-    }
-
-    private String parseToTime(LocalDateTime localDateTime){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return localDateTime.format(formatter);
-    }
 }

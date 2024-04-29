@@ -27,10 +27,10 @@
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
-                               last_order_time, close_time, address, detail_address, lat, lng, lunch_price,
+                               last_order_time, close_time, address, detail_address, hot_place, lat, lng, lunch_price,
                                dinner_price, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
-                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{lat}, #{lng},
+                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{hotPlace},#{lat}, #{lng},
                 #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
     </insert>
 
@@ -46,6 +46,7 @@
             last_order_time  = #{lastOrderTime},
             close_time       = #{closeTime},
             address          = #{address},
+            hot_place        = #{hotPlace},
             detail_address   = #{detailAddress},
             lat              = #{lat},
             lng              = #{lng},
@@ -154,7 +155,7 @@
     </select>
 
     <select id="isAlreadyExistsNameExcludeSelf" resultType="boolean">
-        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name} and res.restaurant_id != #{restaurantId});
+        SELECT EXISTS (SELECT * FROM restaurant res WHERE res.name = #{name} and res.owner_id != #{ownerId});
     </select>
 
     <select id="findRestaurantInfoByName" resultMap="restaurantInfo">
@@ -351,6 +352,12 @@
         where category = #{category}
     </select>
 
+    <select id="getCountByHotPlace" resultType="int">
+        select count(*)
+        from restaurant
+        where hot_place = #{hotPlace}
+    </select>
+
     <select id="searchNameByKeyword" resultType="com.example.api.restaurant.dto.search.RestaurantSummaryDTO">
         select r.restaurant_id, r.name, ri.path as imageUrl, CONCAT(r.address, ' ', r.detail_address) as full_address
         from restaurant r
@@ -371,34 +378,34 @@
         <result property="dinnerPrice" column="dinner_price"/>
         <result property="savedRestaurant" column="saved_restaurant"/>
         <result property="lastOrderTime" column="last_order_time"/>
-        <collection property="possibleReservationTime" ofType="String">
-            <result column="possible_reservation_time"/>
+        <collection property="alreadyReservationTime" ofType="String">
+            <result column="already_reservation_time"/>
         </collection>
     </resultMap>
 
     <select id="searchByFilter" resultMap="getRestaurantSearchList"
             parameterType="com.example.api.restaurant.dto.search.SearchFilter">
         select r.restaurant_id, ri.path, r.name, r.content, r.review_avg, r.review_count,
-        r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
-        if(sr.member_id > 0, true, false) as saved_restaurant, rs.time as possible_reservation_time
+            r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
+            if(sr.member_id > 0, true, false) as saved_restaurant, time(rs.time) as already_reservation_time
         from restaurant r
         left join restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'
         left join reservation_available_date rad on rad.restaurant_id = r.restaurant_id
         left join holiday h on h.restaurant_id = r.restaurant_id and h.day = DATE_FORMAT(#{date}, '%W')
-        left join (SELECT rsv.restaurant_id,
-        rsv.time
-        FROM (SELECT *,
-        ROW_NUMBER() OVER (PARTITION BY restaurant_id ORDER BY time) AS row_num
-        FROM reservation where time >= CONCAT(#{date}, ' ',#{time})) rsv
-        WHERE rsv.row_num &lt;= 3) rs ON rs.restaurant_id = r.restaurant_id
+        left join reservation rs ON rs.restaurant_id = r.restaurant_id and cast(rs.TIME as DATE) = #{date} and cast(rs.TIME as TIME) >= #{time} and rs.status != 'CANCEL'
         left join saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{memberId}
-        where
-        rad.begin_date &lt;= #{date} and rad.end_date >= #{date}
+        where rad.begin_date &lt;= #{date} and rad.end_date >= #{date}
         and r.open_time &lt;= #{time} and r.last_order_time >= #{time}
         and h.day is null
 
         <if test="koreanCity != null">
             and r.address = #{koreanCity.koreanName}
+        </if>
+        <if test="hotPlace != null">
+            and r.hot_place = #{hotPlace.koreanName}
+        </if>
+        <if test="category != null">
+            and r.category = #{category.koreanName}
         </if>
         <if test="personCount != 0">
             and r.table_person_max >= #{personCount} and r.table_person_min &lt;= #{personCount}

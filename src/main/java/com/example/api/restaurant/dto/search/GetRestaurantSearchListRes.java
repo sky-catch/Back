@@ -1,5 +1,6 @@
 package com.example.api.restaurant.dto.search;
 
+import com.example.api.reservation.dto.TimeSlots;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -40,5 +41,7 @@ public class GetRestaurantSearchListRes {
     private List<String> possibleReservationTime;
     @JsonIgnore
     private LocalTime lastOrderTime;
+    @JsonIgnore
+    private List<String> alreadyReservationTime;
     
 }

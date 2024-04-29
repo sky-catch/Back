@@ -31,4 +31,8 @@ public class TimeSlot {
     public boolean isBeforeOrEqual(LocalTime other) {
         return time.isBefore(other) || time.equals(other);
     }
+
+    public String toTimeString(){
+        return time.toString();
+    }
 }

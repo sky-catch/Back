@@ -26,7 +26,7 @@ public interface RestaurantMapper {
 
     boolean isAlreadyExistsName(String name);
 
-    boolean isAlreadyExistsNameExcludeSelf(String name, long restaurantId);
+    boolean isAlreadyExistsNameExcludeSelf(String name, long ownerId);
 
     Optional<GetRestaurantInfoRes> findRestaurantInfoByName(@Param("name") String name,
                                                             @Param("memberId") Long memberId);
@@ -44,6 +44,8 @@ public interface RestaurantMapper {
     int getCountByAddress(String koreanCity);
 
     int getCountByCategory(String category);
+
+    int getCountByHotPlace(String hotPlace);
 
     List<RestaurantSummaryDTO> searchNameByKeyword(String keyword);
 

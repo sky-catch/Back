@@ -8,18 +8,6 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>../sky-catch.log</file>
-        <encoder>
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][%-40.40logger{40}]: %msg%n</pattern>
-        </encoder>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>../logback/sky-catch-%d{yyyyMMdd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-    </appender>
-
     <logger name="jdbc" level="OFF"/>
     <logger name="jdbc.sqlonly" level="DEBUG" />
     <logger name="jdbc.sqltiming" level="OFF"/>
@@ -30,7 +18,6 @@
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </root>
 
 

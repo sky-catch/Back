@@ -28,6 +28,7 @@ CREATE TABLE RESTAURANT
     last_order_time  time           NOT NULL,
     close_time       time           NOT NULL,
     address          varchar(25)    NOT NULL,
+    hot_place        varchar(25),
     detail_address   varchar(50)    NOT NULL,
     lat              decimal(16, 7) NOT NULL,
     lng              decimal(17, 7) NOT NULL,

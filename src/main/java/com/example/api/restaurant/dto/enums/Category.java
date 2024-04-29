@@ -1,8 +1,14 @@
 package com.example.api.restaurant.dto.enums;
 
+import com.example.core.exception.SystemException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_VALID_CATEGORY;
 
 @Getter
 public enum Category {
@@ -24,6 +30,18 @@ public enum Category {
 
     Category(String koreanName) {
         this.koreanName = koreanName;
+    }
+
+    @JsonCreator
+    public static Category parsing(String inputValue){
+        Optional<Category> result = Stream.of(Category.values())
+                .filter(category -> category.koreanName.equals(inputValue))
+                .findFirst();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new SystemException(NOT_VALID_CATEGORY);
+        }
     }
 
     public static Category searchCategory(String keyword) {
