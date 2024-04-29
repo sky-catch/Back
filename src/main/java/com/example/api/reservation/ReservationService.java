@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public synchronized void createReservation(CreateReservationDTO dto) {
+    public void createReservation(CreateReservationDTO dto) {
         log.info("주문 생성");
 
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
@@ -58,7 +59,11 @@ public class ReservationService {
 
         ReservationDTO reservation = dto.toReservationDTO();
         reservation.setPaymentId(paymentReady.getPaymentId());
-        reservationMapper.save(reservation);
+        try {
+            reservationMapper.save(reservation);
+        } catch (DuplicateKeyException e) {
+            throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
+        }
 
         alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getReservationDateTime());
     }
@@ -118,10 +123,9 @@ public class ReservationService {
     private void validateDuplicate(CreateReservationDTO dto) {
         DuplicateReservationSearchCond cond = DuplicateReservationSearchCond.builder()
                 .restaurantId(dto.getRestaurantId())
-                .memberId(dto.getMemberId())
                 .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
                 .build();
-        if (reservationMapper.isAlreadyExistsByRestaurantIdAndMemberIdAndTime(cond)) {
+        if (reservationMapper.findByDuplicateSearchCond(cond).isPresent()) {
             throw new SystemException(ReservationExceptionType.ALREADY_EXISTS_AT_TIME);
         }
     }

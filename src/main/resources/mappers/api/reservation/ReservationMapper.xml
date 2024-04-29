@@ -86,14 +86,14 @@
           AND cast(rez.TIME as TIME) >= #{visitTime};
     </select>
 
-    <select id="isAlreadyExistsByRestaurantIdAndMemberIdAndTime"
+    <select id="findByDuplicateSearchCond"
             parameterType="com.example.api.reservation.dto.condition.DuplicateReservationSearchCond"
-            resultType="boolean">
-        SELECT EXISTS (SELECT *
-                       FROM reservation rez
-                       WHERE rez.RESTAURANT_ID = #{restaurantId}
-                         AND rez.MEMBER_ID = #{memberId}
-                         AND rez.TIME = #{time});
+            resultType="com.example.api.reservation.ReservationDTO">
+        SELECT *
+        FROM reservation rez
+        WHERE rez.RESTAURANT_ID = #{restaurantId}
+          AND rez.TIME = #{time};
+--             FOR UPDATE;
     </select>
 
     <update id="updateStatusById">

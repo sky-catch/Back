@@ -22,7 +22,7 @@ public interface ReservationMapper {
     List<ReservationDTO> findByRestaurantIdAndStatusAndSearchDateAndGreaterThanOrEqualToVisitTime(
             ReservationSearchCond cond);
 
-    boolean isAlreadyExistsByRestaurantIdAndMemberIdAndTime(DuplicateReservationSearchCond cond);
+    Optional<ReservationDTO> findByDuplicateSearchCond(DuplicateReservationSearchCond cond);
 
     void updateStatusById(@Param("reservationId") long reservationId, @Param("status") ReservationStatus status);
 

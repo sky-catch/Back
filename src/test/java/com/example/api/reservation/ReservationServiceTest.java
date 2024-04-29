@@ -328,14 +328,15 @@ class ReservationServiceTest {
             reservationService.createReservation(dto);
             latch.countDown();
         });
-        AtomicReference<SystemException> error = new AtomicReference<>();
+        AtomicReference<Exception> error = new AtomicReference<>();
         executorService.execute(() -> {
             try {
                 reservationService.createReservation(dto);
-            } catch (SystemException e) {
+            } catch (Exception e) {
                 error.set(e);
+            } finally {
+                latch.countDown();
             }
-            latch.countDown();
         });
         latch.await();
 
@@ -343,7 +344,7 @@ class ReservationServiceTest {
         int actual = reservationMapper.findAll().size();
         assertEquals(1, actual);
 
-        assertEquals(error.get().getMessage(), ReservationExceptionType.ALREADY_EXISTS_AT_TIME.getMessage());
+        assertEquals(ReservationExceptionType.TIME_DUPLICATE.getMessage(), error.get().getMessage());
 
         executorService.shutdown();
     }
@@ -638,8 +639,8 @@ class ReservationServiceTest {
         // then
         assertThat(reservationMapper.findAll())
                 .extracting("status")
-                .containsExactly(DONE, DONE, DONE, DONE, DONE, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL, CANCEL,
-                        CANCEL, CANCEL, CANCEL);
+                .containsExactly(DONE, DONE, DONE, DONE, DONE, PLANNED, PLANNED, PLANNED, PLANNED, PLANNED, CANCEL,
+                        CANCEL, CANCEL, CANCEL, CANCEL);
     }
 
     @Test
@@ -704,7 +705,7 @@ class ReservationServiceTest {
                     .restaurantId(testRestaurant.getRestaurantId())
                     .memberId(1L)
                     .paymentId(1L)
-                    .time(validVisitTime)
+                    .time(validVisitTime.plusDays(i))
                     .numberOfPeople(tablePersonMin)
                     .memo("메모")
                     .status(status)

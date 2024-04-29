@@ -10,13 +10,11 @@ import lombok.NoArgsConstructor;
 public class DuplicateReservationSearchCond {
 
     private long restaurantId;
-    private long memberId;
     private LocalDateTime time;
 
     @Builder
-    public DuplicateReservationSearchCond(long restaurantId, long memberId, LocalDateTime time) {
+    public DuplicateReservationSearchCond(long restaurantId, LocalDateTime time) {
         this.restaurantId = restaurantId;
-        this.memberId = memberId;
         this.time = time;
     }
 

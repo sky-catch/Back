@@ -18,6 +18,7 @@ public enum ReservationExceptionType implements CommonExceptionType {
     ALREADY_EXISTS_AT_TIME("해당 방문일의 방문 시간에 예약이 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     NOT_MINE("내 예약이 아닙니다.", HttpStatus.BAD_REQUEST),
     NOT_VALID_MINUTES("방문 시간은 정각 또는 30분 단위입니다.", HttpStatus.BAD_REQUEST),
+    TIME_DUPLICATE("해당 시간에 예약이 존재합니다.", HttpStatus.CONFLICT),
     ;
 
     private final String message;

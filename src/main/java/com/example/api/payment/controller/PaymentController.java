@@ -31,6 +31,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    // todo exception 추가하기
     @PostMapping
     @Operation(summary = "결제 검증", description = "아임포트로 실제 결제한 내용과 DB에 저장된 결제가 일치하는 지 검증하는 API입니다.")
     @ApiResponses({

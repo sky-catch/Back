@@ -55,7 +55,8 @@ CREATE TABLE RESERVATION
     status           varchar(25) NOT NULL,
     created_date     timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_date     timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (reservation_id)
+    PRIMARY KEY (reservation_id),
+    UNIQUE KEY `reservation_unique` (`time`,`restaurant_id`)
 );
 
 CREATE TABLE RESTAURANT_IMAGE
