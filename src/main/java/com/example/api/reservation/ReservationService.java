@@ -126,7 +126,7 @@ public class ReservationService {
                 .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
                 .build();
         if (reservationMapper.findByDuplicateSearchCond(cond).isPresent()) {
-            throw new SystemException(ReservationExceptionType.ALREADY_EXISTS_AT_TIME);
+            throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
         }
     }
 
