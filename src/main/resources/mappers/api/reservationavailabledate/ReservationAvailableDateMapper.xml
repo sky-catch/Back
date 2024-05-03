@@ -21,4 +21,10 @@
         SELECT *
         FROM reservation_available_date;
     </select>
+
+    <select id="findByRestaurantId" resultType="com.example.api.reservationavailabledate.ReservationAvailableDateDTO">
+        SELECT *
+        FROM reservation_available_date rad
+        WHERE rad.restaurant_id = #{restaurantId};
+    </select>
 </mapper>

@@ -2,11 +2,15 @@ package com.example.api.owner;
 
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 
+import com.example.api.holiday.HolidayDTO;
+import com.example.api.holiday.HolidayMapper;
 import com.example.api.member.MemberDTO;
 import com.example.api.member.MemberExceptionType;
 import com.example.api.owner.dto.GetOwnerRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.owner.exception.OwnerExceptionType;
+import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
+import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.api.restaurant.dto.GetRestaurantInfoRes;
@@ -26,6 +30,8 @@ public class OwnerService {
     private final OwnerMapper ownerMapper;
     private final RestaurantMapper restaurantMapper;
     private final ReviewMapper reviewMapper;
+    private final ReservationAvailableDateMapper reservationAvailableDateMapper;
+    private final HolidayMapper holidayMapper;
 
     // 사장이라면 Member, Owner 테이블에 정보 저장
     // 회원이라면 Member 테이블에 정보 저장
@@ -57,7 +63,10 @@ public class OwnerService {
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
         List<GetReviewCommentRes> reviewComments = reviewMapper.getReviewComments(
                 getRestaurantInfoRes.getRestaurantId());
-        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments);
+        ReservationAvailableDateDTO reservationAvailableDateDTO = reservationAvailableDateMapper.findByRestaurantId(
+                getRestaurantInfoRes.getRestaurantId());
+        List<HolidayDTO> holidayDTOS = holidayMapper.findByRestaurantId(getRestaurantInfoRes.getRestaurantId());
+        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments, reservationAvailableDateDTO, holidayDTOS);
     }
 
     private void checkOwnerExists(Owner owner) {

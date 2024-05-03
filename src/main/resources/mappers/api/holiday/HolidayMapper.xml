@@ -26,7 +26,8 @@
     </select>
 
     <delete id="delete" parameterType="com.example.api.holiday.HolidayDTO">
-        DELETE FROM holiday
+        DELETE
+        FROM holiday
         WHERE restaurant_id = #{restaurantId}
     </delete>
 
@@ -39,4 +40,10 @@
         DELETE
         FROM holiday;
     </delete>
+
+    <select id="findByRestaurantId" resultType="com.example.api.holiday.HolidayDTO">
+        SELECT *
+        FROM holiday
+        WHERE holiday.restaurant_id = #{restaurantId};
+    </select>
 </mapper>
