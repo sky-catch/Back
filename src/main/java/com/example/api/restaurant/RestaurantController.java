@@ -5,6 +5,7 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.search.GetRestaurantSearchRes;
 import com.example.api.restaurant.dto.search.GetRestaurantSearchSummaryRes;
 import com.example.api.restaurant.dto.search.SearchFilter;
@@ -25,6 +26,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -81,8 +85,14 @@ public class RestaurantController {
 
     @GetMapping("/search")
     @Operation(summary = "식당 필터 검색", description = "지역, 가격 필터링 가능")
-    public GetRestaurantSearchRes searchByFilter(@Parameter(description = "아래 Schemas에서 SearchFilter확인 부탁드립니다.") @RequestBody SearchFilter dto,
+    public GetRestaurantSearchRes searchByFilter(@Parameter(description = "아래 Schemas에서 SearchFilter확인 부탁드립니다.")
+                                                     @ModelAttribute("dto") SearchFilter dto,
                                                  @LoginMember(required = false) MemberDTO memberDTO){
-        return restaurantService.searchByFilter(dto, memberDTO.getMemberId());
+        List<HotPlace> hotPlaceList = null;
+        if(StringUtils.hasText(dto.getHotPlace())){
+            String[] split = dto.getHotPlace().split(",");
+            hotPlaceList = Arrays.stream(split).map(String::trim).map(HotPlace::parsing).collect(Collectors.toList());
+        }
+        return restaurantService.searchByFilter(dto, memberDTO.getMemberId(), hotPlaceList);
     }
 }

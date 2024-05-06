@@ -138,11 +138,11 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public GetRestaurantSearchRes searchByFilter(SearchFilter filter, Long memberId) {
+    public GetRestaurantSearchRes searchByFilter(SearchFilter filter, Long memberId, List<HotPlace> hotPlaceList) {
         long memberPk = (memberId == null) ? 0 :memberId;
 
         filter.setMemberId(memberPk);
-        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter);
+        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter, hotPlaceList);
         getRestaurantSearchListRes.forEach(i ->
                 i.setPossibleReservationTime(calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(), i.getLastOrderTime())));
 

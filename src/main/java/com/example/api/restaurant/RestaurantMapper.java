@@ -1,6 +1,7 @@
 package com.example.api.restaurant;
 
 import com.example.api.restaurant.dto.*;
+import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.search.GetRestaurantSearchListRes;
 import com.example.api.restaurant.dto.search.RestaurantSummaryDTO;
 import com.example.api.restaurant.dto.search.SearchFilter;
@@ -49,7 +50,7 @@ public interface RestaurantMapper {
 
     List<RestaurantSummaryDTO> searchNameByKeyword(String keyword);
 
-    List<GetRestaurantSearchListRes> searchByFilter(SearchFilter filter);
+    List<GetRestaurantSearchListRes> searchByFilter(@Param("filter") SearchFilter filter, @Param("list") List<HotPlace> list);
 
     // for test
     List<RestaurantDTO> findAll();

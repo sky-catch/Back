@@ -391,39 +391,42 @@
         from restaurant r
         left join restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'
         left join reservation_available_date rad on rad.restaurant_id = r.restaurant_id
-        left join holiday h on h.restaurant_id = r.restaurant_id and h.day = DATE_FORMAT(#{date}, '%W')
-        left join reservation rs ON rs.restaurant_id = r.restaurant_id and cast(rs.TIME as DATE) = #{date} and cast(rs.TIME as TIME) >= #{time} and rs.status != 'CANCEL'
-        left join saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{memberId}
-        where rad.begin_date &lt;= #{date} and rad.end_date >= #{date}
-        and r.open_time &lt;= #{time} and r.last_order_time >= #{time}
+        left join holiday h on h.restaurant_id = r.restaurant_id and h.day = DATE_FORMAT(#{filter.date}, '%W')
+        left join reservation rs ON rs.restaurant_id = r.restaurant_id and cast(rs.TIME as DATE) = #{filter.date} and cast(rs.TIME as TIME) >= #{filter.time} and rs.status != 'CANCEL'
+        left join saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{filter.memberId}
+        where rad.begin_date &lt;= #{filter.date} and rad.end_date >= #{filter.date}
+        and r.open_time &lt;= #{filter.time} and r.last_order_time >= #{filter.time}
         and h.day is null
 
-        <if test="koreanCity != null">
-            and r.address = #{koreanCity.koreanName}
+        <if test="filter.koreanCity != null">
+            and r.address = #{filter.koreanCity.koreanName}
         </if>
-        <if test="hotPlace != null">
-            and r.hot_place = #{hotPlace.koreanName}
+        <if test="list != null">
+            and r.hot_place in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item.koreanName}
+            </foreach>
         </if>
-        <if test="category != null">
-            and r.category = #{category.koreanName}
+        <if test="filter.category != null">
+            and r.category = #{filter.category.koreanName}
         </if>
-        <if test="personCount != 0">
-            and r.table_person_max >= #{personCount} and r.table_person_min &lt;= #{personCount}
+        <if test="filter.personCount != 0">
+            and r.table_person_max >= #{filter.personCount} and r.table_person_min &lt;= #{filter.personCount}
         </if>
-        <if test="maxPrice != 0">
-            and r.lunch_price &lt;= #{maxPrice} and r.dinner_price &lt;= #{maxPrice}
+        <if test="filter.maxPrice != 0">
+            and r.lunch_price &lt;= #{filter.maxPrice} and r.dinner_price &lt;= #{filter.maxPrice}
         </if>
-        <if test="minPrice != 0">
-            and r.lunch_price >= #{minPrice} and r.dinner_price >= #{minPrice}
+        <if test="filter.minPrice != 0">
+            and r.lunch_price >= #{filter.minPrice} and r.dinner_price >= #{filter.minPrice}
         </if>
         <choose>
-            <when test="orderType.toString() == 'RatingOrder'">
+            <when test="filter.orderType.toString() == 'RatingOrder'">
                 order by r.review_avg desc
             </when>
-            <when test="orderType.toString() == 'LowPriceOrder'">
+            <when test="filter.orderType.toString() == 'LowPriceOrder'">
                 order by r.dinner_price asc
             </when>
-            <when test="orderType.toString() == 'HighPriceOrder'">
+            <when test="filter.orderType.toString() == 'HighPriceOrder'">
                 order by r.dinner_price desc
             </when>
             <otherwise>

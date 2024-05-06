@@ -1,6 +1,5 @@
 package com.example.api.restaurant.dto.search;
 
-import com.example.api.restaurant.dto.enums.OrderType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,7 @@ public class GetSearchFilter{
         this.time = searchFilter.getTime();
         this.personCount = searchFilter.getPersonCount();
         this.koreanCity = (searchFilter.getKoreanCity() == null) ? null : searchFilter.getKoreanCity().getKoreanName();
-        this.hotPlace = (searchFilter.getHotPlace() == null) ? null : searchFilter.getHotPlace().getKoreanName();
+        this.hotPlace = (searchFilter.getHotPlace() == null) ? null : searchFilter.getHotPlace();
         this.category = (searchFilter.getCategory() == null) ? null : searchFilter.getCategory().getKoreanName();
         this.minPrice = searchFilter.getMinPrice();
         this.maxPrice = searchFilter.getMaxPrice();
