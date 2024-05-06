@@ -1,29 +1,40 @@
 package com.example.api.restaurant;
 
+import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
+import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
+
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.holiday.HolidayDTO;
+import com.example.api.holiday.HolidayMapper;
 import com.example.api.holiday.HolidayService;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
+import com.example.api.reservationavailabledate.ReservationAvailableDateMapper;
 import com.example.api.reservationavailabledate.ReservationAvailableDateService;
-import com.example.api.restaurant.dto.*;
+import com.example.api.restaurant.dto.CreateRestaurantReq;
+import com.example.api.restaurant.dto.GetRestaurantInfo;
+import com.example.api.restaurant.dto.GetRestaurantInfoRes;
+import com.example.api.restaurant.dto.RestaurantDTO;
+import com.example.api.restaurant.dto.UpdateRestaurantReq;
 import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.enums.KoreanCity;
-import com.example.api.restaurant.dto.search.*;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchListRes;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchRes;
+import com.example.api.restaurant.dto.search.GetRestaurantSearchSummaryRes;
+import com.example.api.restaurant.dto.search.RestaurantSummaryDTO;
+import com.example.api.restaurant.dto.search.SearchFilter;
 import com.example.api.review.ReviewMapper;
 import com.example.api.review.dto.GetReviewCommentRes;
 import com.example.core.exception.SystemException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.api.restaurant.exception.RestaurantExceptionType.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +47,8 @@ public class RestaurantService {
     private final HolidayService holidayService;
     private final ReservationAvailableDateService reservationAvailableDateService;
     private final ReviewMapper reviewMapper;
+    private final ReservationAvailableDateMapper reservationAvailableDateMapper;
+    private final HolidayMapper holidayMapper;
 
     @Transactional
     public long createRestaurant(CreateRestaurantReq req) {
@@ -105,7 +118,10 @@ public class RestaurantService {
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
         List<GetReviewCommentRes> reviewComments = reviewMapper.getReviewComments(
                 getRestaurantInfoRes.getRestaurantId());
-        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments);
+        ReservationAvailableDateDTO reservationAvailableDateDTO = reservationAvailableDateMapper.findByRestaurantId(
+                getRestaurantInfoRes.getRestaurantId());
+        List<HolidayDTO> holidayDTOS = holidayMapper.findByRestaurantId(getRestaurantInfoRes.getRestaurantId());
+        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments, reservationAvailableDateDTO, holidayDTOS);
     }
 
     @Transactional(readOnly = true)
@@ -139,21 +155,25 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public GetRestaurantSearchRes searchByFilter(SearchFilter filter, Long memberId, List<HotPlace> hotPlaceList) {
-        long memberPk = (memberId == null) ? 0 :memberId;
+        long memberPk = (memberId == null) ? 0 : memberId;
 
         filter.setMemberId(memberPk);
         List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter, hotPlaceList);
         getRestaurantSearchListRes.forEach(i ->
-                i.setPossibleReservationTime(calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(), i.getLastOrderTime())));
+                i.setPossibleReservationTime(
+                        calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(),
+                                i.getLastOrderTime())));
 
         return new GetRestaurantSearchRes(filter, getRestaurantSearchListRes.size(), getRestaurantSearchListRes);
     }
 
-    private List<String> calculatePossibleReservationTimes(String startTime, List<String> dbTime, LocalTime lastOrderTime){
+    private List<String> calculatePossibleReservationTimes(String startTime, List<String> dbTime,
+                                                           LocalTime lastOrderTime) {
         TimeSlot reservationTime = new TimeSlot(LocalTime.parse(startTime));
 
         TimeSlots canReservation = TimeSlots.canReservation(reservationTime, lastOrderTime);
-        TimeSlots alreadyReservation = TimeSlots.of(dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
+        TimeSlots alreadyReservation = TimeSlots.of(
+                dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
         return canReservation.subtract(alreadyReservation).limit3().toTimeString();
     }
 

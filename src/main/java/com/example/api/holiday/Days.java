@@ -14,7 +14,7 @@ public class Days {
 
     private List<Day> days;
 
-    private Days(List<Day> days) {
+    public Days(List<Day> days) {
         this.days = days;
     }
 
