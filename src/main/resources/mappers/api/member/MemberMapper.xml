@@ -64,10 +64,11 @@
         WHERE member_id = #{memberId};
     </update>
 
-    <resultMap id="myMainRes" type="com.example.api.member.dto.MyMainRes">
+    <resultMap id="myMainDTO" type="com.example.api.member.dto.MyMainDTO">
         <result property="nickname" column="nickname"/>
         <result property="profileImageUrl" column="profile_image_url"/>
         <result property="name" column="name"/>
+        <result property="email" column="email"/>
         <result property="status" column="status"/>
         <collection property="savedRestaurants" ofType="com.example.api.savedrestaurant.SavedRestaurantDTO">
             <id property="memberId" column="sr_member_id"/>
@@ -92,10 +93,11 @@
     </resultMap>
 
     <!--    todo limit 생각해보기 -->
-    <select id="findMyMainById" resultMap="myMainRes">
+    <select id="findMyMainById" resultMap="myMainDTO">
         SELECT mem.nickname,
                mem.profile_image_url,
                mem.name,
+               mem.email,
                mem.status,
                sr.member_id        AS sr_member_id,
                sr.restaurant_id    AS sr_restaurant_id,

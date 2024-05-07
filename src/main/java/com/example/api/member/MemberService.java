@@ -1,7 +1,9 @@
 package com.example.api.member;
 
+import com.example.api.member.dto.MyMainDTO;
 import com.example.api.member.dto.MyMainRes;
 import com.example.api.member.dto.UpdateMemberDTO;
+import com.example.api.owner.OwnerMapper;
 import com.example.core.exception.SystemException;
 import com.example.core.file.S3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberService {
 
     private final MemberMapper memberMapper;
+    private final OwnerMapper ownerMapper;
     private final S3UploadService s3UploadService;
 
     @Transactional(readOnly = true)
@@ -33,7 +36,18 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MyMainRes getMyMainById(long memberId) {
-        return memberMapper.findMyMainById(memberId)
+        MyMainDTO myMainDTO = memberMapper.findMyMainById(memberId)
                 .orElseThrow(() -> new SystemException(MemberExceptionType.NOT_FOUND));
+        boolean existByEmail = ownerMapper.isExistByEmail(myMainDTO.getEmail());
+
+        return MyMainRes.builder()
+                .nickname(myMainDTO.getNickname())
+                .profileImageUrl(myMainDTO.getProfileImageUrl())
+                .name(myMainDTO.getName())
+                .status(myMainDTO.getStatus())
+                .owner(existByEmail)
+                .savedRestaurants(myMainDTO.getSavedRestaurants())
+                .reviews(myMainDTO.getReviews())
+                .build();
     }
 }

@@ -1,6 +1,6 @@
 package com.example.api.member;
 
-import com.example.api.member.dto.MyMainRes;
+import com.example.api.member.dto.MyMainDTO;
 import com.example.api.member.dto.UpdateMemberDTO;
 import com.example.core.oauth.domain.OauthId;
 import java.util.Optional;
@@ -23,5 +23,5 @@ public interface MemberMapper extends UsersMapper<MemberDTO> {
 
     void updateMember(UpdateMemberDTO dto);
 
-    Optional<MyMainRes> findMyMainById(@Param("memberId") long memberId);
+    Optional<MyMainDTO> findMyMainById(@Param("memberId") long memberId);
 }
