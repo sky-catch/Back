@@ -2,14 +2,12 @@ package com.example.api.reservation;
 
 import com.example.api.alarm.AlarmService;
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.owner.dto.GetReservationOfRestaurantRes;
+import com.example.api.owner.dto.ReservationCount;
+import com.example.api.owner.dto.ReservationOfRestaurant;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
-import com.example.api.reservation.dto.CreateReservationDTO;
-import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.MyReservationDTO;
-import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
-import com.example.api.reservation.dto.TimeSlot;
-import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.*;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
@@ -18,17 +16,18 @@ import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -240,5 +239,12 @@ public class ReservationService {
         reservationMapper.bulkUpdateStatusByIds(noShowIds, ReservationStatus.CANCEL);
 
         return noShowIds;
+    }
+
+    public GetReservationOfRestaurantRes getReservationOfRestaurant(long ownerId) {
+        List<ReservationOfRestaurant> reservationOfRestaurant = reservationMapper.getReservationOfRestaurant(ownerId);
+        List<ReservationCount> reservationCount = reservationMapper.getReservationCount(ownerId);
+
+        return new GetReservationOfRestaurantRes(reservationOfRestaurant, reservationCount);
     }
 }

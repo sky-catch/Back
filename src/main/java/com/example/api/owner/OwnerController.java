@@ -3,6 +3,7 @@ package com.example.api.owner;
 import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.CreateOwnerReq;
 import com.example.api.owner.dto.GetOwnerRes;
+import com.example.api.owner.dto.GetReservationOfRestaurantRes;
 import com.example.api.owner.dto.Owner;
 import com.example.api.reservation.ReservationService;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
@@ -17,17 +18,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -84,4 +79,11 @@ public class OwnerController {
 
         reservationService.changeReservationsToNoShowByRequest(req);
     }
+
+    @GetMapping("/reservation")
+    @Operation(summary = "식당의 예약 보기", description = "예약 리스트들과 예약 상태별 숫자를 볼 수 있습니다.")
+    public GetReservationOfRestaurantRes getReservationOfRestaurant(@LoginOwner Owner owner){
+        return reservationService.getReservationOfRestaurant(owner.getOwnerId());
+    }
+
 }

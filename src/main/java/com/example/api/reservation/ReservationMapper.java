@@ -1,11 +1,14 @@
 package com.example.api.reservation;
 
 import com.example.api.mydining.GetMyReservationDTO;
+import com.example.api.owner.dto.ReservationCount;
+import com.example.api.owner.dto.ReservationOfRestaurant;
 import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,4 +39,8 @@ public interface ReservationMapper {
 
     // for test
     List<ReservationDTO> findAll();
+
+    List<ReservationOfRestaurant> getReservationOfRestaurant(long ownerId);
+
+    List<ReservationCount> getReservationCount(long ownerId);
 }

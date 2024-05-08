@@ -243,4 +243,19 @@
         SELECT *
         FROM reservation;
     </select>
+
+    <select id="getReservationOfRestaurant" resultType="com.example.api.owner.dto.ReservationOfRestaurant">
+        select rs.reservation_id, rs.time, rs.member_id, m.name as member_name, rs.number_of_people, rs.memo, rs.status
+        from reservation rs
+        left join member m on m.member_id = rs.member_id
+        where rs.restaurant_id = (select restaurant_id from restaurant where owner_id = #{ownerId})
+        order by time desc
+    </select>
+
+    <select id="getReservationCount" resultType="com.example.api.owner.dto.ReservationCount">
+        select status, count(status) as count
+        from reservation
+        where restaurant_id = (select restaurant_id from restaurant where owner_id = #{ownerId})
+        group by status
+    </select>
 </mapper>
