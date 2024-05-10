@@ -67,6 +67,9 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql("classpath:truncate.sql")
 class ReservationServiceTest {
 
+    // todo 테스트코드 리팩터링 하기
+    // https://dallog.github.io/test-readability/
+
     private ReservationService reservationService;
     private final AlarmService alarmService;
     private final ReservationMapper reservationMapper;
@@ -743,5 +746,43 @@ class ReservationServiceTest {
                 .beginDate(availableBeginDate)
                 .endDate(availableEndDate)
                 .build();
+    }
+
+    private final class TestRestaurant {
+        private RestaurantDTO restaurantDTO;
+
+        public TestRestaurant saveTestRestaurant(Long ownerId, String name, String category, String content,
+                                                 String phone, int tablePersonMax, int tablePersonMin,
+                                                 LocalTime openTime, LocalTime lastOrderTime, LocalTime closeTime,
+                                                 String address, String detailAddress, BigDecimal lat, BigDecimal lng) {
+            this.restaurantDTO = RestaurantDTO.builder()
+                    .ownerId(ownerId)
+                    .name(name)
+                    .category(category)
+                    .content(content)
+                    .phone(phone)
+                    .tablePersonMax(tablePersonMax)
+                    .tablePersonMin(tablePersonMin)
+                    .openTime(openTime)
+                    .lastOrderTime(lastOrderTime)
+                    .closeTime(closeTime)
+                    .address(address)
+                    .detailAddress(detailAddress)
+                    .lat(lat)
+                    .lng(lng)
+                    .build();
+            restaurantMapper.save(restaurantDTO);
+            return this;
+        }
+
+        public TestRestaurant saveTestRestaurantImage(String path, RestaurantImageType restaurantImageType) {
+            List<AddRestaurantImageWithTypeDTO> list = new ArrayList<>();
+            list.add(AddRestaurantImageWithTypeDTO.builder()
+                    .path(path)
+                    .restaurantImageType(restaurantImageType)
+                    .build());
+            restaurantImageMapper.addRestaurantImages(this.restaurantDTO.getRestaurantId(), list);
+            return this;
+        }
     }
 }

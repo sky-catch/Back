@@ -24,4 +24,14 @@
         </foreach>
     </delete>
 
+
+    <!--    todo bulk insert, delete로 변경하기-->
+    <insert id="updateFacility" parameterType="com.example.api.facility.dto.FacilityReq">
+        UPDATE store_facility
+        SET
+        <foreach collection="facilityIds" item="id" index="idx" separator=",">
+            facility_id = #{id}
+            WHERE restaurant_id = #{restaurantId} AND facility_id = #{item};
+        </foreach>
+    </insert>
 </mapper>

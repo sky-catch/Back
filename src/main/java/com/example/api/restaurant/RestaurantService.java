@@ -87,6 +87,7 @@ public class RestaurantService {
 
         dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.updateRestaurant(dto);
+        storeFacilityMapper.updateFacility(dto.getRestaurantId(), req.getFacilityIds());
 
         List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()
                 .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
@@ -158,7 +159,8 @@ public class RestaurantService {
         long memberPk = (memberId == null) ? 0 : memberId;
 
         filter.setMemberId(memberPk);
-        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter, hotPlaceList);
+        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter,
+                hotPlaceList);
         getRestaurantSearchListRes.forEach(i ->
                 i.setPossibleReservationTime(
                         calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(),

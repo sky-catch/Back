@@ -1,6 +1,5 @@
 package com.example.api.restaurant.dto;
 
-import com.example.api.facility.dto.Facility;
 import com.example.api.holiday.Days;
 import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.KoreanCity;
@@ -85,10 +84,8 @@ public class UpdateRestaurantReq {
     @Schema(description = "예약 가능 종료 날짜", example = "2024-04-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate reservationEndDate;
-    @Schema(description = "[(PARKING, 주차 가능), (VALET_PARKING, 발렛 가능), (CORKAGE, 콜키지 가능), (CORKAGE_FREE, 콜키지 프리)," +
-            " (RENT, 대관 가능), (NO_KIDS, 노키즈존), (WINE_DELIVERY, 와인배송), (LETTERING, 레터링), (SOMMELIER, 전문 소믈리에)," +
-            " (PET, 반려동물 동반), (ACCESSIBLE, 장애인 편의시설)]", example = "[\"PARKING\", \"CORKAGE\"]")
-    private List<Facility> facilities;
+    @Schema(description = "시설 ID들", example = "[3, 4]")
+    private List<Long> facilityIds;
 
     @Schema(hidden = true)
     private long ownerId;
