@@ -5,6 +5,7 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_F
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
 
 import com.example.api.facility.StoreFacilityMapper;
+import com.example.api.facility.dto.FacilityReq;
 import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayMapper;
 import com.example.api.holiday.HolidayService;
@@ -79,14 +80,18 @@ public class RestaurantService {
 
     @Transactional
     public void updateRestaurant(UpdateRestaurantReq req) {
-        RestaurantDTO dto = new RestaurantDTO(req);
-
-        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(dto.getName(), req.getOwnerId())) {
+        if (restaurantMapper.isAlreadyExistsNameExcludeSelf(req.getName(), req.getOwnerId())) {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
+        RestaurantDTO dto = restaurantMapper.findByOwnerId(req.getOwnerId())
+                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+
         dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.updateRestaurant(dto);
+
+        storeFacilityMapper.deleteFacility(new FacilityReq(dto.getRestaurantId(), req.getFacilities()));
+        storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
 
         List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()
                 .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
@@ -158,7 +163,8 @@ public class RestaurantService {
         long memberPk = (memberId == null) ? 0 : memberId;
 
         filter.setMemberId(memberPk);
-        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter, hotPlaceList);
+        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter,
+                hotPlaceList);
         getRestaurantSearchListRes.forEach(i ->
                 i.setPossibleReservationTime(
                         calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(),

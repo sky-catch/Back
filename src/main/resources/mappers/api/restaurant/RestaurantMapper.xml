@@ -30,7 +30,7 @@
                                last_order_time, close_time, address, detail_address, hot_place, lat, lng, lunch_price,
                                dinner_price, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
-                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{hotPlace},#{lat}, #{lng},
+                #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{hotPlace}, #{lat}, #{lng},
                 #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
     </insert>
 
@@ -186,14 +186,15 @@
                resi.type,
                resn.notification_id,
                resn.title,
-               resn.content                                                                       as notification_content,
+               resn.content                                        as notification_content,
                resn.start_date,
                resn.end_date,
-               fc.name                                                                            as facility_name,
-               fc.path                                                                            as facility_path,
+               fc.name                                             as facility_name,
+               fc.path                                             as facility_path,
                EXISTS (SELECT *
                        FROM saved_restaurant sr
-                       WHERE sr.member_id = #{memberId} and sr.restaurant_id = res.restaurant_id) as is_saved
+                       WHERE sr.member_id = #{memberId}
+                         and sr.restaurant_id = res.restaurant_id) as is_saved
         FROM restaurant res
                  LEFT OUTER JOIN restaurant_image resi ON resi.restaurant_id = res.restaurant_id
                  LEFT OUTER JOIN restaurant_notification resn ON resn.restaurant_id = res.restaurant_id
@@ -319,6 +320,33 @@
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
 
+    <select id="findByOwnerId" resultType="com.example.api.restaurant.dto.RestaurantDTO">
+        SELECT res.restaurant_id,
+               res.owner_id,
+               res.name,
+               res.category,
+               res.content,
+               res.phone,
+               res.table_person_max,
+               res.table_person_min,
+               res.open_time,
+               res.last_order_time,
+               res.close_time,
+               res.address,
+               res.detail_address,
+               res.lat,
+               res.lng,
+               res.lunch_price,
+               res.dinner_price,
+               res.saved_count,
+               res.review_count,
+               res.review_avg,
+               res.created_date,
+               res.updated_date
+        FROM restaurant res
+        WHERE res.owner_id = #{ownerId}
+    </select>
+
     <update id="increaseSavedCount" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
         UPDATE RESTAURANT
         SET SAVED_COUNT = SAVED_COUNT + 1
@@ -386,13 +414,14 @@
     <select id="searchByFilter" resultMap="getRestaurantSearchList"
             parameterType="com.example.api.restaurant.dto.search.SearchFilter">
         select r.restaurant_id, ri.path, r.name, r.content, r.review_avg, r.review_count,
-            r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
-            if(sr.member_id > 0, true, false) as saved_restaurant, time(rs.time) as already_reservation_time
+        r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
+        if(sr.member_id > 0, true, false) as saved_restaurant, time(rs.time) as already_reservation_time
         from restaurant r
         left join restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'
         left join reservation_available_date rad on rad.restaurant_id = r.restaurant_id
         left join holiday h on h.restaurant_id = r.restaurant_id and h.day = DATE_FORMAT(#{filter.date}, '%W')
-        left join reservation rs ON rs.restaurant_id = r.restaurant_id and cast(rs.TIME as DATE) = #{filter.date} and cast(rs.TIME as TIME) >= #{filter.time} and rs.status != 'CANCEL'
+        left join reservation rs ON rs.restaurant_id = r.restaurant_id and cast(rs.TIME as DATE) = #{filter.date} and
+        cast(rs.TIME as TIME) >= #{filter.time} and rs.status != 'CANCEL'
         left join saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{filter.memberId}
         where rad.begin_date &lt;= #{filter.date} and rad.end_date >= #{filter.date}
         and r.open_time &lt;= #{filter.time} and r.last_order_time >= #{filter.time}
