@@ -54,7 +54,7 @@ public class OwnerService {
     @Transactional
     public void deleteOwner(long ownerId) {
         checkOwnerExists(ownerMapper.getOwner(ownerId));
-        ownerMapper.deleteOwner(ownerId, HumanStatus.WITHDRAWN);
+        ownerMapper.deleteOwner(ownerId);
     }
 
     @Transactional(readOnly = true)

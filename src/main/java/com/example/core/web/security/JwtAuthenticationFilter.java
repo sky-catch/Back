@@ -52,18 +52,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        //todo queryString 한글 문제
+
         try {
             String accessToken = getAccessToken(request);
             if (isValidToken(accessToken)) {
                 email = jwtProvider.getMemberEmail(accessToken);
-                log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                        request.getMethod(), request.getRequestURI(), this.email, request.getQueryString());
+                log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}", request.getMethod(), request.getRequestURI(), this.email);
                 setAuthentication(accessToken);
             }
         }catch (Exception e){
-            log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                    request.getMethod(), request.getRequestURI(), this.email, request.getQueryString());
+            log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}", request.getMethod(), request.getRequestURI(), this.email);
             log.error(e.getMessage());
         }
 

@@ -35,8 +35,7 @@
     </select>
 
     <update id="deleteOwner">
-        UPDATE owner
-        SET STATUS = #{status}
+        delete from owner
         WHERE OWNER_ID = #{ownerId}
     </update>
 
