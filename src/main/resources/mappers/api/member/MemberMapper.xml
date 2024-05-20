@@ -46,11 +46,6 @@
                 #{oauthServer})
     </select>
 
-    <select id="deleteAll">
-        DELETE
-        FROM member;
-    </select>
-
     <select id="findById" resultType="com.example.api.member.MemberDTO">
         SELECT *
         FROM member
