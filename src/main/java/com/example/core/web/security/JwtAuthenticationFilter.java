@@ -53,22 +53,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        //todo queryString 한글 문제
         try {
             String accessToken = getAccessToken(request);
             if (isValidToken(accessToken)) {
                 email = jwtProvider.getMemberEmail(accessToken);
                 log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                        request.getMethod(), request.getRequestURI(), this.email, URLDecoder.decode(request.getQueryString()));
+                        request.getMethod(), request.getRequestURI(), this.email, getDecodedQueryString(request));
                 setAuthentication(accessToken);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                    request.getMethod(), request.getRequestURI(), this.email, URLDecoder.decode(request.getQueryString()));
+                    request.getMethod(), request.getRequestURI(), this.email, getDecodedQueryString(request));
             log.error(e.getMessage());
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String getDecodedQueryString(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        if (queryString == null) {
+            return ""; // 또는 null을 반환하거나 다른 적절한 값
+        }
+        return URLDecoder.decode(queryString);
     }
 
     private String getAccessToken(HttpServletRequest request) {

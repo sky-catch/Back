@@ -78,7 +78,8 @@ public class RestaurantController {
 
     @GetMapping("/search/{keyword}")
     @Operation(summary = "식당 요약 검색", description = "검색시 지역, 카테고리, 식당명 중에서 해당되는 것에 결과가 나옵니다.")
-    public GetRestaurantSearchSummaryRes getRestaurantSearchSummary(@Parameter(description = "keyword는 두 글자 이상으로 해주세요.") @PathVariable String keyword){
+    public GetRestaurantSearchSummaryRes getRestaurantSearchSummary(@Parameter(description = "keyword는 두 글자 이상으로 해주세요.")
+                                                                        @PathVariable String keyword){
         if(keyword.length() < MIN_KEYWORD_LENGTH){
             throw new SystemException("keyword는 두 글자 이상으로 해주세요.");
         }
