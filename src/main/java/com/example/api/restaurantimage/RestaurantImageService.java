@@ -32,7 +32,7 @@ public class RestaurantImageService {
         if (!findRestaurant.isOwner(ownerId)) {
             throw new SystemException(NOT_OWNER.getMessage());
         }
-
+        restaurantImageMapper.deleteRestaurantImages(restaurantId);
         restaurantImageMapper.addRestaurantImages(restaurantId, getAddRestaurantImageWitTypeDTOS(dto));
     }
 

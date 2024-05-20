@@ -16,6 +16,11 @@
         </foreach>
     </insert>
 
+    <delete id="deleteRestaurantImages">
+        delete from restaurant_image
+        where restaurant_id = #{restaurantId}
+    </delete>
+
     <select id="getRestaurantImagesBy" parameterType="long" resultType="String">
         SELECT path
         FROM restaurant_image
