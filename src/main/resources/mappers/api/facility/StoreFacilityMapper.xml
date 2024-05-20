@@ -24,4 +24,10 @@
         </foreach>
     </delete>
 
+    <delete id="delete">
+        DELETE
+        FROM store_facility
+        WHERE restaurant_id = #{restaurantId};
+    </delete>
+
 </mapper>

@@ -41,9 +41,10 @@ public class RestaurantDTO extends BaseDTO {
     private long reviewCount;
     private float reviewAvg;
 
-    // todo 생성자 값 검증하기 - tablePersonMax < tablePersonMin
-
     public RestaurantDTO(CreateRestaurantReq req) {
+        if (req.getTablePersonMax() < req.getTablePersonMin()) {
+            throw new SystemException(RestaurantExceptionType.NOT_VALID_TABLE_PERSON);
+        }
         this.ownerId = req.getOwnerId();
         this.name = req.getName();
         this.category = req.getCategory().getKoreanName();
@@ -58,11 +59,15 @@ public class RestaurantDTO extends BaseDTO {
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
+        this.hotPlace = HotPlace.getHotPlaceValue(req.getDetailAddress());
         this.lat = req.getLat();
         this.lng = req.getLng();
     }
 
     public RestaurantDTO(UpdateRestaurantReq req) {
+        if (req.getTablePersonMax() < req.getTablePersonMin()) {
+            throw new SystemException(RestaurantExceptionType.NOT_VALID_TABLE_PERSON);
+        }
         this.restaurantId = req.getRestaurantId();
         this.ownerId = req.getOwnerId();
         this.name = req.getName();
@@ -95,6 +100,25 @@ public class RestaurantDTO extends BaseDTO {
             throw new SystemException(RestaurantExceptionType.NOT_VALID_SAVED_COUNT);
         }
         this.savedCount--;
+    }
+
+    public void update(UpdateRestaurantReq req) {
+        this.name = req.getName();
+        this.category = req.getCategory().getKoreanName();
+        this.content = req.getContent();
+        this.phone = req.getPhone();
+        this.tablePersonMax = req.getTablePersonMax();
+        this.tablePersonMin = req.getTablePersonMin();
+        this.openTime = req.getOpenTime();
+        this.lastOrderTime = req.getLastOrderTime();
+        this.closeTime = req.getCloseTime();
+        this.address = req.getAddress().getKoreanName();
+        this.detailAddress = req.getDetailAddress();
+        this.hotPlace = HotPlace.getHotPlaceValue(req.getDetailAddress());
+        this.lat = req.getLat();
+        this.lng = req.getLng();
+        this.lunchPrice = req.getLunchPrice();
+        this.dinnerPrice = req.getDinnerPrice();
     }
 
     // for mybatis

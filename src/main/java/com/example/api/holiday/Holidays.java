@@ -1,6 +1,7 @@
 package com.example.api.holiday;
 
 import com.example.core.exception.SystemException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class Holidays {
         return new Holidays(dayList);
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return days.isEmpty();
     }

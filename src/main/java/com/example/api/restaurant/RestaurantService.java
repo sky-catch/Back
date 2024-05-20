@@ -61,7 +61,6 @@ public class RestaurantService {
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
-        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.save(dto);
 
         holidayService.createHolidays(dto.getRestaurantId(), req.getHolidays());
@@ -84,16 +83,34 @@ public class RestaurantService {
 
         RestaurantDTO dto = restaurantMapper.findByOwnerId(req.getOwnerId())
                 .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
-
-        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
+        dto.update(req);
         restaurantMapper.updateRestaurant(dto);
 
-        storeFacilityMapper.deleteFacility(new FacilityReq(dto.getRestaurantId(), req.getFacilities()));
-        storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
+        updateStoreFacility(req, dto.getRestaurantId());
 
-        holidayService.update(dto.getRestaurantId(), req.getHolidays());
+        updateHolidays(req, dto.getRestaurantId());
+
         reservationAvailableDateService.update(new ReservationAvailableDateDTO(req));
 
+    }
+
+    private void updateStoreFacility(UpdateRestaurantReq req, long restaurantId) {
+        if (req.isEmptyFacilities()) {
+            storeFacilityMapper.delete(restaurantId);
+            return;
+        }
+
+        storeFacilityMapper.deleteFacility(new FacilityReq(restaurantId, req.getFacilities()));
+        storeFacilityMapper.createFacility(restaurantId, req.getFacilities());
+    }
+
+    private void updateHolidays(UpdateRestaurantReq req, long restaurantId) {
+        if (req.isEmptyHolidays()) {
+            holidayMapper.delete(restaurantId);
+            return;
+        }
+
+        holidayService.update(restaurantId, req.getHolidays());
     }
 
     @Transactional(readOnly = true)
