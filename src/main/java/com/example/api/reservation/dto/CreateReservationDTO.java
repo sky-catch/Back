@@ -64,6 +64,11 @@ public class CreateReservationDTO {
                 .build();
     }
 
+    public boolean isValidMinute() {
+        int minute = this.time.getMinute();
+        return minute == 0 || minute == 30;
+    }
+
     public LocalDate getVisitDate() {
         return time.toLocalDate();
     }
