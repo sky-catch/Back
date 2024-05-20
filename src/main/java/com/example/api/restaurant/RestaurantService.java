@@ -41,8 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RestaurantService {
 
-    public static final int MAX_SHOW_RESERVATION = 3;
-    public static final int RESERVATION_TIME_INTERVAL = 30;
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
     private final HolidayService holidayService;
@@ -93,11 +91,7 @@ public class RestaurantService {
         storeFacilityMapper.deleteFacility(new FacilityReq(dto.getRestaurantId(), req.getFacilities()));
         storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
 
-        List<HolidayDTO> holidayDTOs = req.getHolidays().getDays().stream()
-                .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
-                .collect(Collectors.toList());
-
-        holidayService.update(dto.getRestaurantId(), holidayDTOs);
+        holidayService.update(dto.getRestaurantId(), req.getHolidays());
         reservationAvailableDateService.update(new ReservationAvailableDateDTO(req));
 
     }

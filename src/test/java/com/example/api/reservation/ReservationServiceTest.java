@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.api.alarm.AlarmService;
 import com.example.api.holiday.Day;
-import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayMapper;
+import com.example.api.holiday.Holidays;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
@@ -108,7 +108,7 @@ class ReservationServiceTest {
 
         saveTestRestaurant();
         saveTestRestaurantImage();
-        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+        holidayMapper.saveAll(testRestaurant.getRestaurantId(), getMondayAndTuesdayHolidays());
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
     }
 
@@ -730,11 +730,8 @@ class ReservationServiceTest {
         return payment;
     }
 
-    private List<HolidayDTO> getMondayAndTuesdayHolidays() {
-        HolidayDTO monday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.MONDAY).build();
-        HolidayDTO tuesday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.TUESDAY)
-                .build();
-        return Arrays.asList(monday, tuesday);
+    private Holidays getMondayAndTuesdayHolidays() {
+        return Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
     }
 
     private ReservationAvailableDateDTO getTestReservationAvailableDate(long restaurantId) {

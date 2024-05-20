@@ -2,8 +2,6 @@ package com.example.api.holiday;
 
 import com.example.api.holiday.exception.HolidayExceptionType;
 import com.example.core.exception.SystemException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,23 +21,15 @@ public class HolidayService {
             return;
         }
 
-        List<Day> holidayList = holidays.getDays();
-        if (holidayMapper.isAlreadyExistsDays(restaurantId, holidayList)) {
+        if (holidayMapper.isAlreadyExistsDays(restaurantId, holidays)) {
             throw new SystemException(HolidayExceptionType.ALREADY_EXISTS.getMessage());
         }
 
-        List<HolidayDTO> holidayDTOs = holidayList.stream()
-                .map(day -> HolidayDTO.builder()
-                        .restaurantId(restaurantId)
-                        .day(day)
-                        .build())
-                .collect(Collectors.toList());
-
-        holidayMapper.saveAll(holidayDTOs);
+        holidayMapper.saveAll(restaurantId, holidays);
     }
 
-    public void update(long restaurantId, List<HolidayDTO> holidayDTOs) {
+    public void update(long restaurantId, Holidays holidays) {
         holidayMapper.delete(restaurantId);
-        holidayMapper.saveAll(holidayDTOs);
+        holidayMapper.saveAll(restaurantId, holidays);
     }
 }
