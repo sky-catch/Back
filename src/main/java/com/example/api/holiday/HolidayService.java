@@ -17,18 +17,18 @@ public class HolidayService {
     private final HolidayMapper holidayMapper;
 
     @Transactional
-    public void createHolidays(long restaurantId, Days days) {
-        if (days == null || days.getDays().isEmpty()) {
+    public void createHolidays(long restaurantId, Holidays holidays) {
+        if (holidays == null || holidays.isEmpty()) {
             log.info("휴일이 없음");
             return;
         }
 
-        List<Day> dayList = days.getDays();
-        if (holidayMapper.isAlreadyExistsDays(restaurantId, dayList)) {
+        List<Day> holidayList = holidays.getDays();
+        if (holidayMapper.isAlreadyExistsDays(restaurantId, holidayList)) {
             throw new SystemException(HolidayExceptionType.ALREADY_EXISTS.getMessage());
         }
 
-        List<HolidayDTO> holidayDTOs = dayList.stream()
+        List<HolidayDTO> holidayDTOs = holidayList.stream()
                 .map(day -> HolidayDTO.builder()
                         .restaurantId(restaurantId)
                         .day(day)

@@ -15,9 +15,9 @@
     <select id="isAlreadyExistsDays" resultType="boolean">
         SELECT EXISTS (SELECT * FROM holiday h WHERE h.restaurant_id = #{restaurantId}
         <choose>
-            <when test="days.size != 0">
+            <when test="holidays.size != 0">
                 AND h.day IN
-                <foreach collection="days" item="day" index="index" open="(" close=")" separator=",">
+                <foreach collection="holidays" item="day" index="index" open="(" close=")" separator=",">
                     #{day}
                 </foreach>
             </when>

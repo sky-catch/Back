@@ -66,7 +66,7 @@ public class RestaurantService {
         dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.save(dto);
 
-        holidayService.createHolidays(dto.getRestaurantId(), req.getDays());
+        holidayService.createHolidays(dto.getRestaurantId(), req.getHolidays());
 
         reservationAvailableDateService.create(dto.getRestaurantId(),
                 req.getReservationBeginDate(), req.getReservationEndDate());
@@ -93,7 +93,7 @@ public class RestaurantService {
         storeFacilityMapper.deleteFacility(new FacilityReq(dto.getRestaurantId(), req.getFacilities()));
         storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
 
-        List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()
+        List<HolidayDTO> holidayDTOs = req.getHolidays().getDays().stream()
                 .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
                 .collect(Collectors.toList());
 

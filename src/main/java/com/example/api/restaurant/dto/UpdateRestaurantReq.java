@@ -1,7 +1,7 @@
 package com.example.api.restaurant.dto;
 
 import com.example.api.facility.dto.Facility;
-import com.example.api.holiday.Days;
+import com.example.api.holiday.Holidays;
 import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -75,8 +75,8 @@ public class UpdateRestaurantReq {
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
-    @Schema(description = "휴무일", example = "{\"days\": [\"MONDAY\", \"TUESDAY\"]}")
-    private Days days;
+    @Schema(description = "휴무일", example = "{\"holidays\": [\"MONDAY\", \"TUESDAY\"]}")
+    private Holidays holidays;
     @NotNull
     @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")

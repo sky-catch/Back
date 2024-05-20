@@ -60,11 +60,11 @@ class HolidayServiceTest {
     void test1() {
         // given
         long restaurantId = testRestaurant.getRestaurantId();
-        Days days = Days.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
+        Holidays holidays = Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
         long before = holidayMapper.findAll().size();
 
         // when
-        holidayService.createHolidays(restaurantId, days);
+        holidayService.createHolidays(restaurantId, holidays);
 
         // then
         long after = holidayMapper.findAll().size();
@@ -90,10 +90,10 @@ class HolidayServiceTest {
                 .build();
         List<HolidayDTO> holidayDTOs = Arrays.asList(dto1, dto2, dto3);
         holidayMapper.saveAll(holidayDTOs);
-        Days days = Days.of(Arrays.asList(Day.MONDAY.getValue(), Day.THURSDAY.getValue()));
+        Holidays holiDays = Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.THURSDAY.getValue()));
 
         // when
-        assertThatThrownBy(() -> holidayService.createHolidays(restaurantId, days))
+        assertThatThrownBy(() -> holidayService.createHolidays(restaurantId, holiDays))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(HolidayExceptionType.ALREADY_EXISTS.getMessage());
     }

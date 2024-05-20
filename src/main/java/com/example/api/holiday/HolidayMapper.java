@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface HolidayMapper {
 
-    boolean isAlreadyExistsDays(long restaurantId, List<Day> days);
+    boolean isAlreadyExistsDays(long restaurantId, @Param("holidays") List<Day> holidays);
 
     void saveAll(List<HolidayDTO> holidayDTOs);
 
