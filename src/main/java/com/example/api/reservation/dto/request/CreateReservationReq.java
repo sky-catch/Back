@@ -31,4 +31,7 @@ public class CreateReservationReq {
 
     @Schema(description = "결제할 금액", example = "10000")
     private int amountToPay;
+
+    @Schema(description = "결제가 필요한 경우 true, 그렇지 않은 경우 false", example = "true")
+    private boolean shouldPay;
 }

@@ -237,7 +237,7 @@ class ReservationServiceTest {
     void createReservation_with_holiday() {
         // given
         LocalDateTime notValidVisitDateTime = LocalDateTime.of(holiday, openTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
 
@@ -253,7 +253,7 @@ class ReservationServiceTest {
         // given
         LocalTime notOpenTime = openTime.minusMinutes(1);
         LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
 
@@ -267,7 +267,7 @@ class ReservationServiceTest {
     @DisplayName("방문일이 잘못된 경우 예외 발생하는 테스트")
     void createReservation_with_not_valid_visit_date() {
         // given
-        CreateReservationReq req = new CreateReservationReq(notValidVisitTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
 
@@ -283,7 +283,7 @@ class ReservationServiceTest {
         // given
         LocalTime notOpenTime = openTime.plusMinutes(1);
         LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L, req);
 
         // expected
@@ -296,7 +296,7 @@ class ReservationServiceTest {
     @DisplayName("방문일의 방문 시간에 예약이 이미 존재하는 경우 예외 발생하는 테스트")
     void createReservation_with_duplicate() {
         // given
-        CreateReservationReq req = new CreateReservationReq(validVisitTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(validVisitTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
         reservationService.createReservation(dto);
