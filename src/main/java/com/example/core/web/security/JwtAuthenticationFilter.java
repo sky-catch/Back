@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -58,12 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isValidToken(accessToken)) {
                 email = jwtProvider.getMemberEmail(accessToken);
                 log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                        request.getMethod(), request.getRequestURI(), this.email, request.getQueryString());
+                        request.getMethod(), request.getRequestURI(), this.email, URLDecoder.decode(request.getQueryString()));
                 setAuthentication(accessToken);
             }
         }catch (Exception e){
             log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                    request.getMethod(), request.getRequestURI(), this.email, request.getQueryString());
+                    request.getMethod(), request.getRequestURI(), this.email, URLDecoder.decode(request.getQueryString()));
             log.error(e.getMessage());
         }
 

@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/restaurants")
 @RequiredArgsConstructor
@@ -93,6 +95,8 @@ public class RestaurantController {
             String[] split = dto.getHotPlace().split(",");
             hotPlaceList = Arrays.stream(split).map(String::trim).map(HotPlace::parsing).collect(Collectors.toList());
         }
-        return restaurantService.searchByFilter(dto, memberDTO.getMemberId(), hotPlaceList);
+        GetRestaurantSearchRes getRestaurantSearchRes = restaurantService.searchByFilter(dto, memberDTO.getMemberId(), hotPlaceList);
+        log.info(getRestaurantSearchRes.toString());
+        return getRestaurantSearchRes;
     }
 }
