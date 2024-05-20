@@ -1,6 +1,6 @@
 package com.example.api.member.dto;
 
-import com.example.api.review.dto.ReviewDTO;
+import com.example.api.review.dto.ReviewAndRestaurantAndImageDTO;
 import com.example.api.savedrestaurant.SavedRestaurantDTO;
 import com.example.core.dto.HumanStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,11 +25,11 @@ public class MyMainRes {
     @Schema(description = "저장한 식당들")
     private List<SavedRestaurantDTO> savedRestaurants;
     @Schema(description = "작성한 리뷰들")
-    private List<ReviewDTO> reviews;
+    private List<ReviewAndRestaurantAndImageDTO> reviews;
 
     @Builder
     public MyMainRes(String nickname, String profileImageUrl, String name, HumanStatus status, boolean owner,
-                     List<SavedRestaurantDTO> savedRestaurants, List<ReviewDTO> reviews) {
+                     List<SavedRestaurantDTO> savedRestaurants, List<ReviewAndRestaurantAndImageDTO> reviews) {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.name = name;
