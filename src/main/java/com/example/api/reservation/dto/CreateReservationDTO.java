@@ -25,10 +25,11 @@ public class CreateReservationDTO {
     private String memo;
     private ReservationStatus status;
     private int amountToPay;
+    private boolean shouldPay;
 
     @Builder
     private CreateReservationDTO(long restaurantId, long memberId, LocalDateTime time, int numberOfPeople, String memo,
-                                 ReservationStatus status, int amountToPay) {
+                                 ReservationStatus status, int amountToPay, boolean shouldPay) {
         this.restaurantId = restaurantId;
         this.memberId = memberId;
         this.time = time;
@@ -36,6 +37,7 @@ public class CreateReservationDTO {
         this.memo = memo;
         this.status = status;
         this.amountToPay = amountToPay;
+        this.shouldPay = shouldPay;
     }
 
     public static CreateReservationDTO of(long restaurantId, long memberId, CreateReservationReq req) {
@@ -47,6 +49,7 @@ public class CreateReservationDTO {
                 .memo(req.getMemo())
                 .status(PLANNED)
                 .amountToPay(req.getAmountToPay())
+                .shouldPay(req.isShouldPay())
                 .build();
     }
 
@@ -59,6 +62,11 @@ public class CreateReservationDTO {
                 .memo(memo)
                 .status(status)
                 .build();
+    }
+
+    public boolean isValidMinute() {
+        int minute = this.time.getMinute();
+        return minute == 0 || minute == 30;
     }
 
     public LocalDate getVisitDate() {

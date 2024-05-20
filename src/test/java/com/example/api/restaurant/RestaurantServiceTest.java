@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.api.holiday.Days;
+import com.example.api.holiday.Holidays;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantImageRes;
 import com.example.api.restaurant.dto.GetRestaurantInfoRes;
@@ -90,7 +90,7 @@ class RestaurantServiceTest {
                 .detailAddress("detailAddress")
                 .lat(BigDecimal.valueOf(33.450701))
                 .lng(BigDecimal.valueOf(126.570667))
-                .days(Days.of(new ArrayList<>()))
+                .holidays(Holidays.of(new ArrayList<>()))
                 .build();
     }
 

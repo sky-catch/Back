@@ -10,7 +10,6 @@ import com.example.core.exception.SystemException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,11 +59,11 @@ class HolidayServiceTest {
     void test1() {
         // given
         long restaurantId = testRestaurant.getRestaurantId();
-        Days days = Days.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
+        Holidays holidays = Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
         long before = holidayMapper.findAll().size();
 
         // when
-        holidayService.createHolidays(restaurantId, days);
+        holidayService.createHolidays(restaurantId, holidays);
 
         // then
         long after = holidayMapper.findAll().size();
@@ -76,24 +75,12 @@ class HolidayServiceTest {
     void test2() {
         // given
         long restaurantId = testRestaurant.getRestaurantId();
-        HolidayDTO dto1 = HolidayDTO.builder()
-                .restaurantId(restaurantId)
-                .day(Day.MONDAY)
-                .build();
-        HolidayDTO dto2 = HolidayDTO.builder()
-                .restaurantId(restaurantId)
-                .day(Day.TUESDAY)
-                .build();
-        HolidayDTO dto3 = HolidayDTO.builder()
-                .restaurantId(restaurantId)
-                .day(Day.WEDNESDAY)
-                .build();
-        List<HolidayDTO> holidayDTOs = Arrays.asList(dto1, dto2, dto3);
-        holidayMapper.saveAll(holidayDTOs);
-        Days days = Days.of(Arrays.asList(Day.MONDAY.getValue(), Day.THURSDAY.getValue()));
+        holidayMapper.saveAll(restaurantId,
+                Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue(), Day.WEDNESDAY.getValue())));
+        Holidays holidays = Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.THURSDAY.getValue()));
 
         // when
-        assertThatThrownBy(() -> holidayService.createHolidays(restaurantId, days))
+        assertThatThrownBy(() -> holidayService.createHolidays(restaurantId, holidays))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(HolidayExceptionType.ALREADY_EXISTS.getMessage());
     }

@@ -1,11 +1,12 @@
 package com.example.api.restaurant.dto;
 
 import com.example.api.facility.dto.Facility;
-import com.example.api.holiday.Days;
+import com.example.api.holiday.Holidays;
 import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -76,7 +77,7 @@ public class UpdateRestaurantReq {
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
     @Schema(description = "휴무일", example = "{\"days\": [\"MONDAY\", \"TUESDAY\"]}")
-    private Days days;
+    private Holidays holidays;
     @NotNull
     @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
@@ -92,4 +93,16 @@ public class UpdateRestaurantReq {
 
     @Schema(hidden = true)
     private long ownerId;
+
+    @Schema(hidden = true)
+    @JsonIgnore
+    public boolean isEmptyHolidays() {
+        return this.holidays == null || this.holidays.isEmpty();
+    }
+
+    @Schema(hidden = true)
+    @JsonIgnore
+    public boolean isEmptyFacilities() {
+        return this.facilities == null || this.facilities.isEmpty();
+    }
 }

@@ -14,7 +14,7 @@ public interface OwnerMapper extends UsersMapper<Owner> {
 
     Owner getOwner(long ownerId);
 
-    void deleteOwner(long ownerId, HumanStatus status);
+    void deleteOwner(long ownerId);
 
     @Override
     Optional<Owner> findByEmail(String email);

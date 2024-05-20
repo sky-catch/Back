@@ -7,7 +7,12 @@ import com.example.api.owner.dto.ReservationCount;
 import com.example.api.owner.dto.ReservationOfRestaurant;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
-import com.example.api.reservation.dto.*;
+import com.example.api.reservation.dto.CreateReservationDTO;
+import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
+import com.example.api.reservation.dto.MyReservationDTO;
+import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
+import com.example.api.reservation.dto.TimeSlot;
+import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
@@ -16,18 +21,17 @@ import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -53,14 +57,18 @@ public class ReservationService {
                 dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
         validate(dto, restaurantWithHolidayAndAvailableDate);
 
-        PaymentDTO paymentReady = PaymentDTO.ofReadyStatus(dto.getAmountToPay());
-        paymentMapper.save(paymentReady);
-
         ReservationDTO reservation = dto.toReservationDTO();
-        reservation.setPaymentId(paymentReady.getPaymentId());
+        if (dto.isShouldPay()) {
+            PaymentDTO paymentReady = PaymentDTO.ofReadyStatus(dto.getAmountToPay());
+            paymentMapper.save(paymentReady);
+
+            reservation.setPaymentId(paymentReady.getPaymentId());
+        }
+
         try {
             reservationMapper.save(reservation);
         } catch (DuplicateKeyException e) {
+            log.error("{} 해당 시간에 이미 예약이 존재합니다.", dto.getVisitTime());
             throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
         }
 
@@ -72,7 +80,7 @@ public class ReservationService {
         validateStatus(dto);
         validatePerson(dto, restaurantWithHolidayAndAvailableDate);
         validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
-        validateVisitTime(dto, restaurantWithHolidayAndAvailableDate);
+        validateVisitTime(dto.getVisitTime(), restaurantWithHolidayAndAvailableDate);
         validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
         validateMinutes(dto);
         validateDuplicate(dto);
@@ -80,6 +88,7 @@ public class ReservationService {
 
     private void validateStatus(CreateReservationDTO dto) {
         if (dto.getStatus() != ReservationStatus.PLANNED) {
+            log.error("예약 상태 요청 값 {}는 {}가 아닙니다.", dto.getStatus(), ReservationStatus.PLANNED);
             throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
         }
     }
@@ -87,6 +96,10 @@ public class ReservationService {
     private void validatePerson(CreateReservationDTO dto,
                                 RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
+            log.error("{} 해당 예약 인원은 {} 식당의 {} ~ {} 최소, 최대 인원수에 맞지 않습니다.", dto.getNumberOfPeople(),
+                    restaurantWithHolidayAndAvailableDate.getName(),
+                    restaurantWithHolidayAndAvailableDate.getTablePersonMin(),
+                    restaurantWithHolidayAndAvailableDate.getTablePersonMax());
             throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON);
         }
     }
@@ -94,13 +107,18 @@ public class ReservationService {
     private void validateHoliday(CreateReservationDTO dto,
                                  RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
+            log.error("{} 해당 요일은 {} 식당의 휴일입니다.", dto.getVisitDate(), restaurantWithHolidayAndAvailableDate.getName());
             throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY);
         }
     }
 
-    private void validateVisitTime(CreateReservationDTO dto,
+    private void validateVisitTime(LocalTime visitTime,
                                    RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
-        if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(dto.getVisitTime())) {
+        if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(visitTime)) {
+            log.error("예약 시간 {}는 {} 식당의 오픈 시간 {} ~ 주문 마감 시간 {} 사이가 아닙니다.", visitTime,
+                    restaurantWithHolidayAndAvailableDate.getName(),
+                    restaurantWithHolidayAndAvailableDate.getOpenTime(),
+                    restaurantWithHolidayAndAvailableDate.getLastOrderTime());
             throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME);
         }
     }
@@ -108,13 +126,15 @@ public class ReservationService {
     private void validateAvailableDate(CreateReservationDTO dto,
                                        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
         if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
+            log.error("{}는 {} 식당의 예약 가능한 날짜가 아닙니다.", dto.getVisitDate(),
+                    restaurantWithHolidayAndAvailableDate.getAvailableDate());
             throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE);
         }
     }
 
     private void validateMinutes(CreateReservationDTO dto) {
-        int minute = dto.getTime().getMinute();
-        if (!(minute == 0 || minute == 30)) {
+        if (!dto.isValidMinute()) {
+            log.error("예약 시간 {}는 00분 또는 30분 단위가 아닙니다.", dto.getTime());
             throw new SystemException(ReservationExceptionType.NOT_VALID_MINUTES);
         }
     }
@@ -125,6 +145,7 @@ public class ReservationService {
                 .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
                 .build();
         if (reservationMapper.findByDuplicateSearchCond(cond).isPresent()) {
+            log.error("{} 시간에 이미 예약이 존재합니다.", dto.getVisitTime());
             throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
         }
     }
@@ -134,9 +155,8 @@ public class ReservationService {
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHoliday = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
                 dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
 
-        if (restaurantWithHoliday.isNotValidVisitTime(dto.getVisitTime())) {
-            throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME);
-        }
+        validateVisitTime(dto.getVisitTime(), restaurantWithHoliday);
+
         if (restaurantWithHoliday.isHoliday(dto.getSearchDate())) {
             return TimeSlots.of(new ArrayList<>());
         }
@@ -199,9 +219,11 @@ public class ReservationService {
                         reservationId)
                 .orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
         if (reservation.isNotMine(memberId)) {
+            log.error("주문의 memberId = {}, 로그인 유저의 memberId = {}가 달라서 취소할 수 없습니다.", reservation.getMemberId(), memberId);
             throw new SystemException(ReservationExceptionType.NOT_MINE);
         }
         if (reservation.isNotPlanned()) {
+            log.error("주문의 status = {}가 planned가 아니라서 취소할 수 없습니다.", reservation.getStatus());
             throw new SystemException(ReservationExceptionType.NOT_VALID_STATUS);
         }
 

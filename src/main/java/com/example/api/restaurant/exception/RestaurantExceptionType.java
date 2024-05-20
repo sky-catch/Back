@@ -17,6 +17,7 @@ public enum RestaurantExceptionType implements CommonExceptionType {
     NOT_VALID_KOREAN_CITY("잘못된 지역입니다.", HttpStatus.BAD_REQUEST),
     NOT_VALID_HOT_PLACE("잘못된 핫플레이스입니다.", HttpStatus.BAD_REQUEST),
     NOT_VALID_CATEGORY("잘못된 카테고리입니다.", HttpStatus.BAD_REQUEST),
+    NOT_VALID_TABLE_PERSON("식당 최소 인원이 최대 인원이 보다 큽니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;

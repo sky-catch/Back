@@ -51,9 +51,9 @@ public class OwnerController {
     }
 
     /**
-     * delete문이 아닌 status 변화
+     * delete로 변경
      */
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "사장 삭제")
     public void deleteOwner(@LoginOwner Owner owner,
                             @Parameter(description = "사장 ID", example = "1") @PathVariable(name = "id") long ownerId) {

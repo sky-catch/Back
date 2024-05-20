@@ -46,11 +46,6 @@
                 #{oauthServer})
     </select>
 
-    <select id="deleteAll">
-        DELETE
-        FROM member;
-    </select>
-
     <select id="findById" resultType="com.example.api.member.MemberDTO">
         SELECT *
         FROM member
@@ -76,10 +71,11 @@
             <result property="createdDate" column="SAVED_RESTAURANT_CREATED_DATE"/>
             <result property="updatedDate" column="SAVED_RESTAURANT_UPDATED_DATE"/>
         </collection>
-        <collection property="reviews" ofType="com.example.api.review.dto.ReviewDTO">
+        <collection property="reviews" ofType="com.example.api.review.dto.ReviewAndRestaurantAndImageDTO">
             <id property="reviewId" column="review_id"/>
             <result property="memberId" column="revi_member_id"/>
             <result property="restaurantId" column="revi_restaurant_id"/>
+            <result property="restaurantName" column="restaurant_name"/>
             <result property="reservationId" column="revi_reservation_id"/>
             <result property="rate" column="rate"/>
             <result property="comment" column="comment"/>
@@ -106,6 +102,7 @@
                revi.review_id,
                revi.member_id      AS revi_member_id,
                revi.restaurant_id  AS revi_restaurant_id,
+               rt.name             AS restaurant_name,
                revi.reservation_id AS revi_reservation_id,
                revi.rate,
                revi.comment,
@@ -118,6 +115,7 @@
                                  ON sr.member_id = mem.member_id
                  LEFT OUTER JOIN review AS revi ON revi.member_id = mem.member_id
                  LEFT OUTER JOIN review_image ri ON ri.REVIEW_ID = revi.REVIEW_ID
+                 LEFT OUTER JOIN restaurant rt ON rt.RESTAURANT_ID = revi.RESTAURANT_ID
         WHERE mem.member_id = #{memberId}
         ORDER BY sr.CREATED_DATE DESC, revi.CREATED_DATE DESC, ri.REVIEW_IMAGE_ID ASC;
     </select>

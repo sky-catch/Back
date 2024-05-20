@@ -34,15 +34,15 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
 
-    public static final int MAX_SHOW_RESERVATION = 3;
-    public static final int RESERVATION_TIME_INTERVAL = 30;
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
     private final HolidayService holidayService;
@@ -56,17 +56,18 @@ public class RestaurantService {
 
         RestaurantDTO dto = new RestaurantDTO(req);
         if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
+            log.error("{} 유저는 이미 식당을 만들었습니다.", dto.getOwnerId());
             throw new SystemException(CAN_CREATE_ONLY_ONE.getMessage());
         }
 
         if (restaurantMapper.isAlreadyExistsName(dto.getName())) {
+            log.error("{} 식당 이름은 이미 존재합니다.", dto.getName());
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
-        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
         restaurantMapper.save(dto);
 
-        holidayService.createHolidays(dto.getRestaurantId(), req.getDays());
+        holidayService.createHolidays(dto.getRestaurantId(), req.getHolidays());
 
         reservationAvailableDateService.create(dto.getRestaurantId(),
                 req.getReservationBeginDate(), req.getReservationEndDate());
@@ -81,37 +82,61 @@ public class RestaurantService {
     @Transactional
     public void updateRestaurant(UpdateRestaurantReq req) {
         if (restaurantMapper.isAlreadyExistsNameExcludeSelf(req.getName(), req.getOwnerId())) {
+            log.error("{} 식당 이름은 {} 사장 ID가 이미 만들었습니다.", req.getName(), req.getOwnerId());
             throw new SystemException(NOT_UNIQUE_NAME.getMessage());
         }
 
         RestaurantDTO dto = restaurantMapper.findByOwnerId(req.getOwnerId())
-                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
-
-        dto.setHotPlace(HotPlace.getHotPlaceValue(dto.getDetailAddress()));
+                .orElseThrow(() -> {
+                    log.error("{} 사장 ID는 식당을 만들지 않았습니다.", req.getOwnerId());
+                    return new SystemException(NOT_FOUND.getMessage());
+                });
+        dto.update(req);
         restaurantMapper.updateRestaurant(dto);
 
-        storeFacilityMapper.deleteFacility(new FacilityReq(dto.getRestaurantId(), req.getFacilities()));
-        storeFacilityMapper.createFacility(dto.getRestaurantId(), req.getFacilities());
+        updateStoreFacility(req, dto.getRestaurantId());
 
-        List<HolidayDTO> holidayDTOs = req.getDays().getDays().stream()
-                .map(day -> new HolidayDTO(dto.getRestaurantId(), day))
-                .collect(Collectors.toList());
+        updateHolidays(req, dto.getRestaurantId());
 
-        holidayService.update(dto.getRestaurantId(), holidayDTOs);
         reservationAvailableDateService.update(new ReservationAvailableDateDTO(req));
 
+    }
+
+    private void updateStoreFacility(UpdateRestaurantReq req, long restaurantId) {
+        if (req.isEmptyFacilities()) {
+            storeFacilityMapper.delete(restaurantId);
+            return;
+        }
+
+        storeFacilityMapper.deleteFacility(new FacilityReq(restaurantId, req.getFacilities()));
+        storeFacilityMapper.createFacility(restaurantId, req.getFacilities());
+    }
+
+    private void updateHolidays(UpdateRestaurantReq req, long restaurantId) {
+        if (req.isEmptyHolidays()) {
+            holidayMapper.delete(restaurantId);
+            return;
+        }
+
+        holidayService.update(restaurantId, req.getHolidays());
     }
 
     @Transactional(readOnly = true)
     public RestaurantDTO getRestaurantById(long restaurantId) {
         return restaurantMapper.findById(restaurantId)
-                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+                .orElseThrow(() -> {
+                    log.error("{} 해당 식당 ID는 존재하지 않습니다.", restaurantId);
+                    return new SystemException(NOT_FOUND.getMessage());
+                });
     }
 
     @Transactional(readOnly = true)
     public GetRestaurantInfoRes getRestaurantInfoById(long restaurantId) {
         GetRestaurantInfoRes getRestaurantInfoRes = restaurantMapper.findRestaurantInfoById(restaurantId)
-                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+                .orElseThrow(() -> {
+                    log.error("{} 해당 식당 ID는 존재하지 않습니다.", restaurantId);
+                    return new SystemException(NOT_FOUND.getMessage());
+                });
 //        getRestaurantRes.sortImages();
 
         return getRestaurantInfoRes;
@@ -120,7 +145,10 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public GetRestaurantInfo getRestaurantInfoByName(String name, Long memberId) {
         GetRestaurantInfoRes getRestaurantInfoRes = restaurantMapper.findRestaurantInfoByName(name, memberId)
-                .orElseThrow(() -> new SystemException(NOT_FOUND.getMessage()));
+                .orElseThrow(() -> {
+                    log.error("{} 해당 식당 이름을 가진 식당은 존재하지 않습니다.", name);
+                    return new SystemException(NOT_FOUND.getMessage());
+                });
         List<GetReviewCommentRes> reviewComments = reviewMapper.getReviewComments(
                 getRestaurantInfoRes.getRestaurantId());
         ReservationAvailableDateDTO reservationAvailableDateDTO = reservationAvailableDateMapper.findByRestaurantId(

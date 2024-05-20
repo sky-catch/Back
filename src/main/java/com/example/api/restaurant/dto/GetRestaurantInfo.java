@@ -2,8 +2,8 @@ package com.example.api.restaurant.dto;
 
 import com.example.api.facility.dto.GetFacilityRes;
 import com.example.api.holiday.Day;
-import com.example.api.holiday.Days;
 import com.example.api.holiday.HolidayDTO;
+import com.example.api.holiday.Holidays;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
 import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.api.review.dto.GetReviewCommentRes;
@@ -64,7 +64,7 @@ public class GetRestaurantInfo extends BaseDTO {
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
     @Schema(description = "휴무일", example = "{\"days\": [\"MONDAY\", \"TUESDAY\"]}")
-    private Days days;
+    private Holidays holidays;
     @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate reservationBeginDate;
@@ -110,7 +110,7 @@ public class GetRestaurantInfo extends BaseDTO {
         this.lng = getRestaurantInfoRes.getLng();
         this.lunchPrice = getRestaurantInfoRes.getLunchPrice();
         this.dinnerPrice = getRestaurantInfoRes.getDinnerPrice();
-        this.days = getHolidays(holidayDTOS);
+        this.holidays = getHolidays(holidayDTOS);
         this.reservationBeginDate = reservationAvailableDateDTO.getBeginDate();
         this.reservationEndDate = reservationAvailableDateDTO.getEndDate();
         this.savedCount = getRestaurantInfoRes.getSavedCount();
@@ -123,10 +123,10 @@ public class GetRestaurantInfo extends BaseDTO {
         this.isSaved = getRestaurantInfoRes.isSaved();
     }
 
-    private Days getHolidays(List<HolidayDTO> holidayDTOS) {
+    private Holidays getHolidays(List<HolidayDTO> holidayDTOS) {
         List<Day> days = holidayDTOS.stream()
                 .map(HolidayDTO::getDay)
                 .collect(Collectors.toList());
-        return new Days(days);
+        return new Holidays(days);
     }
 }

@@ -6,18 +6,18 @@
     <insert id="saveAll">
         INSERT INTO holiday(restaurant_id, day)
         VALUES
-        <foreach collection="list" item="holidayDTO" index="index" open="(" close=")" separator="),(">
-            #{holidayDTO.restaurantId},
-            #{holidayDTO.day}
+        <foreach collection="holidays.getDays()" item="day" index="index" open="(" close=")" separator="),(">
+            #{restaurantId},
+            #{day}
         </foreach>
     </insert>
 
     <select id="isAlreadyExistsDays" resultType="boolean">
         SELECT EXISTS (SELECT * FROM holiday h WHERE h.restaurant_id = #{restaurantId}
         <choose>
-            <when test="days.size != 0">
+            <when test="!holidays.isEmpty()">
                 AND h.day IN
-                <foreach collection="days" item="day" index="index" open="(" close=")" separator=",">
+                <foreach collection="holidays.getDays()" item="day" index="index" open="(" close=")" separator=",">
                     #{day}
                 </foreach>
             </when>
@@ -35,11 +35,6 @@
         SELECT *
         FROM holiday;
     </select>
-
-    <delete id="deleteAll">
-        DELETE
-        FROM holiday;
-    </delete>
 
     <select id="findByRestaurantId" resultType="com.example.api.holiday.HolidayDTO">
         SELECT *

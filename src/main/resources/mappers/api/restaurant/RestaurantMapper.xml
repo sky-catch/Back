@@ -348,13 +348,13 @@
     </select>
 
     <update id="increaseSavedCount" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
-        UPDATE RESTAURANT
+        UPDATE restaurant
         SET SAVED_COUNT = SAVED_COUNT + 1
         WHERE RESTAURANT_ID = #{restaurantId};
     </update>
 
     <update id="decreaseSavedCount" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
-        UPDATE RESTAURANT
+        UPDATE restaurant
         SET SAVED_COUNT =
                 CASE
                     WHEN SAVED_COUNT >= 1 THEN SAVED_COUNT - 1

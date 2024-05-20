@@ -2,8 +2,6 @@ package com.example.api.holiday;
 
 import com.example.api.holiday.exception.HolidayExceptionType;
 import com.example.core.exception.SystemException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,29 +15,22 @@ public class HolidayService {
     private final HolidayMapper holidayMapper;
 
     @Transactional
-    public void createHolidays(long restaurantId, Days days) {
-        if (days == null || days.getDays().isEmpty()) {
-            log.info("휴일이 없음");
+    public void createHolidays(long restaurantId, Holidays holidays) {
+        if (holidays == null || holidays.isEmpty()) {
+            log.info("빈 휴일 매개 변수값 전달됨");
             return;
         }
 
-        List<Day> dayList = days.getDays();
-        if (holidayMapper.isAlreadyExistsDays(restaurantId, dayList)) {
+        if (holidayMapper.isAlreadyExistsDays(restaurantId, holidays)) {
+            log.error("ID 값 {} 식당은 {} 이 중 휴일이 등록되어 있습니다.", restaurantId, holidays);
             throw new SystemException(HolidayExceptionType.ALREADY_EXISTS.getMessage());
         }
 
-        List<HolidayDTO> holidayDTOs = dayList.stream()
-                .map(day -> HolidayDTO.builder()
-                        .restaurantId(restaurantId)
-                        .day(day)
-                        .build())
-                .collect(Collectors.toList());
-
-        holidayMapper.saveAll(holidayDTOs);
+        holidayMapper.saveAll(restaurantId, holidays);
     }
 
-    public void update(long restaurantId, List<HolidayDTO> holidayDTOs) {
+    public void update(long restaurantId, Holidays holidays) {
         holidayMapper.delete(restaurantId);
-        holidayMapper.saveAll(holidayDTOs);
+        holidayMapper.saveAll(restaurantId, holidays);
     }
 }

@@ -17,8 +17,6 @@ public interface MemberMapper extends UsersMapper<MemberDTO> {
 
     void save(MemberDTO memberDTO);
 
-    void deleteAll();
-
     MemberDTO findById(long memberId);
 
     void updateMember(UpdateMemberDTO dto);

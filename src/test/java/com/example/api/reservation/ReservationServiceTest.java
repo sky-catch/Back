@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.api.alarm.AlarmService;
 import com.example.api.holiday.Day;
-import com.example.api.holiday.HolidayDTO;
 import com.example.api.holiday.HolidayMapper;
+import com.example.api.holiday.Holidays;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
@@ -108,7 +108,7 @@ class ReservationServiceTest {
 
         saveTestRestaurant();
         saveTestRestaurantImage();
-        holidayMapper.saveAll(getMondayAndTuesdayHolidays());
+        holidayMapper.saveAll(testRestaurant.getRestaurantId(), getMondayAndTuesdayHolidays());
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
     }
 
@@ -237,7 +237,7 @@ class ReservationServiceTest {
     void createReservation_with_holiday() {
         // given
         LocalDateTime notValidVisitDateTime = LocalDateTime.of(holiday, openTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
 
@@ -253,7 +253,7 @@ class ReservationServiceTest {
         // given
         LocalTime notOpenTime = openTime.minusMinutes(1);
         LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
 
@@ -267,7 +267,7 @@ class ReservationServiceTest {
     @DisplayName("방문일이 잘못된 경우 예외 발생하는 테스트")
     void createReservation_with_not_valid_visit_date() {
         // given
-        CreateReservationReq req = new CreateReservationReq(notValidVisitTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
 
@@ -283,7 +283,7 @@ class ReservationServiceTest {
         // given
         LocalTime notOpenTime = openTime.plusMinutes(1);
         LocalDateTime notValidVisitDateTime = LocalDateTime.of(notHoliday, notOpenTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L, req);
 
         // expected
@@ -296,7 +296,7 @@ class ReservationServiceTest {
     @DisplayName("방문일의 방문 시간에 예약이 이미 존재하는 경우 예외 발생하는 테스트")
     void createReservation_with_duplicate() {
         // given
-        CreateReservationReq req = new CreateReservationReq(validVisitTime, tablePersonMin, "메모", 1000);
+        CreateReservationReq req = new CreateReservationReq(validVisitTime, tablePersonMin, "메모", 1000, true);
         CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
                 req);
         reservationService.createReservation(dto);
@@ -730,11 +730,8 @@ class ReservationServiceTest {
         return payment;
     }
 
-    private List<HolidayDTO> getMondayAndTuesdayHolidays() {
-        HolidayDTO monday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.MONDAY).build();
-        HolidayDTO tuesday = HolidayDTO.builder().restaurantId(testRestaurant.getRestaurantId()).day(Day.TUESDAY)
-                .build();
-        return Arrays.asList(monday, tuesday);
+    private Holidays getMondayAndTuesdayHolidays() {
+        return Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
     }
 
     private ReservationAvailableDateDTO getTestReservationAvailableDate(long restaurantId) {
