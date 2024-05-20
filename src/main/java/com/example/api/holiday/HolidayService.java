@@ -17,11 +17,12 @@ public class HolidayService {
     @Transactional
     public void createHolidays(long restaurantId, Holidays holidays) {
         if (holidays == null || holidays.isEmpty()) {
-            log.info("휴일이 없음");
+            log.info("빈 휴일 매개 변수값 전달됨");
             return;
         }
 
         if (holidayMapper.isAlreadyExistsDays(restaurantId, holidays)) {
+            log.error("ID 값 {} 식당은 {} 이 중 휴일이 등록되어 있습니다.", restaurantId, holidays);
             throw new SystemException(HolidayExceptionType.ALREADY_EXISTS.getMessage());
         }
 
