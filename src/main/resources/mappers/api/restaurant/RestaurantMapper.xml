@@ -24,6 +24,12 @@
         where restaurant_id = #{restaurantId};
     </update>
 
+    <update id="updateReviewRate" parameterType="com.example.api.review.dto.ReviewDTO">
+        UPDATE restaurant
+        SET review_avg = (review_avg * review_count - #{oldReviewRate} + #{newReviewRate}) / review_count
+        WHERE restaurant_id = #{restaurantId};
+    </update>
+
     <insert id="save" parameterType="com.example.api.restaurant.dto.RestaurantDTO" useGeneratedKeys="true"
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,

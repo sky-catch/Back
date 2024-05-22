@@ -19,6 +19,8 @@ public interface RestaurantMapper {
 
     void decreaseReviewCountAndRate(ReviewDTO reviewDTO);
 
+    void updateReviewRate(int oldReviewRate, int newReviewRate, long restaurantId);
+
     void save(RestaurantDTO dto);
 
     Optional<RestaurantDTO> findById(long restaurantId);
