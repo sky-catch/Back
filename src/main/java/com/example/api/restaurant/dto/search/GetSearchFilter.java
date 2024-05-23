@@ -30,11 +30,11 @@ public class GetSearchFilter{
         this.date = searchFilter.getDate();
         this.time = searchFilter.getTime();
         this.personCount = searchFilter.getPersonCount();
-        this.koreanCity = (searchFilter.getKoreanCity() == null) ? null : searchFilter.getKoreanCity().getKoreanName();
+        this.koreanCity = (searchFilter.getKoreanCity() == null) ? null : searchFilter.getKoreanCity();
         this.hotPlace = (searchFilter.getHotPlace() == null) ? null : searchFilter.getHotPlace();
-        this.category = (searchFilter.getCategory() == null) ? null : searchFilter.getCategory().getKoreanName();
+        this.category = (searchFilter.getCategory() == null) ? null : searchFilter.getCategory();
         this.minPrice = searchFilter.getMinPrice();
         this.maxPrice = searchFilter.getMaxPrice();
-        this.orderType = (searchFilter.getOrderType() == null) ? "기본순" : searchFilter.getOrderType().getKoreanName();
+        this.orderType = (searchFilter.getOrderType() == null) ? "기본순" : searchFilter.getOrderType();
     }
 }

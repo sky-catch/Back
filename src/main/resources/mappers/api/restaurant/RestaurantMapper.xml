@@ -434,16 +434,16 @@
         and h.day is null
 
         <if test="filter.koreanCity != null">
-            and r.address = #{filter.koreanCity.koreanName}
+            and r.address = #{filter.koreanCity}
         </if>
         <if test="list != null">
             and r.hot_place in
             <foreach collection="list" item="item" separator="," open="(" close=")">
-                #{item.koreanName}
+                #{item}
             </foreach>
         </if>
         <if test="filter.category != null">
-            and r.category = #{filter.category.koreanName}
+            and r.category = #{filter.category}
         </if>
         <if test="filter.personCount != 0">
             and r.table_person_max >= #{filter.personCount} and r.table_person_min &lt;= #{filter.personCount}
@@ -455,13 +455,13 @@
             and r.lunch_price >= #{filter.minPrice} and r.dinner_price >= #{filter.minPrice}
         </if>
         <choose>
-            <when test="filter.orderType.toString() == 'RatingOrder'">
+            <when test="filter.orderType == '별점순'">
                 order by r.review_avg desc
             </when>
-            <when test="filter.orderType.toString() == 'LowPriceOrder'">
+            <when test="filter.orderType == '가격낮은순'">
                 order by r.dinner_price asc
             </when>
-            <when test="filter.orderType.toString() == 'HighPriceOrder'">
+            <when test="filter.orderType == '가격높은순'">
                 order by r.dinner_price desc
             </when>
             <otherwise>

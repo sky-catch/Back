@@ -5,7 +5,10 @@ import com.example.api.owner.dto.Owner;
 import com.example.api.restaurant.dto.CreateRestaurantReq;
 import com.example.api.restaurant.dto.GetRestaurantInfo;
 import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.HotPlace;
+import com.example.api.restaurant.dto.enums.KoreanCity;
+import com.example.api.restaurant.dto.enums.OrderType;
 import com.example.api.restaurant.dto.search.GetRestaurantSearchRes;
 import com.example.api.restaurant.dto.search.GetRestaurantSearchSummaryRes;
 import com.example.api.restaurant.dto.search.SearchFilter;
@@ -91,13 +94,19 @@ public class RestaurantController {
     public GetRestaurantSearchRes searchByFilter(@Parameter(description = "아래 Schemas에서 SearchFilter확인 부탁드립니다.")
                                                      @ModelAttribute("dto") SearchFilter dto,
                                                  @LoginMember(required = false) MemberDTO memberDTO){
+        if(dto.getKoreanCity() != null){
+            KoreanCity.parsing(dto.getKoreanCity());
+        }if(dto.getCategory() != null){
+            Category.parsing(dto.getCategory());
+        }if(dto.getOrderType() != null){
+            OrderType.parsing(dto.getOrderType());
+        }
+
         List<HotPlace> hotPlaceList = null;
         if(StringUtils.hasText(dto.getHotPlace())){
             String[] split = dto.getHotPlace().split(",");
             hotPlaceList = Arrays.stream(split).map(String::trim).map(HotPlace::parsing).collect(Collectors.toList());
         }
-        GetRestaurantSearchRes getRestaurantSearchRes = restaurantService.searchByFilter(dto, memberDTO.getMemberId(), hotPlaceList);
-        log.info(getRestaurantSearchRes.toString());
-        return getRestaurantSearchRes;
+        return restaurantService.searchByFilter(dto, memberDTO.getMemberId(), hotPlaceList);
     }
 }
