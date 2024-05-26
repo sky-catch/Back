@@ -48,6 +48,7 @@ public class MemberService {
                 .owner(existByEmail)
                 .savedRestaurants(myMainDTO.getSavedRestaurants())
                 .reviews(myMainDTO.getReviews())
+                .comments(myMainDTO.getComments())
                 .build();
     }
 }

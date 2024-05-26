@@ -1,5 +1,6 @@
 package com.example.api.member.dto;
 
+import com.example.api.comment.dto.CommentDTO;
 import com.example.api.review.dto.ReviewAndRestaurantAndImageDTO;
 import com.example.api.savedrestaurant.SavedRestaurantDTO;
 import com.example.core.dto.HumanStatus;
@@ -19,10 +20,11 @@ public class MyMainDTO {
     private HumanStatus status;
     private List<SavedRestaurantDTO> savedRestaurants;
     private List<ReviewAndRestaurantAndImageDTO> reviews;
+    private List<CommentDTO> comments;
 
     @Builder
     public MyMainDTO(String nickname, String profileImageUrl, String name, String email, HumanStatus status,
-                     List<SavedRestaurantDTO> savedRestaurants, List<ReviewAndRestaurantAndImageDTO> reviews) {
+                     List<SavedRestaurantDTO> savedRestaurants, List<ReviewAndRestaurantAndImageDTO> reviews, List<CommentDTO> comments) {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.name = name;
@@ -30,5 +32,6 @@ public class MyMainDTO {
         this.status = status;
         this.savedRestaurants = savedRestaurants;
         this.reviews = reviews;
+        this.comments = comments;
     }
 }

@@ -86,6 +86,12 @@
                 <result property="path" column="PATH"/>
             </collection>
         </collection>
+        <collection property="comments" ofType="com.example.api.comment.dto.CommentDTO">
+            <id property="commentId" column="comment_id"/>
+            <result property="reviewId" column="review_id"/>
+            <result property="ownerId" column="owner_id"/>
+            <result property="content" column="content"/>
+        </collection>
     </resultMap>
 
     <!--    todo limit 생각해보기 -->
@@ -109,13 +115,18 @@
                revi.CREATED_DATE   AS REVIEW_CREATED_DATE,
                revi.UPDATED_DATE   AS REVIEW_UPDATED_DATE,
                ri.REVIEW_IMAGE_ID,
-               ri.PATH
+               ri.PATH,
+               c.comment_id,
+               c.review_id,
+               c.owner_id,
+               c.content
         FROM member AS mem
                  LEFT OUTER JOIN saved_restaurant AS sr
                                  ON sr.member_id = mem.member_id
                  LEFT OUTER JOIN review AS revi ON revi.member_id = mem.member_id
                  LEFT OUTER JOIN review_image ri ON ri.REVIEW_ID = revi.REVIEW_ID
                  LEFT OUTER JOIN restaurant rt ON rt.RESTAURANT_ID = revi.RESTAURANT_ID
+                 LEFT OUTER JOIN comment c on revi.review_id = c.review_id
         WHERE mem.member_id = #{memberId}
         ORDER BY sr.CREATED_DATE DESC, revi.CREATED_DATE DESC, ri.REVIEW_IMAGE_ID ASC;
     </select>

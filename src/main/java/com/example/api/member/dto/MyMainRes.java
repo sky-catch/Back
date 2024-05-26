@@ -1,5 +1,6 @@
 package com.example.api.member.dto;
 
+import com.example.api.comment.dto.CommentDTO;
 import com.example.api.review.dto.ReviewAndRestaurantAndImageDTO;
 import com.example.api.savedrestaurant.SavedRestaurantDTO;
 import com.example.core.dto.HumanStatus;
@@ -26,10 +27,12 @@ public class MyMainRes {
     private List<SavedRestaurantDTO> savedRestaurants;
     @Schema(description = "작성한 리뷰들")
     private List<ReviewAndRestaurantAndImageDTO> reviews;
+    @Schema(description = "사장 답글들")
+    private List<CommentDTO> comments;
 
     @Builder
     public MyMainRes(String nickname, String profileImageUrl, String name, HumanStatus status, boolean owner,
-                     List<SavedRestaurantDTO> savedRestaurants, List<ReviewAndRestaurantAndImageDTO> reviews) {
+                     List<SavedRestaurantDTO> savedRestaurants, List<ReviewAndRestaurantAndImageDTO> reviews, List<CommentDTO> comments) {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.name = name;
@@ -37,5 +40,6 @@ public class MyMainRes {
         this.owner = owner;
         this.savedRestaurants = savedRestaurants;
         this.reviews = reviews;
+        this.comments = comments;
     }
 }
