@@ -50,8 +50,11 @@ public class ReviewService {
 
     @Transactional
     public void updateReview(UpdateReviewReq dto, List<MultipartFile> files) {
+        int oldReviewRate;
         if (reviewMapper.getReview(dto.getReviewId()) == null) {
             throw new SystemException("해당 리뷰가 없습니다.");
+        }else {
+            oldReviewRate = reviewMapper.getReview(dto.getReviewId()).getRate();
         }
         ReviewDTO reviewDTO = new ReviewDTO(dto);
         long reviewId = reviewDTO.getReviewId();
@@ -60,6 +63,7 @@ public class ReviewService {
         reviewImageMapper.deleteReviewImages(reviewId);
 
         reviewMapper.updateReview(reviewDTO);
+        restaurantMapper.updateReviewRate(oldReviewRate, reviewDTO.getRate(), reviewDTO.getRestaurantId());
         if (!files.isEmpty()) {
             reviewImageMapper.createReviewImage(reviewId, s3UploadService.upload(files));
         }
