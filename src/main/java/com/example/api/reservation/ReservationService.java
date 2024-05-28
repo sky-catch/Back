@@ -13,7 +13,6 @@ import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
-import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
 import com.example.api.reservation.exception.ReservationExceptionType;
@@ -66,14 +65,19 @@ public class ReservationService {
             reservation.setPaymentId(paymentReady.getPaymentId());
         }
 
+        saveIfNotDuplicated(reservation);
+
+        alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getReservationDateTime());
+    }
+
+    private void saveIfNotDuplicated(ReservationDTO reservation) {
         try {
             reservationMapper.save(reservation);
         } catch (DuplicateKeyException e) {
-            log.error("{} 해당 시간에 이미 예약이 존재합니다.", dto.getVisitTime());
+            log.error("식당 ID {}는 {}에 이미 예약이 존재합니다.", reservation.getRestaurantId(),
+                    reservation.getReservationDateTime());
             throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
         }
-
-        alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getReservationDateTime());
     }
 
     private void validate(CreateReservationDTO dto,
@@ -84,7 +88,6 @@ public class ReservationService {
         validateVisitTime(dto.getVisitTime(), restaurantWithHolidayAndAvailableDate);
         validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
         validateMinutes(dto);
-        validateDuplicate(dto);
     }
 
     private void validateStatus(CreateReservationDTO dto) {
@@ -137,17 +140,6 @@ public class ReservationService {
         if (!dto.isValidMinute()) {
             log.error("예약 시간 {}는 00분 또는 30분 단위가 아닙니다.", dto.getTime());
             throw new SystemException(ReservationExceptionType.NOT_VALID_MINUTES);
-        }
-    }
-
-    private void validateDuplicate(CreateReservationDTO dto) {
-        DuplicateReservationSearchCond cond = DuplicateReservationSearchCond.builder()
-                .restaurantId(dto.getRestaurantId())
-                .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
-                .build();
-        if (reservationMapper.findByDuplicateSearchCond(cond).isPresent()) {
-            log.error("{} 시간에 이미 예약이 존재합니다.", dto.getVisitTime());
-            throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
         }
     }
 
