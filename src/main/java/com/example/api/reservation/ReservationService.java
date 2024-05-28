@@ -19,6 +19,7 @@ import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowR
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
+import com.example.api.restaurant.exception.RestaurantExceptionType;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
 import java.time.LocalDate;
@@ -54,7 +55,7 @@ public class ReservationService {
         log.info("예약 생성");
 
         RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
-                dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
+                dto.getRestaurantId()).orElseThrow(() -> new SystemException(RestaurantExceptionType.NOT_FOUND));
         validate(dto, restaurantWithHolidayAndAvailableDate);
 
         ReservationDTO reservation = dto.toReservationDTO();
