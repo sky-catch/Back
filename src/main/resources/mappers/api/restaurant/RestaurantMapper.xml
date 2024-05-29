@@ -210,8 +210,7 @@
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
 
-    <resultMap id="restaurantWithHolidayAndAvailableDate"
-               type="com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO">
+    <resultMap id="restaurantWithAvailableDate" type="com.example.api.restaurant.dto.RestaurantWithAvailableDateDTO">
         <id property="restaurantId" column="restaurant_id"/>
         <id property="ownerId" column="owner_id"/>
         <id property="name" column="name"/>
@@ -241,14 +240,9 @@
             <result property="beginDate" column="begin_date"/>
             <result property="endDate" column="end_date"/>
         </association>
-        <collection property="holidays" ofType="com.example.api.holiday.HolidayDTO">
-            <id property="holidayId" column="holiday_id"/>
-            <id property="restaurantId" column="restaurant_id"/>
-            <id property="day" column="day"/>
-        </collection>
     </resultMap>
 
-    <select id="findRestaurantWithHolidayAndAvailableDateById" resultMap="restaurantWithHolidayAndAvailableDate">
+    <select id="findRestaurantWithAvailableDateById" resultMap="restaurantWithAvailableDate">
         SELECT res.restaurant_id,
                res.owner_id,
                res.name,

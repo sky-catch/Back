@@ -10,9 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.api.alarm.AlarmService;
-import com.example.api.holiday.Day;
-import com.example.api.holiday.HolidayMapper;
-import com.example.api.holiday.Holidays;
 import com.example.api.mydining.GetMyReservationDTO;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
@@ -71,7 +68,6 @@ class ReservationServiceTest {
     private final AlarmService alarmService;
     private final ReservationMapper reservationMapper;
     private final RestaurantMapper restaurantMapper;
-    private final HolidayMapper holidayMapper;
     private final ReservationAvailableDateMapper reservationAvailableDateMapper;
     private final PaymentMapper paymentMapper;
     private final RestaurantImageMapper restaurantImageMapper;
@@ -108,7 +104,6 @@ class ReservationServiceTest {
 
         saveTestRestaurant();
         saveTestRestaurantImage();
-        holidayMapper.saveAll(testRestaurant.getRestaurantId(), getMondayAndTuesdayHolidays());
         reservationAvailableDateMapper.save(getTestReservationAvailableDate(testRestaurant.getRestaurantId()));
     }
 
@@ -230,21 +225,6 @@ class ReservationServiceTest {
         assertThatThrownBy(() -> reservationService.createReservation(dto))
                 .isInstanceOf(SystemException.class)
                 .hasMessageContaining(ReservationExceptionType.OUTBOUND_PERSON.getMessage());
-    }
-
-    @Test
-    @DisplayName("휴일에 예약을 하는 경우 예외 발생하는 테스트")
-    void createReservation_with_holiday() {
-        // given
-        LocalDateTime notValidVisitDateTime = LocalDateTime.of(holiday, openTime);
-        CreateReservationReq req = new CreateReservationReq(notValidVisitDateTime, tablePersonMin, "메모", 1000, true);
-        CreateReservationDTO dto = CreateReservationDTO.of(testRestaurant.getRestaurantId(), 1L,
-                req);
-
-        // expected
-        assertThatThrownBy(() -> reservationService.createReservation(dto))
-                .isInstanceOf(SystemException.class)
-                .hasMessageContaining(ReservationExceptionType.RESERVATION_ON_HOLIDAY.getMessage());
     }
 
     @Test
@@ -441,24 +421,6 @@ class ReservationServiceTest {
                         TimeSlot.of(LocalTime.of(19, 30, 0)),
                         TimeSlot.of(LocalTime.of(20, 0, 0))
                 );
-    }
-
-    @Test
-    @DisplayName("방문 시간이 오픈 시간 ~ 주문 마감 시간이지만 방문일이 휴일인 경우 빈 리스트를 반환하는 테스트")
-    void getAllTimeSlotsWithHoliday() {
-        // given
-        GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
-                .restaurantId(testRestaurant.getRestaurantId())
-                .numberOfPeople(tablePersonMin)
-                .searchDate(holiday)
-                .visitTime(openTime)
-                .build();
-
-        // when
-        TimeSlots actual = reservationService.getAvailableTimeSlots(dto);
-
-        // then
-        assertTrue(actual.getTimeSlots().isEmpty());
     }
 
     @Test
@@ -728,10 +690,6 @@ class ReservationServiceTest {
                 .build();
         paymentMapper.save(payment);
         return payment;
-    }
-
-    private Holidays getMondayAndTuesdayHolidays() {
-        return Holidays.of(Arrays.asList(Day.MONDAY.getValue(), Day.TUESDAY.getValue()));
     }
 
     private ReservationAvailableDateDTO getTestReservationAvailableDate(long restaurantId) {

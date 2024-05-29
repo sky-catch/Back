@@ -6,9 +6,6 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_U
 
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.facility.dto.FacilityReq;
-import com.example.api.holiday.HolidayDTO;
-import com.example.api.holiday.HolidayMapper;
-import com.example.api.holiday.HolidayService;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
@@ -45,11 +42,9 @@ public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
     private final StoreFacilityMapper storeFacilityMapper;
-    private final HolidayService holidayService;
     private final ReservationAvailableDateService reservationAvailableDateService;
     private final ReviewMapper reviewMapper;
     private final ReservationAvailableDateMapper reservationAvailableDateMapper;
-    private final HolidayMapper holidayMapper;
 
     @Transactional
     public long createRestaurant(CreateRestaurantReq req) {
@@ -66,8 +61,6 @@ public class RestaurantService {
         }
 
         restaurantMapper.save(dto);
-
-        holidayService.createHolidays(dto.getRestaurantId(), req.getHolidays());
 
         reservationAvailableDateService.create(dto.getRestaurantId(),
                 req.getReservationBeginDate(), req.getReservationEndDate());
@@ -96,8 +89,6 @@ public class RestaurantService {
 
         updateStoreFacility(req, dto.getRestaurantId());
 
-        updateHolidays(req, dto.getRestaurantId());
-
         reservationAvailableDateService.update(new ReservationAvailableDateDTO(req));
 
     }
@@ -110,15 +101,6 @@ public class RestaurantService {
 
         storeFacilityMapper.deleteFacility(new FacilityReq(restaurantId, req.getFacilities()));
         storeFacilityMapper.createFacility(restaurantId, req.getFacilities());
-    }
-
-    private void updateHolidays(UpdateRestaurantReq req, long restaurantId) {
-        if (req.isEmptyHolidays()) {
-            holidayMapper.delete(restaurantId);
-            return;
-        }
-
-        holidayService.update(restaurantId, req.getHolidays());
     }
 
     @Transactional(readOnly = true)
@@ -153,8 +135,7 @@ public class RestaurantService {
                 getRestaurantInfoRes.getRestaurantId());
         ReservationAvailableDateDTO reservationAvailableDateDTO = reservationAvailableDateMapper.findByRestaurantId(
                 getRestaurantInfoRes.getRestaurantId());
-        List<HolidayDTO> holidayDTOS = holidayMapper.findByRestaurantId(getRestaurantInfoRes.getRestaurantId());
-        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments, reservationAvailableDateDTO, holidayDTOS);
+        return new GetRestaurantInfo(getRestaurantInfoRes, reviewComments, reservationAvailableDateDTO);
     }
 
     @Transactional(readOnly = true)
