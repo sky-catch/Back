@@ -86,16 +86,6 @@
           AND cast(rez.TIME as TIME) >= #{visitTime};
     </select>
 
-    <select id="findByDuplicateSearchCond"
-            parameterType="com.example.api.reservation.dto.condition.DuplicateReservationSearchCond"
-            resultType="com.example.api.reservation.ReservationDTO">
-        SELECT *
-        FROM reservation rez
-        WHERE rez.RESTAURANT_ID = #{restaurantId}
-          AND rez.TIME = #{time};
---             FOR UPDATE;
-    </select>
-
     <update id="updateStatusById">
         UPDATE reservation
         SET STATUS = #{status}
@@ -247,7 +237,7 @@
     <select id="getReservationOfRestaurant" resultType="com.example.api.owner.dto.ReservationOfRestaurant">
         select rs.reservation_id, rs.time, rs.member_id, m.name as member_name, rs.number_of_people, rs.memo, rs.status
         from reservation rs
-        left join member m on m.member_id = rs.member_id
+                 left join member m on m.member_id = rs.member_id
         where rs.restaurant_id = (select restaurant_id from restaurant where owner_id = #{ownerId})
         order by time desc
     </select>

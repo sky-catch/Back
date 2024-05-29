@@ -13,12 +13,12 @@ import com.example.api.reservation.dto.MyReservationDTO;
 import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
-import com.example.api.reservation.dto.condition.DuplicateReservationSearchCond;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
 import com.example.api.reservation.exception.ReservationExceptionType;
 import com.example.api.restaurant.RestaurantMapper;
-import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
+import com.example.api.restaurant.dto.RestaurantWithAvailableDateDTO;
+import com.example.api.restaurant.exception.RestaurantExceptionType;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
 import java.time.LocalDate;
@@ -53,9 +53,9 @@ public class ReservationService {
     public void createReservation(CreateReservationDTO dto) {
         log.info("예약 생성");
 
-        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
-                dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
-        validate(dto, restaurantWithHolidayAndAvailableDate);
+        RestaurantWithAvailableDateDTO restaurantWithAvailableDate = restaurantMapper.findRestaurantWithAvailableDateById(
+                dto.getRestaurantId()).orElseThrow(() -> new SystemException(RestaurantExceptionType.NOT_FOUND));
+        validate(dto, restaurantWithAvailableDate);
 
         ReservationDTO reservation = dto.toReservationDTO();
         if (dto.isShouldPay()) {
@@ -65,25 +65,27 @@ public class ReservationService {
             reservation.setPaymentId(paymentReady.getPaymentId());
         }
 
-        try {
-            reservationMapper.save(reservation);
-        } catch (DuplicateKeyException e) {
-            log.error("{} 해당 시간에 이미 예약이 존재합니다.", dto.getVisitTime());
-            throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
-        }
+        saveIfNotDuplicated(reservation);
 
         alarmService.createReservationAlarm(reservation.getReservationId(), reservation.getReservationDateTime());
     }
 
-    private void validate(CreateReservationDTO dto,
-                          RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
+    private void saveIfNotDuplicated(ReservationDTO reservation) {
+        try {
+            reservationMapper.save(reservation);
+        } catch (DuplicateKeyException e) {
+            log.error("식당 ID {}는 {}에 이미 예약이 존재합니다.", reservation.getRestaurantId(),
+                    reservation.getReservationDateTime());
+            throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
+        }
+    }
+
+    private void validate(CreateReservationDTO dto, RestaurantWithAvailableDateDTO restaurantWithAvailableDate) {
         validateStatus(dto);
-        validatePerson(dto, restaurantWithHolidayAndAvailableDate);
-        validateHoliday(dto, restaurantWithHolidayAndAvailableDate);
-        validateVisitTime(dto.getVisitTime(), restaurantWithHolidayAndAvailableDate);
-        validateAvailableDate(dto, restaurantWithHolidayAndAvailableDate);
+        validatePerson(dto, restaurantWithAvailableDate);
+        validateVisitTime(dto.getVisitTime(), restaurantWithAvailableDate);
+        validateAvailableDate(dto, restaurantWithAvailableDate);
         validateMinutes(dto);
-        validateDuplicate(dto);
     }
 
     private void validateStatus(CreateReservationDTO dto) {
@@ -93,41 +95,31 @@ public class ReservationService {
         }
     }
 
-    private void validatePerson(CreateReservationDTO dto,
-                                RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
-        if (restaurantWithHolidayAndAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
+    private void validatePerson(CreateReservationDTO dto, RestaurantWithAvailableDateDTO restaurantWithAvailableDate) {
+        if (restaurantWithAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
             log.error("{} 해당 예약 인원은 {} 식당의 {} ~ {} 최소, 최대 인원수에 맞지 않습니다.", dto.getNumberOfPeople(),
-                    restaurantWithHolidayAndAvailableDate.getName(),
-                    restaurantWithHolidayAndAvailableDate.getTablePersonMin(),
-                    restaurantWithHolidayAndAvailableDate.getTablePersonMax());
+                    restaurantWithAvailableDate.getName(),
+                    restaurantWithAvailableDate.getTablePersonMin(),
+                    restaurantWithAvailableDate.getTablePersonMax());
             throw new SystemException(ReservationExceptionType.OUTBOUND_PERSON);
         }
     }
 
-    private void validateHoliday(CreateReservationDTO dto,
-                                 RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
-        if (restaurantWithHolidayAndAvailableDate.isHoliday(dto.getVisitDate())) {
-            log.error("{} 해당 요일은 {} 식당의 휴일입니다.", dto.getVisitDate(), restaurantWithHolidayAndAvailableDate.getName());
-            throw new SystemException(ReservationExceptionType.RESERVATION_ON_HOLIDAY);
-        }
-    }
-
-    private void validateVisitTime(LocalTime visitTime,
-                                   RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
-        if (restaurantWithHolidayAndAvailableDate.isNotValidVisitTime(visitTime)) {
+    private void validateVisitTime(LocalTime visitTime, RestaurantWithAvailableDateDTO restaurantWithAvailableDate) {
+        if (restaurantWithAvailableDate.isNotValidVisitTime(visitTime)) {
             log.error("예약 시간 {}는 {} 식당의 오픈 시간 {} ~ 주문 마감 시간 {} 사이가 아닙니다.", visitTime,
-                    restaurantWithHolidayAndAvailableDate.getName(),
-                    restaurantWithHolidayAndAvailableDate.getOpenTime(),
-                    restaurantWithHolidayAndAvailableDate.getLastOrderTime());
+                    restaurantWithAvailableDate.getName(),
+                    restaurantWithAvailableDate.getOpenTime(),
+                    restaurantWithAvailableDate.getLastOrderTime());
             throw new SystemException(ReservationExceptionType.NOT_VALID_VISIT_TIME);
         }
     }
 
     private void validateAvailableDate(CreateReservationDTO dto,
-                                       RestaurantWithHolidayAndAvailableDateDTO restaurantWithHolidayAndAvailableDate) {
-        if (restaurantWithHolidayAndAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
+                                       RestaurantWithAvailableDateDTO restaurantWithAvailableDate) {
+        if (restaurantWithAvailableDate.isNotAvailableDate(dto.getVisitDate())) {
             log.error("{}는 {} 식당의 예약 가능한 날짜가 아닙니다.", dto.getVisitDate(),
-                    restaurantWithHolidayAndAvailableDate.getAvailableDate());
+                    restaurantWithAvailableDate.getAvailableDate());
             throw new SystemException(ReservationExceptionType.NOT_AVAILABLE_DATE);
         }
     }
@@ -139,46 +131,30 @@ public class ReservationService {
         }
     }
 
-    private void validateDuplicate(CreateReservationDTO dto) {
-        DuplicateReservationSearchCond cond = DuplicateReservationSearchCond.builder()
-                .restaurantId(dto.getRestaurantId())
-                .time(LocalDateTime.of(dto.getVisitDate(), dto.getVisitTime()))
-                .build();
-        if (reservationMapper.findByDuplicateSearchCond(cond).isPresent()) {
-            log.error("{} 시간에 이미 예약이 존재합니다.", dto.getVisitTime());
-            throw new SystemException(ReservationExceptionType.TIME_DUPLICATE);
-        }
-    }
-
     @Transactional(readOnly = true)
     public TimeSlots getAvailableTimeSlots(GetAvailableTimeSlotDTO dto) {
-        RestaurantWithHolidayAndAvailableDateDTO restaurantWithHoliday = restaurantMapper.findRestaurantWithHolidayAndAvailableDateById(
+        RestaurantWithAvailableDateDTO restaurantWithAvailableDate = restaurantMapper.findRestaurantWithAvailableDateById(
                 dto.getRestaurantId()).orElseThrow(() -> new SystemException(ReservationExceptionType.NOT_FOUND));
 
-        validateVisitTime(dto.getVisitTime(), restaurantWithHoliday);
+        validateVisitTime(dto.getVisitTime(), restaurantWithAvailableDate);
 
-        if (restaurantWithHoliday.isHoliday(dto.getSearchDate())) {
-            return TimeSlots.of(new ArrayList<>());
-        }
-        if (restaurantWithHoliday.isOutboundTablePerson(dto.getNumberOfPeople())) {
+        if (restaurantWithAvailableDate.isOutboundTablePerson(dto.getNumberOfPeople())) {
             return TimeSlots.of(new ArrayList<>());
         }
 
-        TimeSlots allAvailableTimeSlotsFromVisitTimeToLastOrderTime = createAllAvailableTimeSlotsFromVisitTimeToLastOrderTime(
-                dto.getVisitTime(), restaurantWithHoliday.getLastOrderTime());
+        TimeSlots allTimeSlots = getAllTimeSlots(dto.getVisitTime(), restaurantWithAvailableDate.getLastOrderTime());
         TimeSlots reservationTimeSlots = getReservationTimeSlots(dto);
-        return allAvailableTimeSlotsFromVisitTimeToLastOrderTime.subtract(reservationTimeSlots);
+        return allTimeSlots.subtract(reservationTimeSlots);
     }
 
-    private TimeSlots createAllAvailableTimeSlotsFromVisitTimeToLastOrderTime(LocalTime visitTime,
-                                                                              LocalTime lastOrderTime) {
-        List<TimeSlot> availableTimeSlots = new ArrayList<>();
-        TimeSlot availableTimeSlot = TimeSlot.of(visitTime);
-        while (availableTimeSlot.isBeforeOrEqual(lastOrderTime)) {
-            availableTimeSlots.add(availableTimeSlot);
-            availableTimeSlot = availableTimeSlot.getNextTimeSlot();
+    private TimeSlots getAllTimeSlots(LocalTime visitTime, LocalTime lastOrderTime) {
+        List<TimeSlot> allTimeSlots = new ArrayList<>();
+        TimeSlot timeSlot = TimeSlot.of(visitTime);
+        while (timeSlot.isBeforeOrEqual(lastOrderTime)) {
+            allTimeSlots.add(timeSlot);
+            timeSlot = timeSlot.getNextTimeSlot();
         }
-        return TimeSlots.of(availableTimeSlots);
+        return TimeSlots.of(allTimeSlots);
     }
 
     private TimeSlots getReservationTimeSlots(GetAvailableTimeSlotDTO dto) {

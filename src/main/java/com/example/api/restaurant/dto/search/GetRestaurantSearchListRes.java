@@ -1,14 +1,12 @@
 package com.example.api.restaurant.dto.search;
 
-import com.example.api.reservation.dto.TimeSlots;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -35,6 +33,8 @@ public class GetRestaurantSearchListRes {
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
+    @Schema(description = "고정 예약금", example = "140000")
+    private long deposit;
     @Schema(description = "저장한 식당인지. 저장했으면 true", example = "true")
     private boolean savedRestaurant;
     @Schema(description = "예약 가능 시간 리스트 형태. 최대 3개", example = "17:30")
@@ -43,5 +43,5 @@ public class GetRestaurantSearchListRes {
     private LocalTime lastOrderTime;
     @JsonIgnore
     private List<String> alreadyReservationTime;
-    
+
 }

@@ -34,10 +34,10 @@
             keyProperty="restaurantId">
         INSERT INTO restaurant(owner_id, name, category, content, phone, table_person_max, table_person_min, open_time,
                                last_order_time, close_time, address, detail_address, hot_place, lat, lng, lunch_price,
-                               dinner_price, saved_count, review_count, review_avg)
+                               dinner_price, deposit, saved_count, review_count, review_avg)
         VALUES (#{ownerId}, #{name}, #{category}, #{content}, #{phone}, #{tablePersonMax}, #{tablePersonMin},
                 #{openTime}, #{lastOrderTime}, #{closeTime}, #{address}, #{detailAddress}, #{hotPlace}, #{lat}, #{lng},
-                #{lunchPrice}, #{dinnerPrice}, 0, 0, 0);
+                #{lunchPrice}, #{dinnerPrice}, #{deposit}, 0, 0, 0);
     </insert>
 
     <update id="updateRestaurant" parameterType="com.example.api.restaurant.dto.RestaurantDTO">
@@ -57,7 +57,8 @@
             lat              = #{lat},
             lng              = #{lng},
             lunch_price      = #{lunchPrice},
-            dinner_price     = #{dinnerPrice}
+            dinner_price     = #{dinnerPrice},
+            deposit          = #{deposit}
         WHERE owner_id = #{ownerId};
     </update>
 
@@ -85,6 +86,7 @@
         <id property="lng" column="lng" javaType="java.math.BigDecimal"/>
         <id property="lunchPrice" column="lunch_price"/>
         <id property="dinnerPrice" column="dinner_price"/>
+        <id property="deposit" column="deposit"/>
         <id property="savedCount" column="saved_count"/>
         <id property="reviewCount" column="review_count"/>
         <id property="reviewAvg" column="review_avg"/>
@@ -128,6 +130,7 @@
                res.lng,
                res.lunch_price,
                res.dinner_price,
+               res.deposit,
                res.saved_count,
                res.review_count,
                res.review_avg,
@@ -182,6 +185,7 @@
                res.lng,
                res.lunch_price,
                res.dinner_price,
+               res.deposit,
                res.saved_count,
                res.review_count,
                res.review_avg,
@@ -210,8 +214,7 @@
         ORDER BY resi.type DESC, resi.restaurant_id ASC, resn.start_date DESC;
     </select>
 
-    <resultMap id="restaurantWithHolidayAndAvailableDate"
-               type="com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO">
+    <resultMap id="restaurantWithAvailableDate" type="com.example.api.restaurant.dto.RestaurantWithAvailableDateDTO">
         <id property="restaurantId" column="restaurant_id"/>
         <id property="ownerId" column="owner_id"/>
         <id property="name" column="name"/>
@@ -229,6 +232,7 @@
         <id property="lng" column="lng" javaType="java.math.BigDecimal"/>
         <id property="lunchPrice" column="lunch_price"/>
         <id property="dinnerPrice" column="dinner_price"/>
+        <id property="deposit" column="deposit"/>
         <id property="savedCount" column="saved_count"/>
         <id property="reviewCount" column="review_count"/>
         <id property="reviewAvg" column="review_avg"/>
@@ -241,14 +245,9 @@
             <result property="beginDate" column="begin_date"/>
             <result property="endDate" column="end_date"/>
         </association>
-        <collection property="holidays" ofType="com.example.api.holiday.HolidayDTO">
-            <id property="holidayId" column="holiday_id"/>
-            <id property="restaurantId" column="restaurant_id"/>
-            <id property="day" column="day"/>
-        </collection>
     </resultMap>
 
-    <select id="findRestaurantWithHolidayAndAvailableDateById" resultMap="restaurantWithHolidayAndAvailableDate">
+    <select id="findRestaurantWithAvailableDateById" resultMap="restaurantWithAvailableDate">
         SELECT res.restaurant_id,
                res.owner_id,
                res.name,
@@ -266,6 +265,7 @@
                res.lng,
                res.lunch_price,
                res.dinner_price,
+               res.deposit,
                res.saved_count,
                res.review_count,
                res.review_avg,
@@ -302,6 +302,7 @@
                res.lng,
                res.lunch_price,
                res.dinner_price,
+               res.deposit,
                res.saved_count,
                res.review_count,
                res.review_avg,
@@ -344,6 +345,7 @@
                res.lng,
                res.lunch_price,
                res.dinner_price,
+               res.deposit,
                res.saved_count,
                res.review_count,
                res.review_avg,
@@ -410,6 +412,7 @@
         <result property="koreanCity" column="address"/>
         <result property="lunchPrice" column="lunch_price"/>
         <result property="dinnerPrice" column="dinner_price"/>
+        <result property="deposit" column="deposit"/>
         <result property="savedRestaurant" column="saved_restaurant"/>
         <result property="lastOrderTime" column="last_order_time"/>
         <collection property="alreadyReservationTime" ofType="String">
@@ -420,7 +423,7 @@
     <select id="searchByFilter" resultMap="getRestaurantSearchList"
             parameterType="com.example.api.restaurant.dto.search.SearchFilter">
         select r.restaurant_id, ri.path, r.name, r.content, r.review_avg, r.review_count,
-        r.category, r.address, r.lunch_price, r.dinner_price, r.last_order_time,
+        r.category, r.address, r.lunch_price, r.dinner_price, r.deposit, r.last_order_time,
         if(sr.member_id > 0, true, false) as saved_restaurant, time(rs.time) as already_reservation_time
         from restaurant r
         left join restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'

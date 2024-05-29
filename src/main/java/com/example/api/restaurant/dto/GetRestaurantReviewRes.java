@@ -35,6 +35,7 @@ public class GetRestaurantReviewRes extends BaseDTO {
     private BigDecimal lng;
     private int lunchPrice;
     private int dinnerPrice;
+    private long deposit;
     private long savedCount;
     private long reviewCount;
     private float reviewAvg;

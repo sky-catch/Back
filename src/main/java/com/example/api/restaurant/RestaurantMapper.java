@@ -2,7 +2,7 @@ package com.example.api.restaurant;
 
 import com.example.api.restaurant.dto.GetRestaurantInfoRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
-import com.example.api.restaurant.dto.RestaurantWithHolidayAndAvailableDateDTO;
+import com.example.api.restaurant.dto.RestaurantWithAvailableDateDTO;
 import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.search.GetRestaurantSearchListRes;
 import com.example.api.restaurant.dto.search.RestaurantSummaryDTO;
@@ -36,7 +36,7 @@ public interface RestaurantMapper {
     Optional<GetRestaurantInfoRes> findRestaurantInfoByName(@Param("name") String name,
                                                             @Param("memberId") Long memberId);
 
-    Optional<RestaurantWithHolidayAndAvailableDateDTO> findRestaurantWithHolidayAndAvailableDateById(long restaurantId);
+    Optional<RestaurantWithAvailableDateDTO> findRestaurantWithAvailableDateById(long restaurantId);
 
     void updateRestaurant(RestaurantDTO dto);
 

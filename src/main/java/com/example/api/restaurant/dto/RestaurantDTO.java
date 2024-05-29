@@ -37,6 +37,7 @@ public class RestaurantDTO extends BaseDTO {
     private BigDecimal lng;
     private int lunchPrice;
     private int dinnerPrice;
+    private long deposit;
     private long savedCount;
     private long reviewCount;
     private float reviewAvg;
@@ -59,6 +60,7 @@ public class RestaurantDTO extends BaseDTO {
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
+        this.deposit = req.getDeposit();
         this.hotPlace = HotPlace.getHotPlaceValue(req.getDetailAddress());
         this.lat = req.getLat();
         this.lng = req.getLng();
@@ -83,6 +85,7 @@ public class RestaurantDTO extends BaseDTO {
         this.detailAddress = req.getDetailAddress();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
+        this.deposit = req.getDeposit();
         this.lat = req.getLat();
         this.lng = req.getLng();
     }
@@ -119,6 +122,7 @@ public class RestaurantDTO extends BaseDTO {
         this.lng = req.getLng();
         this.lunchPrice = req.getLunchPrice();
         this.dinnerPrice = req.getDinnerPrice();
+        this.deposit = req.getDeposit();
     }
 
     // for mybatis
