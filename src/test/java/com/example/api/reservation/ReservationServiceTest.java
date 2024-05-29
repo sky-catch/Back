@@ -357,7 +357,7 @@ class ReservationServiceTest {
     @Test
     @DisplayName("방문일에 식당의 예약이 없고, 방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간인 경우 "
             + "방문 시간 ~ 주문 마감 시간까지 30분 단위로 예약 가능 시간을 반환하는 테스트")
-    void get_available_time_slots_with_all() {
+    void getAllTimeSlots() {
         // given
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
@@ -400,7 +400,7 @@ class ReservationServiceTest {
     @Test
     @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이지만, 방문일에 식당의 예약이 존재하는 경우 "
             + "예약 시간을 제외한 예약 가능 시간을 반환하는 테스트")
-    void get_available_time_slots_with_not_include_reservation_time() {
+    void getAllTimeSlotsWithExceptReservationTime() {
         // given
         for (int i = 0; i < 10; i++) {
             ReservationDTO dto = ReservationDTO.builder()
@@ -445,7 +445,7 @@ class ReservationServiceTest {
 
     @Test
     @DisplayName("방문 시간이 오픈 시간 ~ 주문 마감 시간이지만 방문일이 휴일인 경우 빈 리스트를 반환하는 테스트")
-    void get_available_time_slots_with_holiday() {
+    void getAllTimeSlotsWithHoliday() {
         // given
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
@@ -464,7 +464,7 @@ class ReservationServiceTest {
     @Test
     @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이 아닌 경우 "
             + "예외 발생하는 테스트")
-    void get_available_time_slots_with_not_valid_visit_time() {
+    void getAllTimeSlotsWithInvalidVisitTime() {
         // given
         LocalTime notOpenTime = openTime.minusMinutes(1);
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
@@ -484,7 +484,7 @@ class ReservationServiceTest {
     @ValueSource(ints = {underTablePersonMin, overTablePersonMax})
     @DisplayName("방문일이 휴일이 아니고, 방문 시간이 오픈 시간 ~ 주문 마감 시간이고, 예약 가능 인원을 벗어난 경우 "
             + "빈 리스트를 반환하는 테스트")
-    void get_available_time_slots_with_outbound_table_person(int outboundNumberOfPeople) {
+    void getAllTimeSlotsWithOutboundTablePerson(int outboundNumberOfPeople) {
         // given
         GetAvailableTimeSlotDTO dto = GetAvailableTimeSlotDTO.builder()
                 .restaurantId(testRestaurant.getRestaurantId())
