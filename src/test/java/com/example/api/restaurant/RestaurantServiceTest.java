@@ -241,7 +241,7 @@ class RestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("식당 생성 시 이미 식당을 만든 경우 예외 발생하는 테스트")
+//    @DisplayName("식당 생성 시 이미 식당을 만든 경우 예외 발생하는 테스트")
     void test8() {
         // given
         restaurantService.createRestaurant(createRestaurantReq);
