@@ -32,4 +32,15 @@
         WHERE COMMENT_ID = #{commentId}
     </delete>
 
+    <select id="findCommentByMember" resultType="com.example.api.comment.dto.CommentDTO">
+        select c.comment_id,
+               c.review_id,
+               c.owner_id,
+               c.content,
+               c.created_date,
+               c.updated_date
+        from comment c
+        inner join review r on r.review_id = c.review_id and r.member_id = #{memberId}
+    </select>
+
 </mapper>
