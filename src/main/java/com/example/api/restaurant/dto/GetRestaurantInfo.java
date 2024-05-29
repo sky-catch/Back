@@ -59,6 +59,8 @@ public class GetRestaurantInfo extends BaseDTO {
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")
     private int dinnerPrice;
+    @Schema(description = "고정 예약금", example = "140000")
+    private long deposit;
     @Schema(description = "예약 가능 시작 날짜", example = "2024-03-01", type = "string")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate reservationBeginDate;
@@ -104,6 +106,7 @@ public class GetRestaurantInfo extends BaseDTO {
         this.lng = getRestaurantInfoRes.getLng();
         this.lunchPrice = getRestaurantInfoRes.getLunchPrice();
         this.dinnerPrice = getRestaurantInfoRes.getDinnerPrice();
+        this.deposit = getRestaurantInfoRes.getDeposit();
         this.reservationBeginDate = reservationAvailableDateDTO.getBeginDate();
         this.reservationEndDate = reservationAvailableDateDTO.getEndDate();
         this.savedCount = getRestaurantInfoRes.getSavedCount();

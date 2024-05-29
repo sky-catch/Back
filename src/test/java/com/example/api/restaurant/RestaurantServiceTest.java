@@ -93,8 +93,7 @@ class RestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("새로운 식당을 생성하는 테스트")
-    void test1() {
+    void 새로운_식당_생성_테스트() {
         // given
         RestaurantDTO dto = RestaurantDTO.builder()
                 .ownerId(2L)

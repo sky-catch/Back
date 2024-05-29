@@ -34,6 +34,7 @@ CREATE TABLE RESTAURANT
     lng              decimal(17, 7) NOT NULL,
     lunch_price      int                     DEFAULT NULL,
     dinner_price     int                     DEFAULT NULL,
+    deposit          bigint                  DEFAULT NULL,
     saved_count      bigint                  DEFAULT NULL,
     review_count     bigint                  DEFAULT NULL,
     review_avg       float                   DEFAULT NULL,
