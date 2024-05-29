@@ -1,6 +1,5 @@
 package com.example.api.restaurant;
 
-import static com.example.api.restaurant.exception.RestaurantExceptionType.CAN_CREATE_ONLY_ONE;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_FOUND;
 import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_UNIQUE_NAME;
 
@@ -52,7 +51,7 @@ public class RestaurantService {
         RestaurantDTO dto = new RestaurantDTO(req);
         if (restaurantMapper.isAlreadyCreated(dto.getOwnerId())) {
             log.error("{} 유저는 이미 식당을 만들었습니다.", dto.getOwnerId());
-            throw new SystemException(CAN_CREATE_ONLY_ONE.getMessage());
+//            throw new SystemException(CAN_CREATE_ONLY_ONE.getMessage());
         }
 
         if (restaurantMapper.isAlreadyExistsName(dto.getName())) {
