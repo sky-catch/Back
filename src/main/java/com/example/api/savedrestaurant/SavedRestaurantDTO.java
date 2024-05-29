@@ -16,4 +16,9 @@ public class SavedRestaurantDTO extends BaseDTO {
 
     private long memberId;
     private long restaurantId;
+    private String imageUrl;
+    private String savedRestaurantName;
+    private String content;
+    private int rate;
+    private int reviewCount;
 }
