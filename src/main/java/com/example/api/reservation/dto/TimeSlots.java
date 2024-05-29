@@ -1,12 +1,11 @@
 package com.example.api.reservation.dto;
 
+import lombok.Getter;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-
-import lombok.Getter;
 
 @Getter
 public class TimeSlots {
@@ -21,9 +20,9 @@ public class TimeSlots {
         return new TimeSlots(timeSlots);
     }
 
-    public static TimeSlots canReservation(TimeSlot reservationTime, LocalTime lastOrderTime){
+    public static TimeSlots getWholeTodayTimeSlot(TimeSlot reservationTime, LocalTime lastOrderTime) {
         List<TimeSlot> availableTimeSlots = new ArrayList<>();
-        while (reservationTime.isBeforeOrEqual(lastOrderTime)) {
+        while (reservationTime.isBeforeOrEqual(lastOrderTime) && !reservationTime.getTime().equals(LocalTime.MIDNIGHT)) {
             availableTimeSlots.add(reservationTime);
             reservationTime = reservationTime.getNextTimeSlot();
         }
@@ -39,7 +38,7 @@ public class TimeSlots {
         return TimeSlots.of(timeSlots.stream().limit(3).collect(Collectors.toList()));
     }
 
-    public List<String> toTimeString(){
+    public List<String> toTimeString() {
         return timeSlots.stream().map(TimeSlot::toTimeString).collect(Collectors.toList());
     }
 

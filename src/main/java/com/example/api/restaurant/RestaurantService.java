@@ -185,7 +185,7 @@ public class RestaurantService {
                                                            LocalTime lastOrderTime) {
         TimeSlot reservationTime = new TimeSlot(LocalTime.parse(startTime));
 
-        TimeSlots canReservation = TimeSlots.canReservation(reservationTime, lastOrderTime);
+        TimeSlots canReservation = TimeSlots.getWholeTodayTimeSlot(reservationTime, lastOrderTime);
         TimeSlots alreadyReservation = TimeSlots.of(
                 dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
         return canReservation.subtract(alreadyReservation).limit3().toTimeString();
