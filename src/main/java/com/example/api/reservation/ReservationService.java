@@ -157,21 +157,19 @@ public class ReservationService {
             return TimeSlots.of(new ArrayList<>());
         }
 
-        TimeSlots allAvailableTimeSlotsFromVisitTimeToLastOrderTime = createAllAvailableTimeSlotsFromVisitTimeToLastOrderTime(
-                dto.getVisitTime(), restaurantWithHoliday.getLastOrderTime());
+        TimeSlots allTimeSlots = getAllTimeSlots(dto.getVisitTime(), restaurantWithHoliday.getLastOrderTime());
         TimeSlots reservationTimeSlots = getReservationTimeSlots(dto);
-        return allAvailableTimeSlotsFromVisitTimeToLastOrderTime.subtract(reservationTimeSlots);
+        return allTimeSlots.subtract(reservationTimeSlots);
     }
 
-    private TimeSlots createAllAvailableTimeSlotsFromVisitTimeToLastOrderTime(LocalTime visitTime,
-                                                                              LocalTime lastOrderTime) {
-        List<TimeSlot> availableTimeSlots = new ArrayList<>();
-        TimeSlot availableTimeSlot = TimeSlot.of(visitTime);
-        while (availableTimeSlot.isBeforeOrEqual(lastOrderTime)) {
-            availableTimeSlots.add(availableTimeSlot);
-            availableTimeSlot = availableTimeSlot.getNextTimeSlot();
+    private TimeSlots getAllTimeSlots(LocalTime visitTime, LocalTime lastOrderTime) {
+        List<TimeSlot> allTimeSlots = new ArrayList<>();
+        TimeSlot timeSlot = TimeSlot.of(visitTime);
+        while (timeSlot.isBeforeOrEqual(lastOrderTime)) {
+            allTimeSlots.add(timeSlot);
+            timeSlot = timeSlot.getNextTimeSlot();
         }
-        return TimeSlots.of(availableTimeSlots);
+        return TimeSlots.of(allTimeSlots);
     }
 
     private TimeSlots getReservationTimeSlots(GetAvailableTimeSlotDTO dto) {
