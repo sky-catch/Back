@@ -1,1 +1,4 @@
-test
+[submodule "project/Back-submodule"]
+	path = project/Back-submodule
+	url = https://github.com/sky-catch/Back-submodule.git
+	branch = main
