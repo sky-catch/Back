@@ -147,10 +147,10 @@ public class ReservationService {
         return allTimeSlots.subtract(reservationTimeSlots);
     }
 
-    private TimeSlots getAllTimeSlots(LocalTime visitTime, LocalTime lastOrderTime) {
+    private TimeSlots getAllTimeSlots(LocalTime reservationTime, LocalTime lastOrderTime) {
         List<TimeSlot> allTimeSlots = new ArrayList<>();
-        TimeSlot timeSlot = TimeSlot.of(visitTime);
-        while (timeSlot.isBeforeOrEqual(lastOrderTime)) {
+        TimeSlot timeSlot = TimeSlot.of(reservationTime);
+        while (timeSlot.isBeforeOrEqual(lastOrderTime) && !timeSlot.getTime().equals(LocalTime.MIDNIGHT)) {
             allTimeSlots.add(timeSlot);
             timeSlot = timeSlot.getNextTimeSlot();
         }
