@@ -10,8 +10,10 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Data
 @NoArgsConstructor
 public class AddRestaurantImagesDTO {
@@ -40,6 +42,7 @@ public class AddRestaurantImagesDTO {
 
     private void validateImageWithType(List<MultipartFile> files, List<RestaurantImageType> restaurantImageTypes) {
         if (files.size() != restaurantImageTypes.size()) {
+            log.error("식당 이미지 파일 개수 = {}, 식당 이미지 파일 타입 개수 = {}", files.size(), restaurantImageTypes.size());
             throw new SystemException(NOT_MATCH_IMAGE_SIZE_WITH_IMAGE_TYPE_SIZE);
         }
     }
