@@ -58,12 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isValidToken(accessToken)) {
                 email = jwtProvider.getMemberEmail(accessToken);
                 log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                        request.getMethod(), request.getRequestURI(), this.email, getDecodedQueryString(request));
+                        request.getMethod(), URLDecoder.decode(request.getRequestURI()), this.email, getDecodedQueryString(request));
                 setAuthentication(accessToken);
             }
         } catch (Exception e) {
             log.info("[REQUEST] METHOD : {}, requestURI: {}, USER : {}, QueryString : {}",
-                    request.getMethod(), request.getRequestURI(), this.email, getDecodedQueryString(request));
+                    request.getMethod(), URLDecoder.decode(request.getRequestURI()), this.email, getDecodedQueryString(request));
             log.error(e.getMessage());
         }
 
