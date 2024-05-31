@@ -171,23 +171,22 @@ public class RestaurantService {
         long memberPk = (memberId == null) ? 0 : memberId;
 
         filter.setMemberId(memberPk);
-        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter,
-                hotPlaceList);
+        List<GetRestaurantSearchListRes> getRestaurantSearchListRes = restaurantMapper.searchByFilter(filter, hotPlaceList);
         getRestaurantSearchListRes.forEach(i ->
                 i.setPossibleReservationTime(
-                        calculatePossibleReservationTimes(filter.getTime(), i.getAlreadyReservationTime(),
+                        calculatePossibleReservationTimes(filter.getTime(), i.getOpenTime(), i.getAlreadyReservationTime(),
                                 i.getLastOrderTime())));
 
         return new GetRestaurantSearchRes(filter, getRestaurantSearchListRes.size(), getRestaurantSearchListRes);
     }
 
-    private List<String> calculatePossibleReservationTimes(String startTime, List<String> dbTime,
+    private List<String> calculatePossibleReservationTimes(String startTime, String openTime, List<String> dbTime,
                                                            LocalTime lastOrderTime) {
-        TimeSlot reservationTime = new TimeSlot(LocalTime.parse(startTime));
+        TimeSlot reservationTime = LocalTime.parse(openTime).isAfter(LocalTime.parse(startTime)) ?
+                new TimeSlot(LocalTime.parse(openTime)) : new TimeSlot(LocalTime.parse(startTime));
 
         TimeSlots canReservation = TimeSlots.getWholeTodayTimeSlot(reservationTime, lastOrderTime);
-        TimeSlots alreadyReservation = TimeSlots.of(
-                dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
+        TimeSlots alreadyReservation = TimeSlots.of(dbTime.stream().map(LocalTime::parse).map(TimeSlot::new).collect(Collectors.toList()));
         return canReservation.subtract(alreadyReservation).limit3().toTimeString();
     }
 

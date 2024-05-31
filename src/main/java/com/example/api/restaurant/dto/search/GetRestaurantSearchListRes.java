@@ -29,6 +29,8 @@ public class GetRestaurantSearchListRes {
     private String category;
     @Schema(description = "위치", example = "서울")
     private String koreanCity;
+    @Schema(description = "오픈 시간", example = "10:00:00")
+    private String openTime;
     @Schema(description = "점심가격", example = "70000")
     private int lunchPrice;
     @Schema(description = "저녁가격", example = "140000")

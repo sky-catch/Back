@@ -410,6 +410,7 @@
         <result property="reviewCount" column="review_count"/>
         <result property="category" column="category"/>
         <result property="koreanCity" column="address"/>
+        <result property="openTime" column="open_time"/>
         <result property="lunchPrice" column="lunch_price"/>
         <result property="dinnerPrice" column="dinner_price"/>
         <result property="deposit" column="deposit"/>
@@ -423,7 +424,7 @@
     <select id="searchByFilter" resultMap="getRestaurantSearchList"
             parameterType="com.example.api.restaurant.dto.search.SearchFilter">
         select r.restaurant_id, ri.path, r.name, r.content, r.review_avg, r.review_count,
-        r.category, r.address, r.lunch_price, r.dinner_price, r.deposit, r.last_order_time,
+        r.category, r.address, r.open_time ,r.lunch_price, r.dinner_price, r.deposit, r.last_order_time,
         if(sr.member_id > 0, true, false) as saved_restaurant, time(rs.time) as already_reservation_time
         from restaurant r
         left join restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'
@@ -433,7 +434,6 @@
         cast(rs.TIME as TIME) >= #{filter.time} and rs.status != 'CANCEL'
         left join saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{filter.memberId}
         where rad.begin_date &lt;= #{filter.date} and rad.end_date >= #{filter.date}
-        and r.open_time &lt;= #{filter.time} and r.last_order_time >= #{filter.time}
         and h.day is null
 
         <if test="filter.koreanCity != null">
