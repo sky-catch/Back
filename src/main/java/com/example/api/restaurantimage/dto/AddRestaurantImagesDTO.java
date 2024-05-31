@@ -43,6 +43,10 @@ public class AddRestaurantImagesDTO {
     private void validateImageWithType(List<MultipartFile> files, List<RestaurantImageType> restaurantImageTypes) {
         if (files.size() != restaurantImageTypes.size()) {
             log.error("식당 이미지 파일 개수 = {}, 식당 이미지 파일 타입 개수 = {}", files.size(), restaurantImageTypes.size());
+            files.stream().map(MultipartFile::getOriginalFilename)
+                    .forEach(fileName -> log.error("식당 이미지 파일 이름 : {}", fileName));
+            restaurantImageTypes.stream().map(Enum::name)
+                    .forEach(typeName -> log.error("식당 이미지 파일 타입 이름 : {}", typeName));
             throw new SystemException(NOT_MATCH_IMAGE_SIZE_WITH_IMAGE_TYPE_SIZE);
         }
     }
