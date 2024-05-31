@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class AddRestaurantImageWithTypeDTO {
+public class RestaurantImageDTO {
     private String path;
     private RestaurantImageType restaurantImageType;
 
     @Builder
-    public AddRestaurantImageWithTypeDTO(String path, RestaurantImageType restaurantImageType) {
+    public RestaurantImageDTO(String path, RestaurantImageType restaurantImageType) {
         this.path = path;
         this.restaurantImageType = restaurantImageType;
     }

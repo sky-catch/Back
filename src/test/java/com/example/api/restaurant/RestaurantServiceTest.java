@@ -18,7 +18,7 @@ import com.example.api.restaurant.dto.RestaurantNotificationDTO;
 import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.KoreanCity;
 import com.example.api.restaurantimage.RestaurantImageMapper;
-import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
+import com.example.api.restaurantimage.dto.RestaurantImageDTO;
 import com.example.api.restaurantnotification.RestaurantNotificationMapper;
 import com.example.api.restaurantnotification.dto.GetRestaurantNotificationRes;
 import com.example.core.exception.SystemException;
@@ -253,16 +253,16 @@ class RestaurantServiceTest {
     }
 
     private int getCreatedTestImageSize(long restaurantId) {
-        List<AddRestaurantImageWithTypeDTO> restaurantImageWithTypeDTOS = new ArrayList<>();
-        restaurantImageWithTypeDTOS.add(AddRestaurantImageWithTypeDTO.builder()
+        List<RestaurantImageDTO> restaurantImageWithTypeDTOS = new ArrayList<>();
+        restaurantImageWithTypeDTOS.add(RestaurantImageDTO.builder()
                 .path("test1")
                 .restaurantImageType(NORMAL)
                 .build());
-        restaurantImageWithTypeDTOS.add(AddRestaurantImageWithTypeDTO.builder()
+        restaurantImageWithTypeDTOS.add(RestaurantImageDTO.builder()
                 .path("test2")
                 .restaurantImageType(REPRESENTATIVE)
                 .build());
-        restaurantImageWithTypeDTOS.add(AddRestaurantImageWithTypeDTO.builder()
+        restaurantImageWithTypeDTOS.add(RestaurantImageDTO.builder()
                 .path("test3")
                 .restaurantImageType(NORMAL)
                 .build());

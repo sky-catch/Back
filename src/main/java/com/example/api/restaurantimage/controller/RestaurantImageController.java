@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -51,8 +50,7 @@ public class RestaurantImageController {
     public ResponseEntity<Void> addRestaurantImages(@LoginOwner Owner owner,
                                                     @Parameter(description = "식당 이미지들을 추가할 식당 ID", example = "1") @PathVariable long restaurantId,
                                                     @RequestPart AddRestaurantImagesReq addRestaurantImagesReq,
-                                                    @Parameter(description = "식당 이미지 파일들", example = "확장자는 .jpg, .png처럼 이미지 확장자를 허용합니다.") @RequestPart List<MultipartFile> files)
-            throws IOException {
+                                                    @Parameter(description = "식당 이미지 파일들", example = "확장자는 .jpg, .png처럼 이미지 확장자를 허용합니다.") @RequestPart List<MultipartFile> files) {
 
         AddRestaurantImagesDTO dto = AddRestaurantImagesDTO.builder()
                 .restaurantId(restaurantId)

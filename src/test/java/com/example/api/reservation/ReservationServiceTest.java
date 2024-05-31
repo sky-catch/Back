@@ -29,7 +29,7 @@ import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantImageType;
 import com.example.api.restaurantimage.RestaurantImageMapper;
-import com.example.api.restaurantimage.dto.AddRestaurantImageWithTypeDTO;
+import com.example.api.restaurantimage.dto.RestaurantImageDTO;
 import com.example.core.exception.SystemException;
 import com.example.core.payment.CorePaymentService;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -650,8 +650,8 @@ class ReservationServiceTest {
     }
 
     private void saveTestRestaurantImage() {
-        List<AddRestaurantImageWithTypeDTO> list = new ArrayList<>();
-        list.add(AddRestaurantImageWithTypeDTO.builder()
+        List<RestaurantImageDTO> list = new ArrayList<>();
+        list.add(RestaurantImageDTO.builder()
                 .path("test image path")
                 .restaurantImageType(RestaurantImageType.REPRESENTATIVE)
                 .build());
