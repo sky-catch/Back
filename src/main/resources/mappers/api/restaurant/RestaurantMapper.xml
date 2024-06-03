@@ -474,4 +474,12 @@
 
     </select>
 
+    <select id="getAllRestaurant" resultType="com.example.api.restaurant.dto.GetAllRestaurant">
+        SELECT r.restaurant_id, ri.path as image_url, r.name, r.address, r.detail_address as full_address,
+               r.category, r.review_avg, if(sr.member_id > 1, true, false) as saved_restaurant
+        FROM restaurant r
+        LEFT JOIN restaurant_image ri on ri.restaurant_id = r.restaurant_id and ri.type = 'REPRESENTATIVE'
+        LEFT JOIN saved_restaurant sr on sr.restaurant_id = r.restaurant_id and sr.member_id = #{memberId}
+    </select>
+
 </mapper>

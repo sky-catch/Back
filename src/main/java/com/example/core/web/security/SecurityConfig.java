@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/favicon.ico","/v3/api-docs/**", "/swagger-ui/**", "/restaurants/search/**",  "/**.js", "/css/**", "/image/**", "/libs/**", "/assets/**", "/design/**").permitAll()
+                .antMatchers("/oauth/**", "/favicon.ico","/v3/api-docs/**", "/swagger-ui/**", "/restaurants/search/**", "/restaurants/all",  "/**.js", "/css/**", "/image/**", "/libs/**", "/assets/**", "/design/**").permitAll()
 //                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
 

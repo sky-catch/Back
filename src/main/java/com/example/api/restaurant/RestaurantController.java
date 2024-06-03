@@ -2,9 +2,7 @@ package com.example.api.restaurant;
 
 import com.example.api.member.MemberDTO;
 import com.example.api.owner.dto.Owner;
-import com.example.api.restaurant.dto.CreateRestaurantReq;
-import com.example.api.restaurant.dto.GetRestaurantInfo;
-import com.example.api.restaurant.dto.UpdateRestaurantReq;
+import com.example.api.restaurant.dto.*;
 import com.example.api.restaurant.dto.enums.Category;
 import com.example.api.restaurant.dto.enums.HotPlace;
 import com.example.api.restaurant.dto.enums.KoreanCity;
@@ -82,8 +80,8 @@ public class RestaurantController {
     @GetMapping("/search/{keyword}")
     @Operation(summary = "식당 요약 검색", description = "검색시 지역, 카테고리, 식당명 중에서 해당되는 것에 결과가 나옵니다.")
     public GetRestaurantSearchSummaryRes getRestaurantSearchSummary(@Parameter(description = "keyword는 두 글자 이상으로 해주세요.")
-                                                                        @PathVariable String keyword){
-        if(keyword.length() < MIN_KEYWORD_LENGTH){
+                                                                    @PathVariable String keyword) {
+        if (keyword.length() < MIN_KEYWORD_LENGTH) {
             throw new SystemException("keyword는 두 글자 이상으로 해주세요.");
         }
         return restaurantService.getSearchSummaryList(keyword);
@@ -92,21 +90,30 @@ public class RestaurantController {
     @GetMapping("/search")
     @Operation(summary = "식당 필터 검색", description = "지역, 가격 필터링 가능")
     public GetRestaurantSearchRes searchByFilter(@Parameter(description = "아래 Schemas에서 SearchFilter확인 부탁드립니다.")
-                                                     @ModelAttribute("dto") SearchFilter dto,
-                                                 @LoginMember(required = false) MemberDTO memberDTO){
-        if(dto.getKoreanCity() != null){
+                                                 @ModelAttribute("dto") SearchFilter dto,
+                                                 @LoginMember(required = false) MemberDTO memberDTO) {
+        if (dto.getKoreanCity() != null) {
             KoreanCity.parsing(dto.getKoreanCity());
-        }if(dto.getCategory() != null){
+        }
+        if (dto.getCategory() != null) {
             Category.parsing(dto.getCategory());
-        }if(dto.getOrderType() != null){
+        }
+        if (dto.getOrderType() != null) {
             OrderType.parsing(dto.getOrderType());
         }
 
         List<HotPlace> hotPlaceList = null;
-        if(StringUtils.hasText(dto.getHotPlace())){
+        if (StringUtils.hasText(dto.getHotPlace())) {
             String[] split = dto.getHotPlace().split(",");
             hotPlaceList = Arrays.stream(split).map(String::trim).map(HotPlace::parsing).collect(Collectors.toList());
         }
         return restaurantService.searchByFilter(dto, memberDTO.getMemberId(), hotPlaceList);
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "모든 식당", description = "모든 식당")
+    public List<GetAllRestaurant> getAllRestaurant(@LoginMember(required = false) MemberDTO memberDTO) {
+        long memberId = (memberDTO.getMemberId() != null) ? memberDTO.getMemberId() : 0L;
+        return restaurantService.getAllRestaurant(memberId);
     }
 }

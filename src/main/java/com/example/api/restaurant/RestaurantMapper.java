@@ -1,5 +1,6 @@
 package com.example.api.restaurant;
 
+import com.example.api.restaurant.dto.GetAllRestaurant;
 import com.example.api.restaurant.dto.GetRestaurantInfoRes;
 import com.example.api.restaurant.dto.RestaurantDTO;
 import com.example.api.restaurant.dto.RestaurantWithAvailableDateDTO;
@@ -61,4 +62,7 @@ public interface RestaurantMapper {
 
     // for test
     List<RestaurantDTO> findAll();
+
+    List<GetAllRestaurant> getAllRestaurant(long memberId);
+
 }

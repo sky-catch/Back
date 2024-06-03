@@ -5,6 +5,7 @@ import static com.example.api.restaurant.exception.RestaurantExceptionType.NOT_U
 
 import com.example.api.facility.StoreFacilityMapper;
 import com.example.api.facility.dto.FacilityReq;
+import com.example.api.restaurant.dto.GetAllRestaurant;
 import com.example.api.reservation.dto.TimeSlot;
 import com.example.api.reservation.dto.TimeSlots;
 import com.example.api.reservationavailabledate.ReservationAvailableDateDTO;
@@ -190,4 +191,7 @@ public class RestaurantService {
         return canReservation.subtract(alreadyReservation).limit3().toTimeString();
     }
 
+    public List<GetAllRestaurant> getAllRestaurant(long memberId) {
+        return restaurantMapper.getAllRestaurant(memberId);
+    }
 }
