@@ -3,6 +3,7 @@ package com.example.api.review;
 import com.example.api.comment.CommentMapper;
 import com.example.api.reservation.ReservationDTO;
 import com.example.api.reservation.ReservationMapper;
+import com.example.api.reservation.ReservationStatus;
 import com.example.api.restaurant.RestaurantMapper;
 import com.example.api.review.dto.CreateReviewReq;
 import com.example.api.review.dto.ReviewDTO;
@@ -30,22 +31,21 @@ public class ReviewService {
     public void createReview(CreateReviewReq dto, List<MultipartFile> files) {
         ReviewDTO reviewDTO = new ReviewDTO(dto);
 
-        //todo forTest
         ReservationDTO reservationDTO = reservationMapper.getReservation(dto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
-        /*if(reservationDTO.getStatus() != ReservationStatus.DONE){
+        if(reservationDTO.getStatus() != ReservationStatus.DONE){
             throw new SystemException("리뷰를 작성할 수 있는 상태가 아닙니다.");
         }
         if(reviewMapper.isExist(reviewDTO.getReservationId())){
             throw new SystemException("리뷰가 이미 존재합니다.");
-        }*/
+        }
 
         reviewMapper.createReview(reviewDTO);
         if (!files.isEmpty()) {
             reviewImageMapper.createReviewImage(reviewDTO.getReviewId(), s3UploadService.upload(files));
         }
-
-        restaurantMapper.increaseReviewCountAndRate(reviewDTO);
+        long restaurantId = reservationMapper.getReservation(reviewDTO.getReservationId()).get().getRestaurantId();
+        restaurantMapper.increaseReviewCountAndRate(restaurantId, reviewDTO.getRate());
     }
 
     @Transactional

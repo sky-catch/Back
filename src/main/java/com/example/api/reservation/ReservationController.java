@@ -1,10 +1,7 @@
 package com.example.api.reservation;
 
 import com.example.api.member.MemberDTO;
-import com.example.api.reservation.dto.CreateReservationDTO;
-import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
-import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.*;
 import com.example.api.reservation.dto.request.CreateReservationReq;
 import com.example.api.reservation.dto.request.GetAvailableTimeSlotsReq;
 import com.example.core.exception.ExceptionResponse;
@@ -20,14 +17,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -105,5 +95,11 @@ public class ReservationController {
                                   @Parameter(description = "예약 취소하고 싶은 예약 ID", example = "1") @PathVariable long reservationId) {
 
         reservationService.cancelMyReservationById(reservationId, loginMember.getMemberId());
+    }
+
+    @PatchMapping("/status")
+    @Operation(summary = "예약 상태 변화", description = "PLANNED 방문예정, DONE 방문완료, CANCEL 취소/노쇼")
+    public void updateReservationStatus(@RequestBody UpdateReservationReq updateReservationReq){
+        reservationService.updateReservationStatus(updateReservationReq);
     }
 }

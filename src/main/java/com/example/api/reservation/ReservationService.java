@@ -7,12 +7,7 @@ import com.example.api.owner.dto.ReservationCount;
 import com.example.api.owner.dto.ReservationOfRestaurant;
 import com.example.api.payment.PaymentMapper;
 import com.example.api.payment.domain.PaymentDTO;
-import com.example.api.reservation.dto.CreateReservationDTO;
-import com.example.api.reservation.dto.GetAvailableTimeSlotDTO;
-import com.example.api.reservation.dto.MyReservationDTO;
-import com.example.api.reservation.dto.ReservationWithRestaurantAndPaymentDTO;
-import com.example.api.reservation.dto.TimeSlot;
-import com.example.api.reservation.dto.TimeSlots;
+import com.example.api.reservation.dto.*;
 import com.example.api.reservation.dto.condition.ReservationSearchCond;
 import com.example.api.reservation.dto.request.ChangeReservationsStatusToNoShowReq;
 import com.example.api.reservation.exception.ReservationExceptionType;
@@ -244,5 +239,9 @@ public class ReservationService {
         List<ReservationCount> reservationCount = reservationMapper.getReservationCount(ownerId);
 
         return new GetReservationOfRestaurantRes(reservationOfRestaurant, reservationCount);
+    }
+
+    public void updateReservationStatus(UpdateReservationReq updateReservationReq) {
+        reservationMapper.updateStatusById(updateReservationReq.getReservationId(), ReservationStatus.fromName(updateReservationReq.getReservationStatus()));
     }
 }

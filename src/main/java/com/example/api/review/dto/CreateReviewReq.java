@@ -14,7 +14,6 @@ public class CreateReviewReq {
 
     @Schema(hidden = true)
     private long memberId;
-    private long restaurantId;
     private long reservationId;
     @Schema(description = "평점 : 1부터 5까지 정수만")
     private int rate;

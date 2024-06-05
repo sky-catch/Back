@@ -57,12 +57,12 @@
     <select id="isExist" parameterType="long" resultType="boolean">
         SELECT EXISTS(SELECT 1
                       FROM review
-                      WHERE RESTAURANT_ID = #{reservationId})
+                      WHERE reservation_id = #{reservationId})
     </select>
 
     <insert id="createReview" parameterType="com.example.api.review.dto.ReviewDTO" useGeneratedKeys="true" keyProperty="reviewId">
         INSERT INTO review(member_id, restaurant_id, reservation_id, rate, comment)
-        VALUES (#{memberId}, #{restaurantId},
+        VALUES (#{memberId}, (select restaurant_id from reservation where reservation_id = #{reservationId}),
                 #{reservationId}, #{rate}, #{comment})
     </insert>
 

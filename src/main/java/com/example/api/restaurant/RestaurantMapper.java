@@ -16,7 +16,7 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface RestaurantMapper {
-    void increaseReviewCountAndRate(ReviewDTO reviewDTO);
+    void increaseReviewCountAndRate(long restaurantId, int rate);
 
     void decreaseReviewCountAndRate(ReviewDTO reviewDTO);
 
