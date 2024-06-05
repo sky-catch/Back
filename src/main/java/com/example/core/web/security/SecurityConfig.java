@@ -5,6 +5,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 import com.example.core.web.config.CorsConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,8 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/favicon.ico","/v3/api-docs/**", "/swagger-ui/**", "/restaurants/search/**", "/restaurants/all",  "/**.js", "/css/**", "/image/**", "/libs/**", "/assets/**", "/design/**").permitAll()
-//                .antMatchers("/**").permitAll()
+                .antMatchers("/oauth/**", "/favicon.ico","/v3/api-docs/**", "/swagger-ui/**", "/**.js", "/css/**", "/image/**", "/libs/**", "/assets/**", "/design/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
